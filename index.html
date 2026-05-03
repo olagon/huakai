@@ -606,17 +606,17 @@
                             Huli
                         </button>
 
-                        <!-- Map helper, prominent on every round -->
-                        <button type="button" onclick="helpMap.open()" class="ui-btn ui-btn-secondary text-sm">
+                        <!-- Map Mode: alternate input method. Tap through 3 levels to answer. -->
+                        <button type="button" onclick="helpMap.openMapMode()" class="ui-btn ui-btn-secondary text-sm" style="border-color: rgba(0,131,143,0.35); color: #00838F;">
                             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                 <path d="M9 20l-5-2V6l5 2 6-2 5 2v12l-5-2-6 2z"/>
                                 <path d="M9 8v12"/><path d="M15 6v12"/>
                             </svg>
-                            Need help? Open the ahupuaʻa map
+                            Or use Map Mode (skip the dropdowns)
                         </button>
 
                         <p class="text-xs text-black/55 leading-relaxed">
-                            You score only when all 3 answers are correct.
+                            Use the dropdowns and Huli, or tap through the map. You score only when all 3 are right.
                         </p>
                     </div>
                 </div>
@@ -1181,7 +1181,11 @@ const LOCATIONS = window.LOCATIONS || [];
         currentIsland: null,
         currentMoku: null,
 
-        open() {
+        // mode: 'study' (just look around) or 'select' (third tap submits)
+        mode: 'study',
+
+        open(opts) {
+            this.mode = (opts && opts.mode === 'select') ? 'select' : 'study';
             document.getElementById('help-overlay').classList.remove('hidden');
             if (!this.map) this.initMap();
             // Wait for layout, then size + draw
@@ -1191,8 +1195,12 @@ const LOCATIONS = window.LOCATIONS || [];
             }, 80);
         },
 
+        // Convenience: tap-to-answer mode. Used by the "Use Map Mode" button.
+        openMapMode() { this.open({ mode: 'select' }); },
+
         close() {
             document.getElementById('help-overlay').classList.add('hidden');
+            this.mode = 'study';
         },
 
         initMap() {
@@ -1287,7 +1295,9 @@ const LOCATIONS = window.LOCATIONS || [];
                 markers.push(m);
             }
             this.islandMarkerLayer = L.layerGroup(markers).addTo(this.map);
-            this.setInfo("Tap any island to see its moku.");
+            this.setInfo(this.mode === 'select'
+                ? "Map Mode: tap an island, then a moku, then an ahupuaʻa to answer."
+                : "Tap any island to see its moku.");
         },
 
         backToMoku() {
@@ -1336,7 +1346,9 @@ const LOCATIONS = window.LOCATIONS || [];
             }
 
             const mokuCount = Object.keys(mokuColors).length;
-            this.setInfo(`${island}: ${mokuCount} moku, ${data.features.length} ahupuaʻa. Click any region to drill in.`);
+            this.setInfo(this.mode === 'select'
+                ? `${island}: tap the moku you think the photo is in.`
+                : `${island}: ${mokuCount} moku, ${data.features.length} ahupuaʻa. Click any region to drill in.`);
         },
 
         async goAhupuaa(island, moku) {
@@ -1369,6 +1381,10 @@ const LOCATIONS = window.LOCATIONS || [];
                     });
                     layer.on('mouseover', () => layer.setStyle({ fillOpacity: 0.75, weight: 2.2 }));
                     layer.on('mouseout', () => layer.setStyle({ fillOpacity: 0.40, weight: 1.4 }));
+                    // Map Mode: third tap (on an ahupuaʻa polygon) submits the guess.
+                    if (this.mode === 'select') {
+                        layer.on('click', () => this.submitFromMap(island, moku, ahu));
+                    }
                 }
             }).addTo(this.map);
 
@@ -1377,7 +1393,9 @@ const LOCATIONS = window.LOCATIONS || [];
                 if (b.isValid()) this.map.fitBounds(b, { padding: [30, 30] });
             } catch (e) {}
 
-            this.setInfo(`Moku o ${moku} (${island}): ${filtered.features.length} ahupuaʻa shown.`);
+            this.setInfo(this.mode === 'select'
+                ? `${moku}: tap the ahupuaʻa to submit your answer.`
+                : `Moku o ${moku} (${island}): ${filtered.features.length} ahupuaʻa shown.`);
         },
 
         // ---- Data loading ----
@@ -1428,6 +1446,44 @@ const LOCATIONS = window.LOCATIONS || [];
             const out = {};
             list.forEach((m, i) => { out[m] = MOKU_PALETTE[i % MOKU_PALETTE.length]; });
             return out;
+        },
+
+        // Map Mode: turn a (island, moku, ahupuaʻa) tap into a real submitted guess.
+        // Adds the moku/ahupuaʻa to the dropdowns on the fly if they aren't there
+        // so the answer registers cleanly even for entries we discovered via GIS
+        // that the dropdown lookup didn't yet know about.
+        submitFromMap(island, moku, ahupuaa) {
+            const isleSel = document.getElementById('island-select');
+            const mokuSel = document.getElementById('moku-select');
+            const ahuSel  = document.getElementById('ahupuaa-select');
+
+            isleSel.value = island;
+            game.handleIslandChange();   // populates moku dropdown for this island
+
+            if (![...mokuSel.options].some(o => o.value === moku)) {
+                const opt = document.createElement('option');
+                opt.value = moku; opt.textContent = moku;
+                mokuSel.appendChild(opt);
+            }
+            mokuSel.value = moku;
+            game.handleMokuChange();     // populates ahupuaʻa dropdown
+
+            if (![...ahuSel.options].some(o => o.value === ahupuaa)) {
+                const opt = document.createElement('option');
+                opt.value = ahupuaa; opt.textContent = ahupuaa;
+                ahuSel.appendChild(opt);
+            }
+            ahuSel.value = ahupuaa;
+            game.checkSubmitState();
+
+            // Brief visual ack on the info bar
+            this.setInfo(`Answering with ${island} / ${moku} / ${ahupuaa}…`);
+
+            // Close map and submit
+            setTimeout(() => {
+                this.close();
+                game.submitGuess();
+            }, 220);
         }
     };
 

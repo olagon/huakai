@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Moku Match — Curate</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+    body { background: #faf7f2; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    .card { transition: transform 0.1s ease; }
+    .card.marked-delete { opacity: 0.5; }
+    .card.marked-delete .img-wrap { box-shadow: 0 0 0 4px #d84315 inset; }
+    .card.marked-delete .img-wrap::after {
+        content: "DELETE";
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%) rotate(-12deg);
+        background: #d84315;
+        color: #fff;
+        font-weight: 900;
+        font-size: 28px;
+        padding: 6px 18px;
+        letter-spacing: 0.05em;
+        border: 3px solid #fff;
+        border-radius: 6px;
+        z-index: 5;
+        pointer-events: none;
+    }
+    .card.marked-rename .name-input {
+        background: #fff8e1;
+        border-color: #ffa000;
+    }
+    .img-wrap {
+        position: relative;
+        aspect-ratio: 4 / 3;
+        background: #e8e1d6;
+        cursor: pointer;
+        overflow: hidden;
+    }
+    .img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+    .img-wrap .placeholder {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #8d6e63;
+        color: #fff;
+        font-weight: 700;
+        font-size: 12px;
+    }
+    .name-input {
+        font-weight: 700;
+        font-size: 13px;
+        line-height: 1.3;
+        background: transparent;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        padding: 4px 6px;
+        width: 100%;
+        outline: none;
+    }
+    .name-input:hover { border-color: #e8e1d6; }
+    .name-input:focus { border-color: #00838F; background: #fff; }
+    .meta-row { font-size: 11px; color: #6b6660; line-height: 1.4; }
+    .toolbar {
+        position: sticky; top: 0; z-index: 50;
+        background: rgba(250,247,242,0.95);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid #e8e1d6;
+    }
+    .summary-pill {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: #fff; padding: 6px 12px; border-radius: 999px;
+        font-size: 12px; font-weight: 700;
+        border: 1px solid #e8e1d6;
+    }
+    .btn {
+        background: #00838F; color: #fff; padding: 8px 14px;
+        border-radius: 8px; font-weight: 700; font-size: 13px;
+        border: none; cursor: pointer;
+    }
+    .btn:hover { filter: brightness(0.95); }
+    .btn-secondary { background: #fff; color: #1a1614; border: 1px solid #e8e1d6; }
+    .btn-danger { background: #d84315; }
+    select, input[type="text"] {
+        background: #fff; border: 1px solid #e8e1d6;
+        padding: 7px 10px; border-radius: 6px; font-size: 13px;
+        outline: none;
+    }
+    select:focus, input[type="text"]:focus { border-color: #00838F; }
+    #patch-output {
+        font-family: ui-monospace, SFMono-Regular, monospace;
+        font-size: 12px;
+    }
+</style>
+</head>
+<body class="text-slate-900 min-h-screen">
+
+<!-- Toolbar -->
+<div class="toolbar px-4 py-3 flex flex-wrap items-center gap-3">
+    <div>
+        <h1 class="font-extrabold text-lg leading-none">Moku Match: Curate</h1>
+        <p class="text-xs text-slate-500 mt-0.5">Click an image to mark for delete. Edit a name to rename it.</p>
+    </div>
+    <div class="flex items-center gap-2 ml-auto flex-wrap">
+        <input type="text" id="search" placeholder="Search…" class="w-40">
+        <select id="filter-island">
+            <option value="">All islands</option>
+        </select>
+        <select id="filter-state">
+            <option value="">Show all</option>
+            <option value="marked">Only marked</option>
+            <option value="delete">Only marked delete</option>
+            <option value="rename">Only marked rename</option>
+        </select>
+        <span class="summary-pill" title="Total visible / total all">
+            <span id="visible-count">0</span> / <span id="total-count">0</span>
+        </span>
+        <span class="summary-pill" style="background:#fef3e2; border-color:#ffa000; color:#7a3e00;">
+            <span id="rename-count">0</span> rename
+        </span>
+        <span class="summary-pill" style="background:#ffebee; border-color:#d84315; color:#891a00;">
+            <span id="delete-count">0</span> delete
+        </span>
+        <button class="btn-secondary btn" onclick="resetAll()">Reset marks</button>
+        <button class="btn" onclick="generatePatch()">Generate patch</button>
+    </div>
+</div>
+
+<!-- Patch output panel -->
+<div id="patch-panel" class="hidden px-4 py-4 bg-white border-b border-slate-200">
+    <div class="flex items-center justify-between mb-2">
+        <p class="text-sm font-bold">Copy this and paste it back to Claude:</p>
+        <div class="flex gap-2">
+            <button class="btn-secondary btn" onclick="copyPatch()">Copy</button>
+            <button class="btn-secondary btn" onclick="document.getElementById('patch-panel').classList.add('hidden')">Close</button>
+        </div>
+    </div>
+    <textarea id="patch-output" class="w-full h-56 border border-slate-200 rounded p-3" readonly></textarea>
+    <p id="copy-msg" class="text-xs text-emerald-700 mt-1 hidden">Copied.</p>
+</div>
+
+<!-- Grid of cards -->
+<div id="grid" class="grid gap-4 p-4" style="grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));"></div>
+
+<!-- Load location dataset -->
+<script src="data/locations.js"></script>
+
+<script>
+const STORAGE_KEY = 'moku_match_curation_v1';
+
+// State persisted in localStorage
+let state = loadState();
+
+function loadState() {
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    return { deletes: {}, renames: {} };  // both keyed by original name
+}
+
+function saveState() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+const all = (window.LOCATIONS || []).slice();
+
+function init() {
+    document.getElementById('total-count').textContent = all.length;
+    // Populate island filter
+    const islands = [...new Set(all.map(l => l.island))].sort();
+    const sel = document.getElementById('filter-island');
+    for (const i of islands) {
+        const opt = document.createElement('option');
+        opt.value = i; opt.textContent = i;
+        sel.appendChild(opt);
+    }
+    document.getElementById('search').addEventListener('input', render);
+    document.getElementById('filter-island').addEventListener('change', render);
+    document.getElementById('filter-state').addEventListener('change', render);
+    render();
+}
+
+function render() {
+    const grid = document.getElementById('grid');
+    grid.innerHTML = '';
+    const search = document.getElementById('search').value.trim().toLowerCase();
+    const islandFilter = document.getElementById('filter-island').value;
+    const stateFilter = document.getElementById('filter-state').value;
+
+    let visible = 0;
+    for (const loc of all) {
+        if (islandFilter && loc.island !== islandFilter) continue;
+        const isDelete = !!state.deletes[loc.name];
+        const isRename = !!state.renames[loc.name];
+        if (stateFilter === 'marked' && !isDelete && !isRename) continue;
+        if (stateFilter === 'delete' && !isDelete) continue;
+        if (stateFilter === 'rename' && !isRename) continue;
+        if (search) {
+            const haystack = (loc.name + ' ' + loc.island + ' ' + loc.moku + ' ' + loc.ahupuaa).toLowerCase();
+            if (!haystack.includes(search)) continue;
+        }
+        grid.appendChild(buildCard(loc));
+        visible++;
+    }
+    document.getElementById('visible-count').textContent = visible;
+    document.getElementById('delete-count').textContent = Object.keys(state.deletes).length;
+    document.getElementById('rename-count').textContent = Object.keys(state.renames).length;
+}
+
+function buildCard(loc) {
+    const card = document.createElement('div');
+    card.className = 'card bg-white rounded-xl border border-slate-200 overflow-hidden';
+    if (state.deletes[loc.name]) card.classList.add('marked-delete');
+    if (state.renames[loc.name]) card.classList.add('marked-rename');
+
+    // Image wrap (click to toggle delete)
+    const imgWrap = document.createElement('div');
+    imgWrap.className = 'img-wrap';
+    imgWrap.title = 'Click to toggle delete';
+    imgWrap.onclick = () => toggleDelete(loc.name, card);
+
+    const img = document.createElement('img');
+    img.src = loc.img;
+    img.alt = loc.name;
+    img.loading = 'lazy';
+    img.onerror = () => {
+        img.style.display = 'none';
+        const ph = document.createElement('div');
+        ph.className = 'placeholder';
+        ph.textContent = 'IMAGE 404';
+        imgWrap.appendChild(ph);
+    };
+    imgWrap.appendChild(img);
+    card.appendChild(imgWrap);
+
+    // Body
+    const body = document.createElement('div');
+    body.className = 'p-3 space-y-2';
+
+    const nameInput = document.createElement('input');
+    nameInput.type = 'text';
+    nameInput.className = 'name-input';
+    nameInput.value = state.renames[loc.name] || loc.name;
+    nameInput.dataset.original = loc.name;
+    nameInput.onclick = e => e.stopPropagation();
+    nameInput.oninput = () => {
+        const newName = nameInput.value.trim();
+        if (newName && newName !== loc.name) {
+            state.renames[loc.name] = newName;
+            card.classList.add('marked-rename');
+        } else {
+            delete state.renames[loc.name];
+            card.classList.remove('marked-rename');
+        }
+        saveState();
+        document.getElementById('rename-count').textContent = Object.keys(state.renames).length;
+    };
+    body.appendChild(nameInput);
+
+    const meta = document.createElement('div');
+    meta.className = 'meta-row';
+    meta.innerHTML = `
+        <div><strong>${loc.island}</strong></div>
+        <div>${loc.moku} / ${loc.ahupuaa}</div>
+    `;
+    body.appendChild(meta);
+
+    card.appendChild(body);
+    return card;
+}
+
+function toggleDelete(name, card) {
+    if (state.deletes[name]) {
+        delete state.deletes[name];
+        card.classList.remove('marked-delete');
+    } else {
+        state.deletes[name] = true;
+        card.classList.add('marked-delete');
+    }
+    saveState();
+    document.getElementById('delete-count').textContent = Object.keys(state.deletes).length;
+}
+
+function resetAll() {
+    if (!confirm('Clear all marks for delete and rename?')) return;
+    state = { deletes: {}, renames: {} };
+    saveState();
+    render();
+}
+
+function generatePatch() {
+    const patch = {
+        version: 1,
+        generated_at: new Date().toISOString(),
+        deletes: Object.keys(state.deletes).sort(),
+        renames: Object.entries(state.renames).map(([from, to]) => ({ from, to })),
+    };
+    const out = document.getElementById('patch-output');
+    out.value = JSON.stringify(patch, null, 2);
+    document.getElementById('patch-panel').classList.remove('hidden');
+    out.select();
+}
+
+function copyPatch() {
+    const out = document.getElementById('patch-output');
+    out.select();
+    document.execCommand('copy');
+    const msg = document.getElementById('copy-msg');
+    msg.classList.remove('hidden');
+    setTimeout(() => msg.classList.add('hidden'), 1500);
+}
+
+// Wait for locations to be loaded
+if (window.LOCATIONS) {
+    init();
+} else {
+    window.addEventListener('load', () => {
+        if (window.LOCATIONS && all.length === 0) {
+            // re-grab in case load timing
+            location.reload();
+        } else {
+            init();
+        }
+    });
+}
+</script>
+</body>
+</html>

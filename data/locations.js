@@ -1409,14 +1409,5 @@ window.LOCATIONS = [
         "coords": [22.2031, -159.496414],
         "img": "images/kauai/hanalei-01.jpg",
         "attribution": "Farragutful, CC BY-SA 4.0, via Wikimedia Commons"
-    },
-    {
-        "name": "Hanalei coast at Waikoko",
-        "island": "Kauaʻi",
-        "moku": "Haleleʻa",
-        "ahupuaa": "Waikoko",
-        "coords": [22.213312, -159.520264],
-        "img": "images/kauai/hanalei-kauai.jpg",
-        "attribution": "Michelle Maria, CC BY 3.0, via Wikimedia Commons"
     }
 ];

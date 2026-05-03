@@ -49,7 +49,6 @@ its original photographer. Mahalo to everyone who shared their work.
 | `images/kauai/hanalei-bay.jpg` | Hanalei Bay | Kauaʻi | Forest & Kim Starr, CC BY 3.0, via Wikimedia Commons |
 | `images/kauai/hanalei-01.jpg` | Hanalei Bay panorama | Kauaʻi | Farragutful, CC BY-SA 4.0, via Wikimedia Commons |
 | `images/kauai/hanalei-pier.jpg` | Hanalei Pier | Kauaʻi | Debbie Tee, CC BY-SA 4.0, via Wikimedia Commons |
-| `images/kauai/hanalei-kauai.jpg` | Hanalei coast at Waikoko | Kauaʻi | Michelle Maria, CC BY 3.0, via Wikimedia Commons |
 | `images/kauai/hanapepe-town.jpg` | Hanapēpē Town | Kauaʻi | Joel Bradshaw, Public Domain, via Wikimedia Commons |
 | `images/kauai/haena-state-park.jpg` | Hāʻena State Park | Kauaʻi | Forest & Kim Starr, CC BY 3.0, via Wikimedia Commons |
 | `images/kauai/kalalau-lookout.jpg` | Kalalau Lookout | Kauaʻi | Forest & Kim Starr, CC BY 3.0, via Wikimedia Commons |

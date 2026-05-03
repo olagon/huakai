@@ -696,9 +696,22 @@
                             <span id="help-crumb-moku" class="font-extrabold text-kapa-ocean truncate max-w-[120px] sm:max-w-none"></span>
                         </span>
                     </div>
-                    <button onclick="helpMap.close()" class="ui-pill text-xs sm:text-sm font-semibold hover:bg-white px-3 py-2 shrink-0" title="Close" aria-label="Close map">
-                        <span class="hidden sm:inline">Close</span> <span aria-hidden="true">✕</span>
-                    </button>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <button id="help-photo-btn" onclick="helpMap.togglePhoto()" class="ui-pill text-xs sm:text-sm font-semibold hover:bg-white px-3 py-2 shrink-0" title="Show or hide the round photo">
+                            <span aria-hidden="true">📷</span>
+                            <span id="help-photo-btn-label" class="hidden sm:inline">Show photo</span>
+                        </button>
+                        <button onclick="helpMap.close()" class="ui-pill text-xs sm:text-sm font-semibold hover:bg-white px-3 py-2 shrink-0" title="Close" aria-label="Close map">
+                            <span class="hidden sm:inline">Close</span> <span aria-hidden="true">✕</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Floating photo peek (toggled with the camera button) -->
+                <div id="help-photo-peek" class="hidden absolute top-16 right-3 sm:right-4 w-44 sm:w-56 z-[5] pointer-events-auto">
+                    <div class="bg-white rounded-xl overflow-hidden shadow-2xl border border-black/10">
+                        <img id="help-photo-img" referrerpolicy="no-referrer" src="" alt="" class="w-full h-auto block cursor-pointer" onclick="imageLightbox.openCurrent()">
+                        <div class="px-2 py-1 text-[10px] text-black/55 leading-tight">Tap photo to enlarge</div>
+                    </div>
                 </div>
                 <div id="help-map" class="flex-1 bg-gray-200" style="min-height:0"></div>
                 <div id="help-info" class="px-3 sm:px-4 py-2 text-xs text-black/75 bg-white/95 border-t border-black/10 leading-snug">
@@ -1200,7 +1213,32 @@ const LOCATIONS = window.LOCATIONS || [];
 
         close() {
             document.getElementById('help-overlay').classList.add('hidden');
+            // Hide photo peek too so it does not linger
+            const peek = document.getElementById('help-photo-peek');
+            if (peek) peek.classList.add('hidden');
+            const lbl = document.getElementById('help-photo-btn-label');
+            if (lbl) lbl.textContent = 'Show photo';
             this.mode = 'study';
+            this._clearSelection();
+        },
+
+        // Toggle a small floating thumbnail of the current round photo
+        // so the user can peek without leaving the map.
+        togglePhoto() {
+            const peek = document.getElementById('help-photo-peek');
+            const img  = document.getElementById('help-photo-img');
+            const lbl  = document.getElementById('help-photo-btn-label');
+            const round = document.getElementById('location-img');
+            if (!peek || !round) return;
+            if (peek.classList.contains('hidden')) {
+                img.src = round.src;
+                img.alt = round.alt || '';
+                peek.classList.remove('hidden');
+                if (lbl) lbl.textContent = 'Hide photo';
+            } else {
+                peek.classList.add('hidden');
+                if (lbl) lbl.textContent = 'Show photo';
+            }
         },
 
         initMap() {
@@ -1347,8 +1385,15 @@ const LOCATIONS = window.LOCATIONS || [];
 
             const mokuCount = Object.keys(mokuColors).length;
             this.setInfo(this.mode === 'select'
-                ? `${island}: tap the moku you think the photo is in.`
+                ? `${island}: tap the moku you think the photo is in to drill into its ahupuaʻa.`
                 : `${island}: ${mokuCount} moku, ${data.features.length} ahupuaʻa. Click any region to drill in.`);
+        },
+
+        // Style presets for the ahupuaʻa polygons (used so highlight/clear can reset).
+        _ahuStyles: {
+            base:     { color: '#0F172A', weight: 1.4, fillColor: '#00838F', fillOpacity: 0.40 },
+            hover:    { color: '#0F172A', weight: 2.2, fillColor: '#00838F', fillOpacity: 0.65 },
+            selected: { color: '#FFFFFF', weight: 3,   fillColor: '#FF6F00', fillOpacity: 0.92 },
         },
 
         async goAhupuaa(island, moku) {
@@ -1356,6 +1401,7 @@ const LOCATIONS = window.LOCATIONS || [];
             this.currentMoku = moku;
             this.updateCrumbs();
             this.clearLayer();
+            this._clearSelection();   // start fresh whenever we enter a new moku
 
             const data = await this.loadIsland(island);
             if (!data) return;
@@ -1365,13 +1411,10 @@ const LOCATIONS = window.LOCATIONS || [];
                 features: data.features.filter(f => this.getMoku(f.properties) === moku)
             };
 
+            const styles = this._ahuStyles;
+
             this.layer = L.geoJSON(filtered, {
-                style: () => ({
-                    color: '#0F172A',
-                    weight: 1.4,
-                    fillColor: '#00838F',
-                    fillOpacity: 0.40
-                }),
+                style: () => styles.base,
                 onEachFeature: (f, layer) => {
                     const ahu = this.getAhupuaa(f.properties);
                     layer.bindTooltip(ahu, {
@@ -1379,11 +1422,17 @@ const LOCATIONS = window.LOCATIONS || [];
                         direction: 'center',
                         className: 'help-ahu-label'
                     });
-                    layer.on('mouseover', () => layer.setStyle({ fillOpacity: 0.75, weight: 2.2 }));
-                    layer.on('mouseout', () => layer.setStyle({ fillOpacity: 0.40, weight: 1.4 }));
-                    // Map Mode: third tap (on an ahupuaʻa polygon) submits the guess.
+                    layer.on('mouseover', () => {
+                        if (this._selected !== layer) layer.setStyle(styles.hover);
+                    });
+                    layer.on('mouseout', () => {
+                        if (this._selected !== layer) layer.setStyle(styles.base);
+                    });
+                    // Map Mode: tap highlights the polygon. The Submit button
+                    // in the info bar commits. Tapping a different polygon
+                    // moves the selection. The map does NOT zoom or recenter.
                     if (this.mode === 'select') {
-                        layer.on('click', () => this.submitFromMap(island, moku, ahu));
+                        layer.on('click', () => this._selectAhu(layer, island, moku, ahu));
                     }
                 }
             }).addTo(this.map);
@@ -1393,9 +1442,72 @@ const LOCATIONS = window.LOCATIONS || [];
                 if (b.isValid()) this.map.fitBounds(b, { padding: [30, 30] });
             } catch (e) {}
 
-            this.setInfo(this.mode === 'select'
-                ? `${moku}: tap the ahupuaʻa to submit your answer.`
-                : `Moku o ${moku} (${island}): ${filtered.features.length} ahupuaʻa shown.`);
+            if (this.mode === 'select') {
+                this._renderSelectionInfo(island, moku);   // shows starting hint, no selection yet
+            } else {
+                this.setInfo(`Moku o ${moku} (${island}): ${filtered.features.length} ahupuaʻa shown.`);
+            }
+        },
+
+        // ---- Map Mode selection state ----
+
+        _selectAhu(layer, island, moku, ahu) {
+            const styles = this._ahuStyles;
+            // Reset any previously-selected polygon
+            if (this._selected && this._selected !== layer) {
+                this._selected.setStyle(styles.base);
+            }
+            this._selected = layer;
+            this._selectedIsland = island;
+            this._selectedMoku = moku;
+            this._selectedAhu = ahu;
+            layer.setStyle(styles.selected);
+            try { layer.bringToFront(); } catch (e) {}
+            this._renderSelectionInfo(island, moku);
+        },
+
+        _clearSelection() {
+            const styles = this._ahuStyles;
+            if (this._selected) {
+                try { this._selected.setStyle(styles.base); } catch (e) {}
+            }
+            this._selected = null;
+            this._selectedIsland = null;
+            this._selectedMoku = null;
+            this._selectedAhu = null;
+        },
+
+        // Renders the bottom info bar in select mode. If a polygon is
+        // selected, shows the Submit + Pick another buttons. Otherwise
+        // shows the "tap an ahupuaʻa" hint.
+        _renderSelectionInfo(island, moku) {
+            const info = document.getElementById('help-info');
+            if (!this._selectedAhu) {
+                info.textContent = `${moku} (${island}): tap an ahupuaʻa to highlight it, then tap Submit.`;
+                return;
+            }
+            info.innerHTML = '';
+            const lead = document.createElement('span');
+            lead.innerHTML = `Picked <strong>${this._selectedAhu}</strong> (${this._selectedMoku}, ${this._selectedIsland}). `;
+            const submit = document.createElement('button');
+            submit.textContent = 'Submit ▶';
+            submit.style.cssText = 'background:#00838F; color:#fff; padding:5px 14px; border-radius:999px; font-weight:800; font-size:12px; margin-left:8px; border:none; cursor:pointer;';
+            submit.onclick = () => this._confirmSelection();
+            const reset = document.createElement('button');
+            reset.textContent = 'Pick another';
+            reset.style.cssText = 'background:rgba(15,23,42,0.06); color:#0F172A; padding:5px 12px; border-radius:999px; font-weight:700; font-size:12px; margin-left:6px; border:1px solid rgba(15,23,42,0.10); cursor:pointer;';
+            reset.onclick = () => {
+                this._clearSelection();
+                this._renderSelectionInfo(island, moku);
+            };
+            info.appendChild(lead);
+            info.appendChild(submit);
+            info.appendChild(reset);
+        },
+
+        _confirmSelection() {
+            if (!this._selectedAhu) return;
+            this.submitFromMap(this._selectedIsland, this._selectedMoku, this._selectedAhu);
         },
 
         // ---- Data loading ----

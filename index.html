@@ -346,6 +346,70 @@
         .legal-doc .kind-headline { font-size: 1.3rem; }
     }
 
+    /* IMAGE LIGHTBOX (click round photo to enlarge + zoom) */
+    #image-lightbox {
+        background: rgba(8, 10, 14, 0.96);
+        backdrop-filter: blur(4px);
+    }
+    #lightbox-stage {
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-overflow-scrolling: touch;
+    }
+    #lightbox-img {
+        max-width: 100vw;
+        max-height: 100vh;
+        object-fit: contain;
+        cursor: zoom-in;
+        transition: transform 220ms ease;
+        transform-origin: center center;
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+    #lightbox-img.zoom-2x { transform: scale(2);   cursor: zoom-in; }
+    #lightbox-img.zoom-4x { transform: scale(4);   cursor: zoom-out; }
+    .lightbox-chip {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.92);
+        color: #0F172A;
+        font-weight: 700;
+        font-size: 12px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        cursor: pointer;
+        user-select: none;
+        z-index: 10;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: none;
+    }
+    .lightbox-chip:hover { background: #fff; }
+    /* Hint button overlay on the round image showing it is clickable */
+    .zoom-hint-pill {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        z-index: 25;
+        background: rgba(0, 0, 0, 0.55);
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 6px 10px;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        pointer-events: none;
+        border: 1px solid rgba(255,255,255,0.18);
+        backdrop-filter: blur(6px);
+    }
+
     /* FOOTER - matches /learnhawaiian/ */
     .site-footer {
         --ink-soft: #4a4540;
@@ -459,11 +523,18 @@
                             <div class="text-black/35 animate-pulse font-semibold text-sm">Loading</div>
                         </div>
 
-                        <!-- Image Element -->
-                        <img id="location-img" referrerpolicy="no-referrer" src="" alt="Guess the location" class="relative z-0 w-full h-full object-cover transition-opacity duration-500 opacity-0">
+                        <!-- Image Element (click to enlarge) -->
+                        <img id="location-img" referrerpolicy="no-referrer" src="" alt="Guess the location" onclick="imageLightbox.openCurrent()" style="cursor: zoom-in;" class="relative z-0 w-full h-full object-cover transition-opacity duration-500 opacity-0">
+
+                        <!-- Click-to-zoom hint -->
+                        <div class="zoom-hint-pill" aria-hidden="true">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                            <span class="hidden sm:inline">Click to enlarge</span>
+                            <span class="sm:hidden">Tap to enlarge</span>
+                        </div>
 
                         <!-- Soft Gradient Overlay -->
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent z-10"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent z-10 pointer-events-none"></div>
 
                         <!-- Attribution (Always visible) -->
                         <div class="absolute top-3 left-3 right-3 z-20 flex items-center justify-between gap-3">
@@ -633,6 +704,23 @@
                 <div id="help-info" class="px-3 sm:px-4 py-2 text-xs text-black/75 bg-white/95 border-t border-black/10 leading-snug">
                     Tap any island to see its moku, then tap a moku to see its ahupuaʻa.
                 </div>
+            </div>
+        </div>
+
+        <!-- Image Lightbox (click round photo to enlarge + zoom) -->
+        <div id="image-lightbox" class="fixed inset-0 z-[80] hidden" onclick="if(event.target===this || event.target.id==='lightbox-stage') imageLightbox.close()">
+            <button class="lightbox-chip" style="top:12px; left:12px;" onclick="imageLightbox.cycleZoom()" aria-label="Toggle zoom">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                <span id="lightbox-zoom-label">Zoom 1x</span>
+            </button>
+            <button class="lightbox-chip" style="top:12px; right:12px;" onclick="imageLightbox.close()" aria-label="Close">
+                Close ✕
+            </button>
+            <div id="lightbox-stage">
+                <img id="lightbox-img" src="" alt="" onclick="imageLightbox.cycleZoom()" draggable="false">
+            </div>
+            <div class="lightbox-chip" style="bottom:14px; left:50%; transform:translateX(-50%); cursor:default; background:rgba(255,255,255,0.85);">
+                <span id="lightbox-attribution" style="font-weight:600;"></span>
             </div>
         </div>
 
@@ -1476,6 +1564,73 @@ const LOCATIONS = window.LOCATIONS || [];
 
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') legal.close();
+    });
+
+    // ----------------------------------------------------------------
+    // IMAGE LIGHTBOX — click round photo to see it big, click again to
+    // cycle zoom (1x → 2x → 4x → 1x). When zoomed, the stage scrolls
+    // so you can drag/swipe to pan around.
+    // ----------------------------------------------------------------
+    const imageLightbox = {
+        zoomLevels: [1, 2, 4],
+        zoomIdx: 0,
+
+        openCurrent() {
+            const roundImg = document.getElementById('location-img');
+            if (!roundImg || !roundImg.src) return;
+            const attribEl = document.getElementById('attribution-text');
+            this.open(roundImg.src, roundImg.alt, attribEl ? attribEl.textContent : '');
+        },
+
+        open(src, alt, attribution) {
+            const modal = document.getElementById('image-lightbox');
+            const img   = document.getElementById('lightbox-img');
+            const attr  = document.getElementById('lightbox-attribution');
+            img.src = src;
+            img.alt = alt || '';
+            attr.textContent = attribution || '';
+            this.zoomIdx = 0;
+            this.applyZoom();
+            modal.classList.remove('hidden');
+            // Center the scroll position once layout settles
+            setTimeout(() => {
+                const stage = document.getElementById('lightbox-stage');
+                stage.scrollTop  = (stage.scrollHeight  - stage.clientHeight)  / 2;
+                stage.scrollLeft = (stage.scrollWidth   - stage.clientWidth)   / 2;
+            }, 30);
+        },
+
+        close() {
+            document.getElementById('image-lightbox').classList.add('hidden');
+        },
+
+        cycleZoom() {
+            this.zoomIdx = (this.zoomIdx + 1) % this.zoomLevels.length;
+            this.applyZoom();
+            // Re-center after a zoom change so the new view starts framed
+            setTimeout(() => {
+                const stage = document.getElementById('lightbox-stage');
+                stage.scrollTop  = (stage.scrollHeight  - stage.clientHeight)  / 2;
+                stage.scrollLeft = (stage.scrollWidth   - stage.clientWidth)   / 2;
+            }, 250);
+        },
+
+        applyZoom() {
+            const img   = document.getElementById('lightbox-img');
+            const label = document.getElementById('lightbox-zoom-label');
+            const z     = this.zoomLevels[this.zoomIdx];
+            img.classList.remove('zoom-2x', 'zoom-4x');
+            if (z === 2) img.classList.add('zoom-2x');
+            if (z === 4) img.classList.add('zoom-4x');
+            label.textContent = z === 1 ? 'Zoom 1x · click to zoom' :
+                                z === 2 ? 'Zoom 2x · click again' :
+                                          'Zoom 4x · click to reset';
+        }
+    };
+
+    // ESC closes the lightbox
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') imageLightbox.close();
     });
     </script>
 </body>

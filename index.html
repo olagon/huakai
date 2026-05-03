@@ -738,6 +738,34 @@
 // Keep using the global name so the rest of the game code still works.
 const LOCATIONS = window.LOCATIONS || [];
 
+// Augment MOKU_DATA and AHUPUAA_DATA with any island/moku/ahupuaʻa
+// combos that appear in LOCATIONS. This keeps the dropdowns in sync
+// when new entries are added by the discovery script — we don't have
+// to hand-edit MOKU_DATA / AHUPUAA_DATA every time.
+(function syncDropdownsFromLocations() {
+    for (const loc of LOCATIONS) {
+        const island = loc.island, moku = loc.moku, ahu = loc.ahupuaa;
+        if (!island || !moku || !ahu) continue;
+
+        if (!MOKU_DATA[island]) MOKU_DATA[island] = [];
+        if (!MOKU_DATA[island].includes(moku)) MOKU_DATA[island].push(moku);
+
+        if (!AHUPUAA_DATA[island]) AHUPUAA_DATA[island] = {};
+        if (!AHUPUAA_DATA[island][moku]) AHUPUAA_DATA[island][moku] = [];
+        if (!AHUPUAA_DATA[island][moku].includes(ahu)) AHUPUAA_DATA[island][moku].push(ahu);
+    }
+    // Sort moku and ahupuaʻa alphabetically per island so the dropdowns
+    // are predictable. Hawaiian sort is roughly fine with localeCompare.
+    for (const island of Object.keys(MOKU_DATA)) {
+        MOKU_DATA[island].sort((a, b) => a.localeCompare(b));
+    }
+    for (const island of Object.keys(AHUPUAA_DATA)) {
+        for (const moku of Object.keys(AHUPUAA_DATA[island])) {
+            AHUPUAA_DATA[island][moku].sort((a, b) => a.localeCompare(b));
+        }
+    }
+})();
+
 
     // --- GAME LOGIC ---
     const game = {

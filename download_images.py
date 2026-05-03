@@ -29,6 +29,7 @@ import json
 import os
 import re
 import sys
+import time
 import unicodedata
 from io import BytesIO
 from pathlib import Path
@@ -145,7 +146,15 @@ def slugify(s: str) -> str:
 # ---- Download + process ----
 def fetch_and_save(url: str, dest: Path):
     headers = {"User-Agent": USER_AGENT, "Accept": "image/*,*/*;q=0.8"}
-    r = requests.get(url, headers=headers, allow_redirects=True, timeout=HTTP_TIMEOUT)
+    # Try up to 3 times if rate-limited (HTTP 429)
+    for attempt in range(3):
+        r = requests.get(url, headers=headers, allow_redirects=True, timeout=HTTP_TIMEOUT)
+        if r.status_code == 429:
+            wait = int(r.headers.get("Retry-After", "30"))
+            wait = min(max(wait, 5), 60)
+            time.sleep(wait)
+            continue
+        break
     if r.status_code != 200:
         return False, f"HTTP {r.status_code}"
     data = r.content
@@ -301,6 +310,8 @@ def main():
             print(f"FAIL {msg}")
             new_locations.append(loc)   # keep original URL so game still works
             failures.append((loc, msg))
+        # Throttle to stay under Wikimedia's rate limit (anonymous: ~5 req/s)
+        time.sleep(0.4)
 
     print()
     print(f"Downloaded:  {downloaded}")

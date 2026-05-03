@@ -988,7 +988,7 @@ window.LOCATIONS = [
         "attribution": "U.S. National Archives (NARA), Public Domain, via Wikimedia Commons"
     },
     {
-        "name": "Honokalani Beach",
+        "name": "Honokalani black sand beach (Waiʻānapanapa)",
         "island": "Maui",
         "moku": "Hāna",
         "ahupuaa": "Honokalani",
@@ -997,7 +997,7 @@ window.LOCATIONS = [
         "attribution": "Kirt Edblom from Kihei, Hi, United States, CC BY-SA 2.0, via Wikimedia Commons"
     },
     {
-        "name": "Morning Hana beach",
+        "name": "Hāmoa Beach at sunrise",
         "island": "Maui",
         "moku": "Hāna",
         "ahupuaa": "Hāmoa",
@@ -1006,7 +1006,7 @@ window.LOCATIONS = [
         "attribution": "Dieter F, CC BY-SA 3.0, via Wikimedia Commons"
     },
     {
-        "name": "Oneuli Beach Maui Hawaii",
+        "name": "Oneuli Black Sand Beach (Mākena)",
         "island": "Maui",
         "moku": "Honuaʻula",
         "ahupuaa": "Mohopilo",
@@ -1015,7 +1015,7 @@ window.LOCATIONS = [
         "attribution": "dronepicr, CC BY 2.0, via Wikimedia Commons"
     },
     {
-        "name": "Pololū Valley, Kohala Coast, Big Island, Hawai’i - 53284406818",
+        "name": "Pololū Valley from the Kohala coast",
         "island": "Hawaiʻi",
         "moku": "Kohala",
         "ahupuaa": "Pololū",
@@ -1024,7 +1024,7 @@ window.LOCATIONS = [
         "attribution": "lamblukas, CC BY 2.0, via Wikimedia Commons"
     },
     {
-        "name": "Hawaii-Kauai-Moloaa-beach",
+        "name": "Moloaʻa Beach",
         "island": "Kauaʻi",
         "moku": "Koʻolau",
         "ahupuaa": "Moloaʻa",
@@ -1033,7 +1033,7 @@ window.LOCATIONS = [
         "attribution": "pfly from Pugetopolis, CC BY-SA 2.0, via Wikimedia Commons"
     },
     {
-        "name": "Wainiha Beach Park",
+        "name": "Wainiha Beach Park (north shore Kauaʻi)",
         "island": "Kauaʻi",
         "moku": "Haleleʻa",
         "ahupuaa": "Wainiha",
@@ -1042,7 +1042,7 @@ window.LOCATIONS = [
         "attribution": "Syced, CC0, via Wikimedia Commons"
     },
     {
-        "name": "2022-1025-manoa-heritage-center-2",
+        "name": "Mānoa Heritage Center",
         "island": "Oʻahu",
         "moku": "Kona",
         "ahupuaa": "Waikīkī",
@@ -1051,7 +1051,7 @@ window.LOCATIONS = [
         "attribution": "Fuzheado, CC0, via Wikimedia Commons"
     },
     {
-        "name": "Heiau, Ka Lae (South Point), Hawaii",
+        "name": "Heiau at Ka Lae (South Point)",
         "island": "Hawaiʻi",
         "moku": "Kaʻū",
         "ahupuaa": "Kamāʻoa, Puʻuʻeo, Ke",
@@ -1060,7 +1060,7 @@ window.LOCATIONS = [
         "attribution": "Ken Lund from Reno, Nevada, USA, CC BY-SA 2.0, via Wikimedia Commons"
     },
     {
-        "name": "Heiau, Keauhou Bay",
+        "name": "Keauhou Bay heiau",
         "island": "Hawaiʻi",
         "moku": "Kona",
         "ahupuaa": "Kahaluʻu",
@@ -1069,7 +1069,7 @@ window.LOCATIONS = [
         "attribution": "brewbooks from near Seattle, USA, CC BY-SA 2.0, via Wikimedia Commons"
     },
     {
-        "name": "Kahaluu Heiau",
+        "name": "Kahaluʻu Heiau",
         "island": "Hawaiʻi",
         "moku": "Kona",
         "ahupuaa": "Kahaluʻu",
@@ -1078,7 +1078,7 @@ window.LOCATIONS = [
         "attribution": "W Nowicki, CC BY 3.0, via Wikimedia Commons"
     },
     {
-        "name": "Hawaii Volcanoes National Park (504412)",
+        "name": "Hawaiʻi Volcanoes National Park (Kapāpala)",
         "island": "Hawaiʻi",
         "moku": "Kaʻū",
         "ahupuaa": "Kapāpala",
@@ -1087,7 +1087,7 @@ window.LOCATIONS = [
         "attribution": "Robert Linsdell from St. Andrews, Canada, CC BY 2.0, via Wikimedia Commons"
     },
     {
-        "name": "Hawaiʻi Volcanoes National Park, Hawaii",
+        "name": "Hawaiʻi Volcanoes National Park",
         "island": "Hawaiʻi",
         "moku": "Kaʻū",
         "ahupuaa": "Keauhou",
@@ -1096,7 +1096,7 @@ window.LOCATIONS = [
         "attribution": "Ken Lund from Reno, Nevada, USA, CC BY-SA 2.0, via Wikimedia Commons"
     },
     {
-        "name": "Kokoolau Crater Overlook. Chain of Craters Rd, Hawaii Volcanoes National Park (504008)",
+        "name": "Kōkoʻolau Crater Overlook (Chain of Craters Road)",
         "island": "Hawaiʻi",
         "moku": "Kaʻū",
         "ahupuaa": "Keauhou",
@@ -1105,7 +1105,7 @@ window.LOCATIONS = [
         "attribution": "Robert Linsdell from St. Andrews, Canada, CC BY 2.0, via Wikimedia Commons"
     },
     {
-        "name": "Puhimo Crater. Hawaii Volcanoes National Park (504003)",
+        "name": "Puhimoa Crater (HVNP)",
         "island": "Hawaiʻi",
         "moku": "Kaʻū",
         "ahupuaa": "Keauhou",
@@ -1123,7 +1123,7 @@ window.LOCATIONS = [
         "attribution": "Akos Kokai, CC BY 2.0, via Wikimedia Commons"
     },
     {
-        "name": "Nawiliwili Beach Park, Nawiliwili Bay, Lihue",
+        "name": "Nāwiliwili Beach Park, Līhuʻe",
         "island": "Kauaʻi",
         "moku": "Puna",
         "ahupuaa": "Niumalu",
@@ -1132,7 +1132,7 @@ window.LOCATIONS = [
         "attribution": "Bob Linsdell, CC BY 3.0, via Wikimedia Commons"
     },
     {
-        "name": "Oahu lighthouse",
+        "name": "Lighthouse on the Koʻolau coast (Waimānalo)",
         "island": "Oʻahu",
         "moku": "Koʻolaupoko",
         "ahupuaa": "Waimānalo",
@@ -1141,7 +1141,7 @@ window.LOCATIONS = [
         "attribution": "Tyler Lahti, CC BY-SA 4.0, via Wikimedia Commons"
     },
     {
-        "name": "Honolulu (zoomed out, cropped)",
+        "name": "Honolulu skyline",
         "island": "Oʻahu",
         "moku": "Kona",
         "ahupuaa": "Honolulu",
@@ -1159,7 +1159,7 @@ window.LOCATIONS = [
         "attribution": "Eric Tessmer, CC BY 2.0, via Wikimedia Commons"
     },
     {
-        "name": "Above Diamond Head Beach Park",
+        "name": "Diamond Head Beach Park from above",
         "island": "Oʻahu",
         "moku": "Kona",
         "ahupuaa": "Waikīkī",
@@ -1168,7 +1168,7 @@ window.LOCATIONS = [
         "attribution": "Daniel Ramirez from Honolulu, USA, CC BY 2.0, via Wikimedia Commons"
     },
     {
-        "name": "Bunker atop Diamond Head in Honolulu, Hawaii",
+        "name": "Bunker atop Diamond Head",
         "island": "Oʻahu",
         "moku": "Kona",
         "ahupuaa": "Waikīkī",
@@ -1177,7 +1177,7 @@ window.LOCATIONS = [
         "attribution": "MyCatIsAChonk, CC BY-SA 4.0, via Wikimedia Commons"
     },
     {
-        "name": "Diamond Head",
+        "name": "Diamond Head from the south shore",
         "island": "Oʻahu",
         "moku": "Kona",
         "ahupuaa": "Waikīkī",
@@ -1186,7 +1186,7 @@ window.LOCATIONS = [
         "attribution": "Prayitno / Thank you for (12 millions +) view from Los Angeles, USA, CC BY 2.0, via Wikimedia Commons"
     },
     {
-        "name": "Diamond Head - Kapahulu - St. Louis, Honolulu, HI, USA",
+        "name": "Diamond Head from Kapahulu",
         "island": "Oʻahu",
         "moku": "Kona",
         "ahupuaa": "Waikīkī",
@@ -1195,7 +1195,7 @@ window.LOCATIONS = [
         "attribution": "Aaron Zhu, CC BY-SA 3.0, via Wikimedia Commons"
     },
     {
-        "name": "Diamond Head and Waikiki",
+        "name": "Diamond Head with Waikīkī",
         "island": "Oʻahu",
         "moku": "Kona",
         "ahupuaa": "Honolulu",
@@ -1204,7 +1204,7 @@ window.LOCATIONS = [
         "attribution": "InSapphoWeTrust from Los Angeles, California, USA, CC BY-SA 2.0, via Wikimedia Commons"
     },
     {
-        "name": "Diamond Head from Kapiolani Park",
+        "name": "Diamond Head from Kapiʻolani Park",
         "island": "Oʻahu",
         "moku": "Kona",
         "ahupuaa": "Waikīkī",
@@ -1213,7 +1213,7 @@ window.LOCATIONS = [
         "attribution": "Daniel Ramirez from Honolulu, USA, CC BY 2.0, via Wikimedia Commons"
     },
     {
-        "name": "Diamond Head trail",
+        "name": "On the Diamond Head trail",
         "island": "Oʻahu",
         "moku": "Kona",
         "ahupuaa": "Waikīkī",
@@ -1222,7 +1222,7 @@ window.LOCATIONS = [
         "attribution": "verygreen, CC BY-SA 3.0, via Wikimedia Commons"
     },
     {
-        "name": "Moon over Diamond Head crater from Waialae, Oahu, Hawaii",
+        "name": "Moon over Diamond Head from Waiʻalae",
         "island": "Oʻahu",
         "moku": "Kona",
         "ahupuaa": "Waikīkī",
@@ -1231,7 +1231,7 @@ window.LOCATIONS = [
         "attribution": "Aaron Zhu, CC BY-SA 3.0, via Wikimedia Commons"
     },
     {
-        "name": "Biki in Waikiki",
+        "name": "Bikeshare in Waikīkī",
         "island": "Oʻahu",
         "moku": "Kona",
         "ahupuaa": "Waikīkī",
@@ -1240,7 +1240,7 @@ window.LOCATIONS = [
         "attribution": "Daniel Ramirez from Honolulu, USA, CC BY 2.0, via Wikimedia Commons"
     },
     {
-        "name": "Centennial Park Waikiki",
+        "name": "Centennial Park, Waikīkī",
         "island": "Oʻahu",
         "moku": "Kona",
         "ahupuaa": "Waikīkī",
@@ -1249,7 +1249,7 @@ window.LOCATIONS = [
         "attribution": "Peaceray, CC BY-SA 3.0, via Wikimedia Commons"
     },
     {
-        "name": "HAWAII 2014",
+        "name": "Waikoloa coast",
         "island": "Hawaiʻi",
         "moku": "Kohala",
         "ahupuaa": "Waimea, Waikoloa",
@@ -1258,7 +1258,7 @@ window.LOCATIONS = [
         "attribution": "Alan Light, CC BY 2.0, via Wikimedia Commons"
     },
     {
-        "name": "Hawaii Hotel - Moana Surfrider, A Westin Resort & Spa, Waikiki Beach",
+        "name": "Moana Surfrider Hotel, Waikīkī",
         "island": "Oʻahu",
         "moku": "Kona",
         "ahupuaa": "Waikīkī",
@@ -1267,7 +1267,7 @@ window.LOCATIONS = [
         "attribution": "Tony Webster, CC BY 2.0, via Wikimedia Commons"
     },
     {
-        "name": "Honolulu View",
+        "name": "Honolulu skyline from Waikīkī",
         "island": "Oʻahu",
         "moku": "Kona",
         "ahupuaa": "Waikīkī",
@@ -1276,7 +1276,7 @@ window.LOCATIONS = [
         "attribution": "Matt Dell from Honolulu, United States, CC BY-SA 2.0, via Wikimedia Commons"
     },
     {
-        "name": "Paki Avenue",
+        "name": "Paki Avenue, Waikīkī",
         "island": "Oʻahu",
         "moku": "Kona",
         "ahupuaa": "Waikīkī",
@@ -1285,7 +1285,7 @@ window.LOCATIONS = [
         "attribution": "Daniel Ramirez from Honolulu, USA, CC BY 2.0, via Wikimedia Commons"
     },
     {
-        "name": "Prime Real Estates Location - Ocean Front Ocean View",
+        "name": "Waikīkī oceanfront condos",
         "island": "Oʻahu",
         "moku": "Kona",
         "ahupuaa": "Waikīkī",
@@ -1294,7 +1294,7 @@ window.LOCATIONS = [
         "attribution": "Prayitno / Thank you for (12 millions +) view from Los Angeles, USA, CC BY 2.0, via Wikimedia Commons"
     },
     {
-        "name": "Sheraton Waikiki Hotel Resort, Honolulu, Hawaii",
+        "name": "Sheraton Waikīkī",
         "island": "Oʻahu",
         "moku": "Kona",
         "ahupuaa": "Waikīkī",
@@ -1303,7 +1303,7 @@ window.LOCATIONS = [
         "attribution": "Tony Webster, CC BY 2.0, via Wikimedia Commons"
     },
     {
-        "name": "The Stones of Life at Waikiki",
+        "name": "Nā Pōhaku Ola Kapaemāhū (Wizard Stones), Waikīkī",
         "island": "Oʻahu",
         "moku": "Kona",
         "ahupuaa": "Waikīkī",
@@ -1312,7 +1312,7 @@ window.LOCATIONS = [
         "attribution": "Daniel Ramirez from Honolulu, USA, CC BY 2.0, via Wikimedia Commons"
     },
     {
-        "name": "Thurston Triangle Fountain. Kapahulu, Honolulu (503724)",
+        "name": "Thurston Triangle Fountain, Kapahulu",
         "island": "Oʻahu",
         "moku": "Kona",
         "ahupuaa": "Waikīkī",
@@ -1321,7 +1321,7 @@ window.LOCATIONS = [
         "attribution": "Robert Linsdell from St. Andrews, Canada, CC BY 2.0, via Wikimedia Commons"
     },
     {
-        "name": "Waikiki buildings",
+        "name": "Waikīkī skyline",
         "island": "Oʻahu",
         "moku": "Kona",
         "ahupuaa": "Waikīkī",
@@ -1330,7 +1330,7 @@ window.LOCATIONS = [
         "attribution": "Gage Skidmore from Surprise, AZ, United States of America, CC BY-SA 2.0, via Wikimedia Commons"
     },
     {
-        "name": "Colonial Sugartown - Old Hilo",
+        "name": "Old Hilo storefronts (Ponahawai)",
         "island": "Hawaiʻi",
         "moku": "Hilo",
         "ahupuaa": "Ponahawai",
@@ -1339,7 +1339,7 @@ window.LOCATIONS = [
         "attribution": "Peter Gill / UK, CC BY 3.0, via Wikimedia Commons"
     },
     {
-        "name": "Hilo bridge",
+        "name": "Wailuku River bridge, Hilo",
         "island": "Hawaiʻi",
         "moku": "Hilo",
         "ahupuaa": "Piʻihonua",
@@ -1348,7 +1348,7 @@ window.LOCATIONS = [
         "attribution": "rjones0856, CC BY 2.0, via Wikimedia Commons"
     },
     {
-        "name": "Hilo Town and Mauna Kea",
+        "name": "Hilo town with Mauna Kea behind",
         "island": "Hawaiʻi",
         "moku": "Hilo",
         "ahupuaa": "Kūkūau 2",
@@ -1357,7 +1357,7 @@ window.LOCATIONS = [
         "attribution": "AlaskaDave, CC BY-SA 3.0, via Wikimedia Commons"
     },
     {
-        "name": "Image of Mauna Kea from the Hilo suburbs",
+        "name": "Mauna Kea seen from Waiākea, Hilo",
         "island": "Hawaiʻi",
         "moku": "Hilo",
         "ahupuaa": "Waiākea",
@@ -1375,7 +1375,7 @@ window.LOCATIONS = [
         "attribution": "Eric Marshall, CC BY 3.0, via Wikimedia Commons"
     },
     {
-        "name": "Rainbow falls with a blue cloudy sky",
+        "name": "Rainbow Falls under cloudy skies",
         "island": "Hawaiʻi",
         "moku": "Hilo",
         "ahupuaa": "Piʻihonua",
@@ -1384,7 +1384,7 @@ window.LOCATIONS = [
         "attribution": "Maplemoths, CC BY 4.0, via Wikimedia Commons"
     },
     {
-        "name": "Sub-tropical gardens at Wild Ginger Hotel",
+        "name": "Tropical garden in Puʻuʻeo, Hilo",
         "island": "Hawaiʻi",
         "moku": "Hilo",
         "ahupuaa": "Puʻuʻeo",
@@ -1393,7 +1393,7 @@ window.LOCATIONS = [
         "attribution": "Peter Gill / UK, CC BY 3.0, via Wikimedia Commons"
     },
     {
-        "name": "WaiakeaUkaAgricultureShot",
+        "name": "Waiākea Uka farmland",
         "island": "Hawaiʻi",
         "moku": "Hilo",
         "ahupuaa": "Waiākea",
@@ -1402,7 +1402,7 @@ window.LOCATIONS = [
         "attribution": "AlaskaDave, CC BY-SA 3.0, via Wikimedia Commons"
     },
     {
-        "name": "Hanalei 01",
+        "name": "Hanalei Bay panorama",
         "island": "Kauaʻi",
         "moku": "Haleleʻa",
         "ahupuaa": "Hanalei",
@@ -1411,7 +1411,7 @@ window.LOCATIONS = [
         "attribution": "Farragutful, CC BY-SA 4.0, via Wikimedia Commons"
     },
     {
-        "name": "Hanalei Kauai",
+        "name": "Hanalei coast at Waikoko",
         "island": "Kauaʻi",
         "moku": "Haleleʻa",
         "ahupuaa": "Waikoko",

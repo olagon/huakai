@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moku Match | A Hawaiʻi Geography Game</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Nunito:wght@400;700;900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    kapa: {
+                        light: '#F4E4C1',
+                        brown: '#8D6E63',
+                        dark: '#4E342E',
+                        green: '#2E7D32',
+                        ocean: '#00838F',
+                        clay: '#D84315',
+                    },
+                    ui: {
+                        bg: '#FBFAF7',
+                        surface: '#FFFFFF',
+                        ink: '#0F172A',
+                        ink2: '#1F2937',
+                        line: 'rgba(15, 23, 42, 0.10)',
+                        muted: 'rgba(15, 23, 42, 0.05)',
+                    }
+                },
+                fontFamily: {
+                    sans: ['Plus Jakarta Sans', 'Nunito', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                },
+                boxShadow: {
+                    soft: '0 10px 30px rgba(15, 23, 42, 0.10)',
+                    lift: '0 18px 60px rgba(15, 23, 42, 0.12)',
+                },
+            }
+        }
+    }
+    </script>
+    <style>
+    :root {
+        --ring: rgba(0, 131, 143, 0.16);
+    }
+
+    body {
+        background:
+            radial-gradient(1200px 600px at 20% 0%, rgba(0, 131, 143, 0.12), transparent 60%),
+            radial-gradient(900px 520px at 90% 12%, rgba(46, 125, 50, 0.10), transparent 55%),
+            linear-gradient(180deg, #FBFAF7 0%, #F3F0E8 100%);
+    }
+
+    body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background-image:
+            radial-gradient(rgba(15, 23, 42, 0.10) 0.5px, transparent 0.5px),
+            radial-gradient(rgba(15, 23, 42, 0.08) 0.5px, transparent 0.5px);
+        background-size: 22px 22px, 28px 28px;
+        background-position: 0 0, 10px 14px;
+        opacity: 0.05;
+        mix-blend-mode: multiply;
+    }
+
+    .glass-panel {
+        background: rgba(255, 255, 255, 0.78);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(15, 23, 42, 0.10);
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.10);
+    }
+
+    .ui-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.45rem 0.75rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.70);
+        border: 1px solid rgba(15, 23, 42, 0.10);
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+    }
+
+    .ui-select {
+        width: 100%;
+        padding: 0.85rem 1rem;
+        border-radius: 0.9rem;
+        background: rgba(255, 255, 255, 0.90);
+        border: 1px solid rgba(15, 23, 42, 0.12);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.60);
+        font-weight: 700;
+        font-size: 1rem;
+        line-height: 1.2;
+        letter-spacing: -0.01em;
+        outline: none;
+        transition: box-shadow 160ms ease, border-color 160ms ease, background-color 160ms ease;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image:
+            linear-gradient(45deg, transparent 50%, rgba(15, 23, 42, 0.55) 50%),
+            linear-gradient(135deg, rgba(15, 23, 42, 0.55) 50%, transparent 50%);
+        background-position:
+            calc(100% - 18px) calc(50% - 2px),
+            calc(100% - 12px) calc(50% - 2px);
+        background-size: 6px 6px, 6px 6px;
+        background-repeat: no-repeat;
+        padding-right: 2.25rem;
+    }
+
+    .ui-select:focus {
+        border-color: rgba(0, 131, 143, 0.55);
+        box-shadow: 0 0 0 6px var(--ring);
+    }
+
+    .ui-select:disabled {
+        background: rgba(15, 23, 42, 0.05);
+        color: rgba(15, 23, 42, 0.45);
+        cursor: not-allowed;
+    }
+
+    .ui-btn {
+        width: 100%;
+        border-radius: 1rem;
+        padding: 0.95rem 1.1rem;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.55rem;
+        user-select: none;
+        transition: transform 120ms ease, filter 120ms ease, box-shadow 160ms ease;
+    }
+
+    .ui-btn:active {
+        transform: translateY(0);
+    }
+
+    .ui-btn-primary {
+        background: #00838F;
+        color: #FFFFFF;
+        box-shadow: 0 12px 26px rgba(0, 131, 143, 0.22);
+    }
+
+    .ui-btn-primary:hover {
+        transform: translateY(-1px);
+        filter: brightness(0.98);
+    }
+
+    .ui-btn-primary:disabled {
+        background: rgba(15, 23, 42, 0.30);
+        box-shadow: none;
+        transform: none;
+        cursor: not-allowed;
+        filter: none;
+    }
+
+    .ui-btn-secondary {
+        background: rgba(15, 23, 42, 0.06);
+        color: #0F172A;
+        border: 1px solid rgba(15, 23, 42, 0.10);
+    }
+
+    .ui-btn-secondary:hover {
+        filter: brightness(0.98);
+    }
+
+    .animate-fade-in {
+        animation: fadeIn 320ms ease-out both;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(6px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Leaflet Fixes */
+    .leaflet-container {
+        font-family: 'Plus Jakarta Sans', 'Nunito', sans-serif;
+    }
+
+    /* Help map labels */
+    .help-island-chip {
+        position: relative;
+        transform: translate(-50%, -50%);
+        background: rgba(255, 255, 255, 0.95);
+        border: 1.5px solid rgba(0, 131, 143, 0.55);
+        border-radius: 999px;
+        padding: 8px 14px;
+        font-weight: 800;
+        font-size: 13px;
+        color: #0F172A;
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.22);
+        cursor: pointer;
+        white-space: nowrap;
+        user-select: none;
+        -webkit-tap-highlight-color: rgba(0, 131, 143, 0.25);
+        transition: transform 100ms ease, background 120ms ease;
+    }
+    .help-island-chip:hover, .help-island-chip:active {
+        background: #00838F;
+        color: #fff;
+        transform: translate(-50%, -50%) scale(1.06);
+    }
+    .help-island-label {
+        background: rgba(255, 255, 255, 0.92);
+        border: 1px solid rgba(15, 23, 42, 0.12);
+        border-radius: 999px;
+        padding: 4px 10px;
+        font-weight: 800;
+        font-size: 12px;
+        color: #0F172A;
+        box-shadow: 0 6px 16px rgba(15, 23, 42, 0.18);
+        cursor: pointer;
+    }
+    @media (max-width: 640px) {
+        .help-ahu-label {
+            font-size: 9px;
+            padding: 1px 4px;
+        }
+    }
+    .help-moku-label {
+        background: rgba(15, 23, 42, 0.78);
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 2px 8px;
+        font-weight: 700;
+        font-size: 11px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    }
+    .help-ahu-label {
+        background: rgba(255, 255, 255, 0.92);
+        border: 1px solid rgba(15, 23, 42, 0.18);
+        color: #0F172A;
+        border-radius: 4px;
+        padding: 1px 6px;
+        font-weight: 700;
+        font-size: 10px;
+    }
+    .help-island-label::before,
+    .help-moku-label::before,
+    .help-ahu-label::before {
+        display: none;
+    }
+    .help-loading {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(255,255,255,0.95);
+        padding: 10px 18px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 13px;
+        color: #0F172A;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+        z-index: 1000;
+    }
+
+    /* LEGAL MODAL - matches /learnhawaiian/ aesthetic */
+    .legal-doc {
+        --bg: #faf7f2;
+        --surface: #ffffff;
+        --ink: #1a1614;
+        --ink-soft: #4a4540;
+        --ink-muted: #8a8580;
+        --line: #e8e1d6;
+        --accent: #5e3a9e;
+        --font-display: 'Source Serif 4', Georgia, serif;
+        --font-body: 'Geist', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--font-body);
+        font-size: 16px;
+        line-height: 1.65;
+        padding: 2rem 1.5rem 3rem;
+        -webkit-font-smoothing: antialiased;
+    }
+    .legal-doc .legal-inner { max-width: 640px; margin: 0 auto; }
+    .legal-doc h1 {
+        font-family: var(--font-display);
+        font-weight: 500;
+        font-size: 2rem;
+        margin: 0 0 0.5rem;
+        line-height: 1.15;
+        color: var(--ink);
+    }
+    .legal-doc h2 {
+        font-family: var(--font-display);
+        font-weight: 500;
+        font-size: 1.25rem;
+        margin: 2rem 0 0.5rem;
+        color: var(--ink);
+    }
+    .legal-doc p { color: var(--ink-soft); margin: 0 0 1rem; }
+    .legal-doc a {
+        color: var(--accent);
+        text-decoration: none;
+        border-bottom: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    }
+    .legal-doc a:hover { border-bottom-color: var(--accent); }
+    .legal-doc .kindness {
+        background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+        border-left: 4px solid var(--accent);
+        padding: 1.25rem 1.5rem;
+        border-radius: 12px;
+        margin: 1.25rem 0 2rem;
+    }
+    .legal-doc .kind-headline {
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        font-weight: 500;
+        color: var(--accent);
+        margin: 0 0 0.5rem;
+        line-height: 1.1;
+        letter-spacing: -0.01em;
+    }
+    .legal-doc .kindness p {
+        margin: 0;
+        color: var(--ink);
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+    .legal-doc .meta {
+        font-size: 0.85rem;
+        color: var(--ink-muted);
+        margin-top: 2.5rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid var(--line);
+    }
+    @media (max-width: 600px) {
+        .legal-doc { padding: 1.5rem 1.1rem 2rem; font-size: 15px; }
+        .legal-doc h1 { font-size: 1.7rem; }
+        .legal-doc h2 { font-size: 1.15rem; margin-top: 1.6rem; }
+        .legal-doc .kind-headline { font-size: 1.3rem; }
+    }
+
+    /* FOOTER - matches /learnhawaiian/ */
+    .site-footer {
+        --ink-soft: #4a4540;
+        --ink-muted: #8a8580;
+        --line: #e8e1d6;
+        --accent: #5e3a9e;
+        text-align: center;
+        padding: 1.75rem 1rem 2rem;
+        font-size: 0.82rem;
+        color: var(--ink-muted);
+        margin-top: auto;
+        line-height: 1.55;
+    }
+    .site-footer a {
+        color: var(--ink-soft);
+        text-decoration: none;
+        border-bottom: 1px solid var(--line);
+        transition: color 0.15s, border-color 0.15s;
+        white-space: nowrap;
+    }
+    .site-footer a:hover {
+        color: var(--accent);
+        border-bottom-color: var(--accent);
+    }
+    .site-footer .footer-line {
+        display: block;
+        margin-bottom: 0.4rem;
+    }
+    .site-footer .footer-line:last-child { margin-bottom: 0; }
+    .site-footer .footer-version {
+        margin-top: 0.6rem;
+        font-size: 0.7rem;
+        opacity: 0.55;
+        letter-spacing: 0.06em;
+    }
+    @media (max-width: 600px) {
+        .site-footer { padding: 1.5rem 0.75rem 1.5rem; font-size: 0.78rem; }
+        .site-footer .footer-line { margin-bottom: 0.45rem; }
+    }
+    </style>
+</head>
+
+<body class="text-ui-ink flex flex-col min-h-screen antialiased selection:bg-kapa-ocean/20 selection:text-ui-ink">
+    <!-- Header -->
+    <header class="sticky top-0 z-50 border-b border-black/5 bg-white/70 backdrop-blur">
+        <div class="max-w-3xl mx-auto px-2 sm:px-4 py-3 flex items-center justify-between">
+            <div class="leading-tight">
+                <h1 class="text-lg sm:text-xl font-extrabold tracking-tight">Moku Match</h1>
+                <p class="text-[11px] sm:text-xs text-black/55">Nā Moku o Hawaiʻi Geo Challenge</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="helpMap.open()" class="ui-pill hover:bg-white" title="Map help: drill into Moku and Ahupuaʻa">
+                    <span class="text-kapa-ocean font-extrabold">?</span>
+                    <span class="text-xs font-semibold text-black/70">Map</span>
+                </button>
+                <div id="score-display" class="hidden ui-pill">
+                    <span class="text-black/45 text-xs font-semibold">Score</span>
+                    <span id="current-score" class="tabular-nums font-extrabold text-kapa-ocean">0</span>
+                    <span class="text-black/40 text-xs font-semibold">/10</span>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Main Content Area -->
+    <main class="flex-grow px-4 py-6 sm:py-10 flex flex-col items-center justify-center w-full max-w-3xl mx-auto">
+        <!-- View: Start Screen -->
+        <div id="start-screen" class="glass-panel p-8 sm:p-10 rounded-3xl text-center max-w-lg w-full animate-fade-in">
+            <div class="mb-6">
+                <div class="mx-auto mb-7 w-20 h-20 rounded-2xl bg-white/70 border border-black/10 flex items-center justify-center">
+                    <svg class="w-10 h-10 text-kapa-ocean" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                </svg>
+                </div>
+            </div>
+            <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-3">Aloha, Explorer!</h2>
+            <p class="text-base sm:text-lg text-black/75 mb-7 leading-relaxed">
+                Test your knowledge of Hawaiʻi's geography. Can you identify the <strong class="text-black/85">Mokupuni</strong> (Island), <strong class="text-black/85">Moku</strong> (District), and <strong class="text-black/85">Ahupuaʻa</strong> (Land Division)?
+            </p>
+            <div class="rounded-2xl border border-black/10 bg-white/60 p-4 sm:p-5 mb-7 text-left text-sm text-black/70">
+                <p class="font-extrabold text-black/80 tracking-tight">How scoring works</p>
+                <ul class="mt-3 space-y-1.5 pl-5 list-disc marker:text-black/30">
+                    <li>10 Rounds per game.</li>
+                    <li>First: Identify the Island.</li>
+                    <li>Second: Identify the Moku (District).</li>
+                    <li>Third: Identify the Ahupuaʻa (Land Division).</li>
+                    <li><strong class="text-black/85">You must get all 3 right to score a point!</strong></li>
+                </ul>
+            </div>
+            <button onclick="game.start()" class="ui-btn ui-btn-primary text-lg">
+                Hana Hou (Start)
+            </button>
+        </div>
+        <!-- View: Game Round -->
+        <div id="game-screen" class="hidden w-full animate-fade-in">
+            <!-- Progress Bar -->
+            <div class="w-full mb-5">
+                <div class="flex items-center justify-between mb-2">
+                    <p class="text-xs font-semibold text-black/50">Round <span id="round-number">1</span>/10</p>
+                    <p class="text-xs font-semibold text-black/50"><span class="tabular-nums" id="current-score-inline">0</span>/10</p>
+                </div>
+                <div class="w-full bg-black/5 rounded-full h-2 overflow-hidden">
+                    <div id="progress-bar" class="bg-kapa-ocean h-2 rounded-full transition-all duration-500" style="width: 10%"></div>
+                </div>
+            </div>
+            <div class="glass-panel rounded-3xl overflow-hidden mb-6">
+                <div class="grid md:grid-cols-2">
+                    <!-- Image Container -->
+                    <div class="relative aspect-video md:aspect-auto md:min-h-[420px] bg-black/5 flex items-center justify-center overflow-hidden">
+                        <!-- Loading -->
+                        <div class="absolute inset-0 flex items-center justify-center z-0">
+                            <div class="text-black/35 animate-pulse font-semibold text-sm">Loading</div>
+                        </div>
+
+                        <!-- Image Element -->
+                        <img id="location-img" referrerpolicy="no-referrer" src="" alt="Guess the location" class="relative z-0 w-full h-full object-cover transition-opacity duration-500 opacity-0">
+
+                        <!-- Soft Gradient Overlay -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent z-10"></div>
+
+                        <!-- Attribution (Always visible) -->
+                        <div class="absolute top-3 left-3 right-3 z-20 flex items-center justify-between gap-3">
+                            <div class="ui-pill bg-black/45 border-white/15 text-white text-[11px] max-w-[78%] overflow-hidden">
+                                <span id="attribution-text" class="truncate"></span>
+                            </div>
+                            <div class="ui-pill bg-black/45 border-white/15 text-white text-[11px] px-3 py-1">
+                                CC
+                            </div>
+                        </div>
+
+                        <!-- Hidden mobile attribution hook (kept for JS compatibility) -->
+                        <span id="attribution-text-mobile" class="hidden"></span>
+
+                        <!-- Bottom hint, now a tap-to-open button for the help map -->
+                        <div class="absolute bottom-3 left-3 right-3 z-20">
+                            <button type="button" onclick="helpMap.open()"
+                                class="w-full ui-pill bg-black/55 border-white/20 text-white text-xs sm:text-[13px] hover:bg-black/70 active:bg-black/80 transition flex items-center justify-between gap-2 px-3 py-2"
+                                title="Open the ahupuaʻa map">
+                                <span class="flex items-center gap-2">
+                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M9 20l-5-2V6l5 2 6-2 5 2v12l-5-2-6 2z"/>
+                                        <path d="M9 8v12"/><path d="M15 6v12"/>
+                                    </svg>
+                                    <span class="font-semibold">Open the ahupuaʻa map</span>
+                                </span>
+                                <span class="text-white/70 hidden sm:inline">drill into moku & ahupuaʻa</span>
+                                <span class="text-white/70 sm:hidden">tap to drill in</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Controls -->
+                    <div class="p-6 sm:p-7 md:p-8 space-y-5">
+                        <!-- Island Select -->
+                        <div>
+                            <label class="block text-[11px] font-extrabold tracking-widest text-black/45 mb-2 uppercase">1 Mokupuni</label>
+                            <select id="island-select" onchange="game.handleIslandChange()" class="ui-select">
+                                <option value="">Select Island...</option>
+                                <option value="Oʻahu">Oʻahu</option>
+                                <option value="Maui">Maui</option>
+                                <option value="Hawaiʻi">Hawaiʻi</option>
+                                <option value="Kauaʻi">Kauaʻi</option>
+                                <option value="Molokaʻi">Molokaʻi</option>
+                                <option value="Lānaʻi">Lānaʻi</option>
+                                <option value="Niʻihau">Niʻihau</option>
+                                <option value="Kahoʻolawe">Kahoʻolawe</option>
+                            </select>
+                        </div>
+
+                        <!-- Moku Select -->
+                        <div>
+                            <label class="block text-[11px] font-extrabold tracking-widest text-black/45 mb-2 uppercase">2 Moku</label>
+                            <select id="moku-select" onchange="game.handleMokuChange()" disabled class="ui-select">
+                                <option value="">Select Moku...</option>
+                            </select>
+                        </div>
+
+                        <!-- Ahupuaa Select -->
+                        <div>
+                            <label class="block text-[11px] font-extrabold tracking-widest text-black/45 mb-2 uppercase">3 Ahupuaʻa</label>
+                            <select id="ahupuaa-select" disabled class="ui-select">
+                                <option value="">Select Ahupuaʻa...</option>
+                            </select>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button id="submit-btn" onclick="game.submitGuess()" class="ui-btn ui-btn-primary" disabled>
+                            Huli
+                        </button>
+
+                        <!-- Map helper, prominent on every round -->
+                        <button type="button" onclick="helpMap.open()" class="ui-btn ui-btn-secondary text-sm">
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M9 20l-5-2V6l5 2 6-2 5 2v12l-5-2-6 2z"/>
+                                <path d="M9 8v12"/><path d="M15 6v12"/>
+                            </svg>
+                            Need help? Open the ahupuaʻa map
+                        </button>
+
+                        <p class="text-xs text-black/55 leading-relaxed">
+                            You score only when all 3 answers are correct.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- View: Result Overlay (Feedback) -->
+        <div id="feedback-overlay" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+            <div class="glass-panel rounded-3xl max-w-md w-full overflow-hidden animate-fade-in">
+                <div id="feedback-header" class="p-6 text-center text-white">
+                    <h3 id="feedback-title" class="text-3xl font-black uppercase tracking-widest mb-2"></h3>
+                    <div id="feedback-icon" class="text-5xl"></div>
+                </div>
+                <div class="p-6 text-center space-y-3">
+                    <div>
+                        <p class="text-xs uppercase tracking-wide text-gray-500">Location</p>
+                        <p id="reveal-name" class="text-2xl font-bold text-kapa-dark"></p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 border-t border-b border-gray-100 py-4">
+                        <div>
+                            <p class="text-xs uppercase tracking-wide text-gray-500">Ahupuaʻa</p>
+                            <p id="reveal-ahupuaa" class="font-semibold text-kapa-ocean"></p>
+                        </div>
+                        <div>
+                            <p class="text-xs uppercase tracking-wide text-gray-500">Moku</p>
+                            <p id="reveal-moku" class="font-semibold text-kapa-ocean"></p>
+                        </div>
+                    </div>
+                    <button onclick="game.nextRound()" class="w-full bg-kapa-dark text-white font-bold py-3 rounded-lg shadow hover:bg-black transition">
+                        Hoʻomau (Next)
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- View: End Game -->
+        <div id="end-screen" class="hidden w-full animate-fade-in">
+            <div class="glass-panel p-7 sm:p-10 rounded-3xl mb-6">
+                <div class="text-center mb-6">
+                    <p class="text-xs uppercase tracking-[0.25em] text-black/55 font-extrabold">Pau Ka Pāʻani</p>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-2">Final Score</h2>
+                    <div class="text-6xl font-black text-kapa-ocean mb-4"><span id="final-score">0</span><span class="text-3xl text-gray-400">/10</span></div>
+                    <p id="final-message" class="font-bold text-lg"></p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 justify-center mb-7">
+                    <button onclick="game.copyResults()" class="ui-btn ui-btn-secondary">
+                        <span aria-hidden="true">📋</span> Copy Result
+                    </button>
+                    <button onclick="location.reload()" class="ui-btn ui-btn-primary">
+                        <span aria-hidden="true">↺</span> Play Again
+                    </button>
+                </div>
+            </div>
+            <!-- Map Recap -->
+            <div class="glass-panel rounded-3xl overflow-hidden mb-6">
+                <div class="px-5 py-4 text-sm font-extrabold tracking-wide text-black/75 bg-white/50 border-b border-black/10">Map Recap</div>
+                <div id="map" class="w-full h-80 bg-gray-200"></div>
+            </div>
+            <!-- Image Grid -->
+            <div class="glass-panel p-5 sm:p-6 rounded-3xl">
+                <h3 class="font-extrabold tracking-tight mb-3">Your Journey</h3>
+                <div id="history-grid" class="grid grid-cols-5 sm:grid-cols-10 gap-2">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+        <!-- View: Help Map Overlay (drill from Mokupuni to Moku to Ahupuaʻa) -->
+        <div id="help-overlay" class="fixed inset-0 z-[60] hidden bg-black/70 backdrop-blur-sm">
+            <div class="absolute inset-0 sm:inset-4 md:inset-6 sm:rounded-2xl bg-white sm:glass-panel sm:overflow-hidden flex flex-col" style="overflow:hidden">
+                <div class="flex items-center justify-between px-3 sm:px-4 py-2.5 sm:py-3 border-b border-black/10 bg-white/90">
+                    <div class="flex items-center gap-1.5 sm:gap-2 text-sm flex-wrap min-w-0">
+                        <button onclick="helpMap.goIslands()" class="font-extrabold text-black/80 hover:text-kapa-ocean px-2 py-1 -mx-2 rounded">Mokupuni</button>
+                        <span id="help-crumb-island-wrap" class="hidden items-center gap-1.5 sm:gap-2">
+                            <span class="text-black/30">›</span>
+                            <button onclick="helpMap.backToMoku()" id="help-crumb-island" class="font-extrabold text-black/80 hover:text-kapa-ocean px-2 py-1 -mx-2 rounded truncate max-w-[140px] sm:max-w-none"></button>
+                        </span>
+                        <span id="help-crumb-moku-wrap" class="hidden items-center gap-1.5 sm:gap-2">
+                            <span class="text-black/30">›</span>
+                            <span id="help-crumb-moku" class="font-extrabold text-kapa-ocean truncate max-w-[120px] sm:max-w-none"></span>
+                        </span>
+                    </div>
+                    <button onclick="helpMap.close()" class="ui-pill text-xs sm:text-sm font-semibold hover:bg-white px-3 py-2 shrink-0" title="Close" aria-label="Close map">
+                        <span class="hidden sm:inline">Close</span> <span aria-hidden="true">✕</span>
+                    </button>
+                </div>
+                <div id="help-map" class="flex-1 bg-gray-200" style="min-height:0"></div>
+                <div id="help-info" class="px-3 sm:px-4 py-2 text-xs text-black/75 bg-white/95 border-t border-black/10 leading-snug">
+                    Tap any island to see its moku, then tap a moku to see its ahupuaʻa.
+                </div>
+            </div>
+        </div>
+
+        <!-- Legal Modal (Privacy + Terms) -->
+        <div id="legal-modal" class="fixed inset-0 z-[70] hidden bg-black/70 backdrop-blur-sm" onclick="if(event.target===this) legal.close()">
+            <div class="legal-card absolute inset-0 sm:inset-6 md:inset-10 sm:rounded-2xl bg-white flex flex-col overflow-hidden" style="max-width: 760px; margin-left: auto; margin-right: auto;">
+                <div class="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-black/10 bg-white/95">
+                    <div id="legal-title" class="font-extrabold tracking-tight text-base sm:text-lg"></div>
+                    <button onclick="legal.close()" class="ui-pill text-xs sm:text-sm font-semibold hover:bg-white px-3 py-2 shrink-0" aria-label="Close">
+                        <span class="hidden sm:inline">Close</span> <span aria-hidden="true">✕</span>
+                    </button>
+                </div>
+                <div id="legal-body" class="flex-1 overflow-y-auto"></div>
+            </div>
+        </div>
+    </main>
+    <footer class="site-footer">
+        <span class="footer-line">Built with aloha by <a href="https://www.linkedin.com/in/olinlagon/" target="_blank" rel="noopener">Olin Kealoha Lagon</a></span>
+        <span class="footer-line"><a href="https://github.com/olagon/MokuMatch" target="_blank" rel="noopener">Open source</a> &middot; <a href="https://opensource.org/licenses/MIT" target="_blank" rel="noopener">MIT License</a> &middot; No ads</span>
+        <span class="footer-line"><a href="#" onclick="legal.open('privacy'); return false;">Privacy</a> &middot; <a href="#" onclick="legal.open('terms'); return false;">Terms</a> &middot; <a href="https://www.linkedin.com/in/olinlagon/" target="_blank" rel="noopener">Send feedback</a></span>
+        <span class="footer-line footer-version">© 2026 &middot; v1.0</span>
+    </footer>
+    <!-- Location dataset (split out of index.html for easier expansion) -->
+    <script src="data/locations.js"></script>
+    <script>
+    // --- DATA SOURCE ---
+
+    // All known Moku per Island
+    const MOKU_DATA = {
+        "Oʻahu": ["Kona", "ʻEwa", "Waiʻanae", "Waialua", "Koʻolauloa", "Koʻolaupoko"],
+        "Hawaiʻi": ["Hilo", "Puna", "Kaʻū", "Kona", "Kohala", "Hāmākua"],
+        "Maui": ["Lāhainā", "Wailuku", "Koʻolau", "Hāna", "Kīpahulu", "Kaupō", "Kahikinui", "Honuaʻula", "Kula", "Kāʻanapali", "Haleakalā", "Makawao"],
+        "Kauaʻi": ["Waimea", "Kona", "Puna", "Koʻolau", "Haleleʻa", "Nāpali"],
+        "Molokaʻi": ["Kaluakoʻi", "Palaʻau", "Kawela", "Manaʻe", "Koʻolau", "Kona"],
+        "Lānaʻi": ["Lānaʻi", "Kona", "Koʻolau"],
+        "Niʻihau": ["Paniʻo"],
+        "Kahoʻolawe": ["Kahikinui"]
+    };
+
+    // Ahupuaa Mappings
+    // Updated to support the new location set
+    const AHUPUAA_DATA = {
+        "Oʻahu": {
+            "Kona": ["Waikīkī", "Maunalua", "Mānoa", "Makiki", "Honolulu", "Nuʻuanu", "Pālolo", "Kaimukī", "Kapālama", "Kapahulu"],
+            "Koʻolaupoko": ["Heʻeia", "Waimānalo", "Kailua", "Kāneʻohe", "Kualoa", "Hakipuʻu", "Kahaluʻu"],
+            "Waialua": ["Waimea", "Kawailoa", "Mokulēʻia", "Paʻalaʻa", "Kamananui", "Kuaokala", "Kaʻena"],
+            "ʻEwa": ["Honouliuli", "Waipiʻo", "Hālawa", "Waimalu", "Mānana", "ʻAiea"],
+            "Koʻolauloa": ["Lāʻie", "Hauʻula", "Punaluʻu", "Kaʻaʻawa", "Kahuku", "Pūpūkea"],
+            "Waiʻanae": ["Waiʻanae", "Mākaha", "Nānākuli", "Māʻili", "Lualualei", "Keawaʻula"]
+        },
+        "Maui": {
+            "Kula": ["Kealahou", "Kula", "ʻUlupalakua", "Pūlehu", "Ōmaʻopio", "Palauea"],
+            "Wailuku": ["Wailuku", "Waikapū", "Waiheʻe", "Kahakuloa"],
+            "Koʻolau": ["Wailua", "Keʻanae", "Nāhiku", "Honomanū"],
+            "Honuaʻula": ["Papaʻanui", "Wailea", "Mākena", "Kanahena", "Keauhou"],
+            "Hāna": ["Hāna", "Hamoa", "Wakiu", "Kawela", "Honokalani"],
+            "Lāhainā": ["Lāhainā", "Pāʻia", "Honokōhau", "Ukumehame", "Olowalu", "Pāhea", "Hanakaʻōʻō", "Honolua", "Nāpili"],
+            "Kāʻanapali": ["Kāʻanapali", "Honokōwai", "Kahana"],
+            "Haleakalā": ["Kapalaoa"],
+            "Makawao": ["Kealahou"],
+            "Kīpahulu": ["Kīpahulu", "Kaumakani"],
+            "Kaupō": ["Kaupō", "Nuʻu"],
+            "Kahikinui": ["Auahi", "Lualaʻilua"]
+        },
+        "Kauaʻi": {
+            "Waimea": ["Waimea", "Hanapēpē", "Kekaha", "Mānā", "Makaweli"],
+            "Haleleʻa": ["Hanakāpīʻai", "Hanalei", "Wainiha", "Lumahaʻi", "Kalihiwai", "Kalalau", "Hāʻena"],
+            "Puna": ["Wailua", "Līhuʻe", "Hanamāʻulu", "Kīpū", "Nawiliwili"],
+            "Kona": ["Waimea", "Hanapēpē", "Kalāheo", "Lāwaʻi", "Kōloa", "Poʻipū", "Eleʻele"],
+            "Koʻolau": ["Anahola", "Moloaʻa", "Kīlauea"],
+            "Nāpali": ["Kalalau", "Miloliʻi", "Nuʻalolo"]
+        },
+        "Hawaiʻi": {
+            "Kaʻū": ["Kapāpala", "Pāhala", "Punaluʻu", "Nīnole", "Waiʻōhinu", "Ka Lae", "Kamaʻoa", "Keauhou"],
+            "Hāmākua": ["Waipiʻo", "Kaʻohe", "Honokaʻa", "Pāʻauhau", "Kalōpā", "Waimanu"],
+            "Hilo": ["Honomū", "Hilo", "Wainaku", "Paukaʻa", "Pāpaʻikou", "Pepeʻekeo", "Punahoa", "Waiākea", "Laupāhoehoe"],
+            "Kona": ["Hōnaunau", "Kealakekua", "Kailua", "Keauhou", "Kaluko", "Hōlualoa", "Kaʻūpūlehu", "Kaʻawaloa"],
+            "Kohala": ["Hāwī", "Kapaʻau", "Māhukona", "Kawaihae", "Puakō", "Pololū", "Lālāmilo"],
+            "Puna": ["Kapoho", "Keaʻau", "Pāhoa", "Kalapana", "ʻŌlaʻa", "Keahialaka"]
+        },
+        "Molokaʻi": {
+            "Koʻolau": ["Kalaupapa", "Kalawao", "Makanalua", "Waikananui", "Hālawa"],
+            "Kaluakoʻi": ["Kaluakoʻi", "Kepuhi", "Maunaloa"],
+            "Manaʻe": ["Hālawa", "Pūkoʻo", "Waialua"],
+            "Palaʻau": ["Hoʻolehua", "Pālāʻau", "Makanalua"],
+            "Kawela": ["Kawela", "Kamalo"],
+            "Kona": ["Kaunakakai", "Kalamaʻula"]
+        },
+        "Lānaʻi": {
+            "Lānaʻi": ["Kaunolū", "Mahana"],
+            "Kona": ["Kaunolū", "Pālāwai", "Mānele", "Kaa", "Paomaʻi"],
+            "Koʻolau": ["Keōmuku", "Maunalei", "Hauola"]
+        },
+        "Niʻihau": {
+            "Paniʻo": ["Pūʻuwai"]
+        },
+        "Kahoʻolawe": {
+            "Kahikinui": ["Lua Makika", "Hakioawa", "Honokanaiʻa", "Kealaikahiki"]
+        }
+    };
+
+// LOCATIONS is loaded from data/locations.js (see <script> tag above).
+// Keep using the global name so the rest of the game code still works.
+const LOCATIONS = window.LOCATIONS || [];
+
+
+    // --- GAME LOGIC ---
+    const game = {
+        rounds: 10,
+        currentRoundIndex: 0,
+        score: 0,
+        gameHistory: [],
+        deck: [],
+
+        elements: {
+            startScreen: document.getElementById('start-screen'),
+            gameScreen: document.getElementById('game-screen'),
+            endScreen: document.getElementById('end-screen'),
+            feedbackOverlay: document.getElementById('feedback-overlay'),
+            scoreDisplay: document.getElementById('score-display'),
+            currentScore: document.getElementById('current-score'),
+            currentScoreInline: document.getElementById('current-score-inline'),
+            img: document.getElementById('location-img'),
+            attributionText: document.getElementById('attribution-text'),
+            attributionTextMobile: document.getElementById('attribution-text-mobile'),
+            roundNum: document.getElementById('round-number'),
+            progressBar: document.getElementById('progress-bar'),
+            islandSelect: document.getElementById('island-select'),
+            mokuSelect: document.getElementById('moku-select'),
+            ahupuaaSelect: document.getElementById('ahupuaa-select'),
+            submitBtn: document.getElementById('submit-btn')
+        },
+
+        start() {
+            // Removed shuffle so it plays the 10 specific locations in order or just sliced
+            // Since there are exactly 10, we can just use them all. 
+            // Randomized order of the 10 is still good for replayability.
+            this.deck = [...LOCATIONS].sort(() => 0.5 - Math.random()).slice(0, this.rounds);
+            this.currentRoundIndex = 0;
+            this.score = 0;
+            this.gameHistory = [];
+
+            this.updateScoreUI();
+
+            this.elements.startScreen.classList.add('hidden');
+            this.elements.endScreen.classList.add('hidden');
+            this.elements.gameScreen.classList.remove('hidden');
+            this.elements.scoreDisplay.classList.remove('hidden');
+
+            this.loadRound();
+        },
+
+        loadRound() {
+            const loc = this.deck[this.currentRoundIndex];
+            const imgEl = this.elements.img;
+
+            // Reset inputs
+            this.elements.islandSelect.value = "";
+            this.elements.mokuSelect.innerHTML = '<option value="">Select Moku...</option>';
+            this.elements.mokuSelect.disabled = true;
+            this.elements.ahupuaaSelect.innerHTML = '<option value="">Select Ahupuaʻa...</option>';
+            this.elements.ahupuaaSelect.disabled = true;
+            this.elements.submitBtn.disabled = true;
+
+            // Image Loading
+            imgEl.classList.add('opacity-0');
+            imgEl.alt = `${loc.name} - ${loc.attribution}`; // Add attribution to Alt text
+
+            // Update Visible Attribution
+            this.elements.attributionText.textContent = loc.attribution;
+            this.elements.attributionTextMobile.textContent = loc.attribution;
+
+            imgEl.onload = () => {
+                imgEl.classList.remove('opacity-0');
+            };
+
+            // Fallback for ANY error (including archive glitches)
+            imgEl.onerror = () => {
+                console.error("Image failed entirely:", imgEl.src);
+                imgEl.src = "https://placehold.co/800x450/8D6E63/FFFFFF?text=No+Image+Source";
+                imgEl.classList.remove('opacity-0');
+            };
+
+            // Trigger load
+            imgEl.src = loc.img;
+
+            // Update UI
+            this.elements.roundNum.textContent = this.currentRoundIndex + 1;
+            const progressPct = ((this.currentRoundIndex + 1) / this.rounds) * 100;
+            this.elements.progressBar.style.width = `${progressPct}%`;
+        },
+
+        handleIslandChange() {
+            const island = this.elements.islandSelect.value;
+            const mokuSelect = this.elements.mokuSelect;
+            const ahupuaaSelect = this.elements.ahupuaaSelect;
+
+            // Reset downstream menus
+            mokuSelect.innerHTML = '<option value="">Select Moku...</option>';
+            mokuSelect.disabled = true;
+
+            ahupuaaSelect.innerHTML = '<option value="">Select Ahupuaʻa...</option>';
+            ahupuaaSelect.disabled = true;
+
+            if (island && MOKU_DATA[island]) {
+                mokuSelect.disabled = false;
+
+                MOKU_DATA[island].forEach(moku => {
+                    const option = document.createElement('option');
+                    option.value = moku;
+                    option.textContent = moku;
+                    mokuSelect.appendChild(option);
+                });
+            }
+
+            this.checkSubmitState();
+        },
+
+        handleMokuChange() {
+            const island = this.elements.islandSelect.value;
+            const moku = this.elements.mokuSelect.value;
+            const ahupuaaSelect = this.elements.ahupuaaSelect;
+
+            // Reset Ahupuaʻa
+            ahupuaaSelect.innerHTML = '<option value="">Select Ahupuaʻa...</option>';
+            ahupuaaSelect.disabled = true;
+
+            if (island && moku && AHUPUAA_DATA[island] && AHUPUAA_DATA[island][moku]) {
+                ahupuaaSelect.disabled = false;
+
+                // Sort alphabetically
+                const ahupuaaList = [...AHUPUAA_DATA[island][moku]].sort();
+
+                ahupuaaList.forEach(ahu => {
+                    const option = document.createElement('option');
+                    option.value = ahu;
+                    option.textContent = ahu;
+                    ahupuaaSelect.appendChild(option);
+                });
+            }
+
+            this.checkSubmitState();
+        },
+
+        checkSubmitState() {
+            const ready = Boolean(
+                this.elements.islandSelect.value &&
+                this.elements.mokuSelect.value &&
+                this.elements.ahupuaaSelect.value
+            );
+
+            this.elements.submitBtn.disabled = !ready;
+        },
+
+        submitGuess() {
+            const loc = this.deck[this.currentRoundIndex];
+            const guessIsland = this.elements.islandSelect.value;
+            const guessMoku = this.elements.mokuSelect.value;
+            const guessAhupuaa = this.elements.ahupuaaSelect.value;
+
+            const isIslandCorrect = guessIsland === loc.island;
+            const isMokuCorrect = guessMoku === loc.moku;
+            const isAhupuaaCorrect = guessAhupuaa === loc.ahupuaa;
+
+            // ALL THREE must be correct
+            const isFullyCorrect = isIslandCorrect && isMokuCorrect && isAhupuaaCorrect;
+
+            if (isFullyCorrect) this.score++;
+
+            this.gameHistory.push({
+                location: loc,
+                correct: isFullyCorrect,
+                guess: { island: guessIsland, moku: guessMoku, ahupuaa: guessAhupuaa }
+            });
+
+            this.updateScoreUI();
+            this.showFeedback(isFullyCorrect, loc);
+        },
+
+        showFeedback(isCorrect, loc) {
+            const overlay = this.elements.feedbackOverlay;
+            const header = document.getElementById('feedback-header');
+            const title = document.getElementById('feedback-title');
+            const icon = document.getElementById('feedback-icon');
+
+            overlay.classList.remove('hidden');
+
+            document.getElementById('reveal-name').textContent = loc.name;
+            document.getElementById('reveal-ahupuaa').textContent = loc.ahupuaa;
+            document.getElementById('reveal-moku').textContent = `${loc.moku}, ${loc.island}`;
+
+            if (isCorrect) {
+                header.className = 'px-6 py-5 sm:px-7 sm:py-6 text-center text-white bg-kapa-green';
+                title.textContent = "Pololei!";
+                icon.textContent = "🤙";
+            } else {
+                header.className = 'px-6 py-5 sm:px-7 sm:py-6 text-center text-white bg-kapa-clay';
+                title.textContent = "Auwē!";
+                icon.textContent = "🤔";
+            }
+        },
+
+        nextRound() {
+            this.elements.feedbackOverlay.classList.add('hidden');
+            this.currentRoundIndex++;
+
+            if (this.currentRoundIndex < this.rounds) {
+                this.loadRound();
+            } else {
+                this.endGame();
+            }
+        },
+
+        updateScoreUI() {
+            this.elements.currentScore.textContent = this.score;
+            if (this.elements.currentScoreInline) {
+                this.elements.currentScoreInline.textContent = this.score;
+            }
+        },
+
+        endGame() {
+            this.elements.gameScreen.classList.add('hidden');
+            this.elements.endScreen.classList.remove('hidden');
+
+            document.getElementById('final-score').textContent = this.score;
+
+            const msg = document.getElementById('final-message');
+            if (this.score === 10) msg.textContent = "He Kumu ʻOe! (You are an expert!)";
+            else if (this.score >= 7) msg.textContent = "Maikaʻi Loa! (Very Good!)";
+            else msg.textContent = "E Hoʻomaʻamaʻa Hou. (Keep practicing.)";
+
+            this.renderHistoryGrid();
+            this.initMap();
+        },
+
+        renderHistoryGrid() {
+            const grid = document.getElementById('history-grid');
+            grid.innerHTML = '';
+            this.gameHistory.forEach(record => {
+                const div = document.createElement('div');
+                div.className = `aspect-square rounded overflow-hidden border-2 ${record.correct ? 'border-kapa-green' : 'border-kapa-clay'}`;
+
+                const imgSrc = record.location.img;
+                div.innerHTML = `<img src="${imgSrc}" class="w-full h-full object-cover">`;
+                grid.appendChild(div);
+            });
+        },
+
+        initMap() {
+            setTimeout(() => {
+                if (this.map) this.map.remove();
+
+                this.map = L.map('map').setView([20.7, -157.5], 6);
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(this.map);
+
+                this.gameHistory.forEach(record => {
+                    const color = record.correct ? 'green' : 'red';
+                    L.circleMarker(record.location.coords, {
+                            color: color,
+                            fillColor: color,
+                            fillOpacity: 0.7,
+                            radius: 8
+                        }).addTo(this.map)
+                        .bindPopup(`<b>${record.location.name}</b><br>${record.location.ahupuaa}, ${record.location.moku}`);
+                });
+            }, 100);
+        },
+
+        copyResults() {
+            const text = `Moku Match Results:\nScore: ${this.score}/10\nExplore Hawaiʻi's geography!`;
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                alert("Result copied to clipboard!");
+            } catch (err) {
+                console.error('Unable to copy', err);
+            }
+            document.body.removeChild(textArea);
+        }
+    };
+
+    // Add listeners to ensure state checks run on interaction
+    document.getElementById('island-select').addEventListener('change', () => game.checkSubmitState());
+    document.getElementById('moku-select').addEventListener('change', () => game.checkSubmitState());
+    document.getElementById('ahupuaa-select').addEventListener('change', () => game.checkSubmitState());
+
+    // ----------------------------------------------------------------
+    // HELP MAP OVERLAY
+    // ----------------------------------------------------------------
+    // Data source: Hawaiʻi Statewide GIS Program (Office of Planning).
+    // Layer: HistoricCultural/MapServer/1 (Ahupuaʻa polygons, fields:
+    // ahupuaa, moku, mokupuni). The layer is a public ArcGIS REST
+    // FeatureServer that returns GeoJSON when called with f=geojson.
+    // Metadata: https://files.hawaii.gov/dbedt/op/gis/data/ahupuaa.pdf
+    // Catalog:  https://opendata.hawaii.gov/dataset/ahupuaa
+    //
+    // The overlay loads each island lazily, caches it in memory, and
+    // lets the user drill from Mokupuni to Moku to Ahupuaʻa.
+
+    const AHUPUAA_REST_URL = "https://geodata.hawaii.gov/arcgis/rest/services/HistoricCultural/MapServer/1/query";
+
+    const ISLAND_VIEWS = {
+        "Oʻahu":      { center: [21.466, -157.975], zoom: 10, spellings: ["Oahu", "Oʻahu", "O'ahu"] },
+        "Maui":       { center: [20.800, -156.330], zoom: 10, spellings: ["Maui"] },
+        "Hawaiʻi":    { center: [19.600, -155.500], zoom: 9,  spellings: ["Hawaii", "Hawaiʻi", "Hawai'i"] },
+        "Kauaʻi":     { center: [22.060, -159.530], zoom: 10, spellings: ["Kauai", "Kauaʻi", "Kaua'i"] },
+        "Molokaʻi":   { center: [21.130, -157.000], zoom: 10, spellings: ["Molokai", "Molokaʻi", "Moloka'i"] },
+        "Lānaʻi":     { center: [20.830, -156.920], zoom: 11, spellings: ["Lanai", "Lānaʻi", "Lana'i", "Lānai"] },
+        "Niʻihau":    { center: [21.900, -160.160], zoom: 11, spellings: ["Niihau", "Niʻihau", "Ni'ihau"] },
+        "Kahoʻolawe": { center: [20.550, -156.600], zoom: 11, spellings: ["Kahoolawe", "Kahoʻolawe", "Kaho'olawe"] }
+    };
+
+    const MOKU_PALETTE = [
+        '#00838F', '#2E7D32', '#D84315', '#8D6E63', '#5E35B1',
+        '#FBC02D', '#C2185B', '#1976D2', '#7B1FA2', '#FF6F00',
+        '#00796B', '#5D4037', '#455A64', '#AD1457'
+    ];
+
+    const helpMap = {
+        map: null,
+        layer: null,
+        islandMarkerLayer: null,
+        cache: {},
+        currentIsland: null,
+        currentMoku: null,
+
+        open() {
+            document.getElementById('help-overlay').classList.remove('hidden');
+            if (!this.map) this.initMap();
+            // Wait for layout, then size + draw
+            setTimeout(() => {
+                this.map.invalidateSize();
+                this.goIslands();
+            }, 80);
+        },
+
+        close() {
+            document.getElementById('help-overlay').classList.add('hidden');
+        },
+
+        initMap() {
+            this.map = L.map('help-map', {
+                zoomControl: true,
+                worldCopyJump: false,
+                preferCanvas: true
+            });
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap | Ahupuaʻa data: Hawaiʻi Statewide GIS Program',
+                maxZoom: 17
+            }).addTo(this.map);
+        },
+
+        clearLayer() {
+            if (this.layer) {
+                this.map.removeLayer(this.layer);
+                this.layer = null;
+            }
+            if (this.islandMarkerLayer) {
+                this.map.removeLayer(this.islandMarkerLayer);
+                this.islandMarkerLayer = null;
+            }
+        },
+
+        setInfo(text) {
+            document.getElementById('help-info').textContent = text;
+        },
+
+        showLoading(text) {
+            this.hideLoading();
+            const el = document.createElement('div');
+            el.className = 'help-loading';
+            el.id = 'help-loading-pill';
+            el.textContent = text;
+            document.getElementById('help-map').appendChild(el);
+        },
+
+        hideLoading() {
+            const old = document.getElementById('help-loading-pill');
+            if (old) old.remove();
+        },
+
+        updateCrumbs() {
+            const islandWrap = document.getElementById('help-crumb-island-wrap');
+            const mokuWrap = document.getElementById('help-crumb-moku-wrap');
+            const islandEl = document.getElementById('help-crumb-island');
+            const mokuEl = document.getElementById('help-crumb-moku');
+
+            if (this.currentIsland) {
+                islandWrap.classList.remove('hidden');
+                islandWrap.classList.add('inline-flex');
+                islandEl.textContent = this.currentIsland;
+            } else {
+                islandWrap.classList.add('hidden');
+                islandWrap.classList.remove('inline-flex');
+            }
+
+            if (this.currentMoku) {
+                mokuWrap.classList.remove('hidden');
+                mokuWrap.classList.add('inline-flex');
+                mokuEl.textContent = this.currentMoku;
+            } else {
+                mokuWrap.classList.add('hidden');
+                mokuWrap.classList.remove('inline-flex');
+            }
+        },
+
+        // ---- Navigation states ----
+
+        goIslands() {
+            this.currentIsland = null;
+            this.currentMoku = null;
+            this.updateCrumbs();
+            this.clearLayer();
+            // Wider initial view so all 8 islands fit on a phone
+            const isMobile = window.matchMedia('(max-width: 640px)').matches;
+            this.map.setView([20.6, -157.4], isMobile ? 6 : 7);
+
+            const markers = [];
+            for (const [island, info] of Object.entries(ISLAND_VIEWS)) {
+                // Use a divIcon: the visible chip IS the clickable marker.
+                // This avoids the touch-tap-through issue with permanent tooltips.
+                const icon = L.divIcon({
+                    className: '',
+                    html: `<div class="help-island-chip">${island}</div>`,
+                    iconSize: null,
+                    iconAnchor: [0, 0]
+                });
+                const m = L.marker(info.center, { icon: icon, riseOnHover: true })
+                    .on('click', () => this.goMoku(island));
+                markers.push(m);
+            }
+            this.islandMarkerLayer = L.layerGroup(markers).addTo(this.map);
+            this.setInfo("Tap any island to see its moku.");
+        },
+
+        backToMoku() {
+            if (!this.currentIsland) return this.goIslands();
+            this.goMoku(this.currentIsland);
+        },
+
+        async goMoku(island) {
+            this.currentIsland = island;
+            this.currentMoku = null;
+            this.updateCrumbs();
+            this.clearLayer();
+            this.setInfo(`Loading ${island}...`);
+            this.showLoading(`Loading ${island} ahupuaʻa...`);
+
+            const data = await this.loadIsland(island);
+            this.hideLoading();
+            if (!data) return;
+
+            const mokuColors = this.makeMokuColors(data);
+
+            this.layer = L.geoJSON(data, {
+                style: f => ({
+                    color: '#ffffff',
+                    weight: 1,
+                    fillColor: mokuColors[this.getMoku(f.properties)] || '#888',
+                    fillOpacity: 0.55
+                }),
+                onEachFeature: (f, layer) => {
+                    const moku = this.getMoku(f.properties);
+                    const ahu = this.getAhupuaa(f.properties);
+                    layer.bindTooltip(`<b>${moku}</b><br><span style="opacity:0.8">${ahu}</span>`, { sticky: true });
+                    layer.on('click', () => this.goAhupuaa(island, moku));
+                    layer.on('mouseover', () => layer.setStyle({ weight: 2.5, color: '#0F172A' }));
+                    layer.on('mouseout', () => layer.setStyle({ weight: 1, color: '#ffffff' }));
+                }
+            }).addTo(this.map);
+
+            const view = ISLAND_VIEWS[island];
+            try {
+                const b = this.layer.getBounds();
+                if (b.isValid()) this.map.fitBounds(b, { padding: [20, 20] });
+                else if (view) this.map.setView(view.center, view.zoom);
+            } catch (e) {
+                if (view) this.map.setView(view.center, view.zoom);
+            }
+
+            const mokuCount = Object.keys(mokuColors).length;
+            this.setInfo(`${island}: ${mokuCount} moku, ${data.features.length} ahupuaʻa. Click any region to drill in.`);
+        },
+
+        async goAhupuaa(island, moku) {
+            this.currentIsland = island;
+            this.currentMoku = moku;
+            this.updateCrumbs();
+            this.clearLayer();
+
+            const data = await this.loadIsland(island);
+            if (!data) return;
+
+            const filtered = {
+                type: 'FeatureCollection',
+                features: data.features.filter(f => this.getMoku(f.properties) === moku)
+            };
+
+            this.layer = L.geoJSON(filtered, {
+                style: () => ({
+                    color: '#0F172A',
+                    weight: 1.4,
+                    fillColor: '#00838F',
+                    fillOpacity: 0.40
+                }),
+                onEachFeature: (f, layer) => {
+                    const ahu = this.getAhupuaa(f.properties);
+                    layer.bindTooltip(ahu, {
+                        permanent: true,
+                        direction: 'center',
+                        className: 'help-ahu-label'
+                    });
+                    layer.on('mouseover', () => layer.setStyle({ fillOpacity: 0.75, weight: 2.2 }));
+                    layer.on('mouseout', () => layer.setStyle({ fillOpacity: 0.40, weight: 1.4 }));
+                }
+            }).addTo(this.map);
+
+            try {
+                const b = this.layer.getBounds();
+                if (b.isValid()) this.map.fitBounds(b, { padding: [30, 30] });
+            } catch (e) {}
+
+            this.setInfo(`Moku o ${moku} (${island}): ${filtered.features.length} ahupuaʻa shown.`);
+        },
+
+        // ---- Data loading ----
+
+        async loadIsland(island) {
+            if (this.cache[island]) return this.cache[island];
+
+            const variants = (ISLAND_VIEWS[island] && ISLAND_VIEWS[island].spellings) || [island];
+
+            // The mokupuni field uses Hawaiian spelling in the source layer,
+            // but we try plain ASCII as a fallback in case the field changes.
+            for (const v of variants) {
+                const where = `mokupuni='${v.replace(/'/g, "''")}'`;
+                const params = new URLSearchParams({
+                    where: where,
+                    outFields: 'ahupuaa,moku,mokupuni',
+                    outSR: '4326',
+                    returnGeometry: 'true',
+                    f: 'geojson'
+                });
+                try {
+                    const res = await fetch(`${AHUPUAA_REST_URL}?${params.toString()}`);
+                    if (!res.ok) continue;
+                    const data = await res.json();
+                    if (data && data.features && data.features.length) {
+                        this.cache[island] = data;
+                        return data;
+                    }
+                } catch (e) {
+                    console.warn(`Help map fetch failed for "${v}":`, e);
+                }
+            }
+            this.setInfo(`Couldn't load ${island} from the GIS source. Try again, or check your connection.`);
+            return null;
+        },
+
+        // ---- Field accessors (defensive against case changes) ----
+
+        getMoku(props) {
+            return props.moku || props.MOKU || props.Moku || 'Unknown moku';
+        },
+        getAhupuaa(props) {
+            return props.ahupuaa || props.AHUPUAA || props.Ahupuaa || 'Unknown ahupuaʻa';
+        },
+
+        makeMokuColors(data) {
+            const list = [...new Set(data.features.map(f => this.getMoku(f.properties)))].sort();
+            const out = {};
+            list.forEach((m, i) => { out[m] = MOKU_PALETTE[i % MOKU_PALETTE.length]; });
+            return out;
+        }
+    };
+
+    // ESC closes the help overlay
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') helpMap.close();
+    });
+
+    // ----------------------------------------------------------------
+    // LEGAL MODAL (Privacy + Terms)
+    // ----------------------------------------------------------------
+    const LEGAL_DOCS = {
+        privacy: {
+            title: "Privacy Policy",
+            html: `
+                <h1>Privacy Policy</h1>
+
+                <div class="kindness">
+                    <p class="kind-headline">Be kind.</p>
+                    <p>That includes how we treat your information. This game collects nothing about you. There is no sign in, no account, no email, no analytics, no tracking. The rest of this page is just the detail behind that promise.</p>
+                </div>
+
+                <h2>What we collect</h2>
+                <p>Nothing personal. Moku Match runs entirely in your browser. Your score, the rounds you played, and the photos you saw all live in the page you have open and disappear when you close the tab.</p>
+                <p>We do not set cookies. We do not use localStorage to remember you. We do not run analytics.</p>
+
+                <h2>What third party services see</h2>
+                <p>Moku Match pulls a few things from the open web. Each of those services sees your IP address as part of any normal web request. We do not get a copy.</p>
+                <p><strong>Wikimedia Commons</strong> serves the photos shown each round. Their privacy policy is at <a href="https://foundation.wikimedia.org/wiki/Privacy_policy" target="_blank" rel="noopener">foundation.wikimedia.org</a>.</p>
+                <p><strong>OpenStreetMap</strong> serves the base map tiles when you open the help map. Their policy is at <a href="https://wiki.osmfoundation.org/wiki/Privacy_Policy" target="_blank" rel="noopener">osmfoundation.org</a>.</p>
+                <p><strong>Hawaiʻi Statewide GIS Program</strong> serves the ahupuaʻa boundary polygons when you open the help map. Their site is at <a href="https://planning.hawaii.gov/gis/" target="_blank" rel="noopener">planning.hawaii.gov/gis</a>.</p>
+
+                <h2>Where this site is hosted</h2>
+                <p>Moku Match is hosted on GitHub Pages. GitHub may log standard web request information per their statement at <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">docs.github.com</a>.</p>
+
+                <h2>What we do not do</h2>
+                <p>No accounts. No sign in. No ads. No analytics. No cookies. No tracking. No newsletters. We do not sell anything because we do not have anything to sell.</p>
+
+                <h2>Contact</h2>
+                <p>For privacy questions or anything else, send a message on <a href="https://www.linkedin.com/in/olinlagon/" target="_blank" rel="noopener">LinkedIn</a>.</p>
+
+                <h2>Changes to this policy</h2>
+                <p>If anything here changes, we will update this page and note the change at the bottom.</p>
+
+                <p class="meta">Last updated: May 2, 2026.</p>
+            `
+        },
+        terms: {
+            title: "Terms of Use",
+            html: `
+                <h1>Terms of Use</h1>
+
+                <div class="kindness">
+                    <p class="kind-headline">Be kind.</p>
+                    <p>That is the heart of how this game should be used. Be kind to the ʻāina you are learning about. Be kind to the kupuna who named these places. Be kind to the people who built and maintain this game. Everything else on this page is just the detail.</p>
+                </div>
+
+                <h2>Using Moku Match</h2>
+                <p>Moku Match is free. No sign up, no payment, no account. It runs entirely in your browser. Open the page, play, close the tab. That is the whole arrangement.</p>
+
+                <h2>Open source</h2>
+                <p>Moku Match is open source under the <a href="https://opensource.org/licenses/MIT" target="_blank" rel="noopener">MIT License</a> and lives on <a href="https://github.com/olagon/MokuMatch" target="_blank" rel="noopener">GitHub</a>. You can fork it, study it, or build on it.</p>
+
+                <h2>What we ask of you</h2>
+                <p>Treat the place names with respect. They are not trivia. Each ahupuaʻa carries history, family ties, water rights, and stories that go back generations.</p>
+                <p>Treat other learners with kindness if you share scores or talk about Moku Match.</p>
+                <p>Do not try to break Moku Match or abuse the third party services it relies on.</p>
+
+                <h2>Where the data comes from</h2>
+                <p>Place name boundaries (mokupuni, moku, ahupuaʻa) come from the Office of Hawaiian Affairs and the Department of Land and Natural Resources, published by the <a href="https://planning.hawaii.gov/gis/" target="_blank" rel="noopener">Hawaiʻi Statewide GIS Program</a>.</p>
+                <p>Photos come from <a href="https://commons.wikimedia.org/" target="_blank" rel="noopener">Wikimedia Commons</a>. Each photo is shown with its credit and license on the photo itself.</p>
+                <p>If you find a wrong attribution, a misspelled place name, or a photo that does not match the ahupuaʻa it is placed in, please let us know.</p>
+
+                <h2>Accuracy</h2>
+                <p>Hawaiian place name boundaries are not always crisp. There are competing historical sources, and some ahupuaʻa names have been spelled differently over time. We use the official state GIS layer as our reference, but we will be wrong sometimes. If you spot an error, tell us.</p>
+                <p>This game is a learning tool, not an authoritative record. For deeper study, work with a kumu, take a Hawaiian Studies class, or read the original mahele records.</p>
+
+                <h2>No warranty</h2>
+                <p>Moku Match is provided "as is." We do our best, but we cannot promise every photo loads, every place is correctly attributed, or that the help map data is always available. The third party services Moku Match relies on can go down, change their URLs, or alter their data.</p>
+
+                <h2>If we ever shut it down</h2>
+                <p>Moku Match is one HTML file plus one data file plus a public dataset. If this hosting goes away, the code is on GitHub and the dataset is on the State of Hawaiʻi GIS site. Either could be revived by anyone.</p>
+
+                <h2>Changes to these terms</h2>
+                <p>If anything changes, we update this page and note it at the bottom.</p>
+
+                <h2>Questions or feedback</h2>
+                <p>Send a message on <a href="https://www.linkedin.com/in/olinlagon/" target="_blank" rel="noopener">LinkedIn</a>. Corrections, ideas, bug reports, or just to say hello are all welcome.</p>
+
+                <p class="meta">Last updated: May 2, 2026.</p>
+            `
+        }
+    };
+
+    const legal = {
+        open(which) {
+            const doc = LEGAL_DOCS[which];
+            if (!doc) return;
+            document.getElementById('legal-title').textContent = doc.title;
+            const body = document.getElementById('legal-body');
+            body.innerHTML = '<div class="legal-doc"><div class="legal-inner">' + doc.html + '</div></div>';
+            body.scrollTop = 0;
+            document.getElementById('legal-modal').classList.remove('hidden');
+        },
+        close() {
+            document.getElementById('legal-modal').classList.add('hidden');
+        }
+    };
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') legal.close();
+    });
+    </script>
+</body>
+
+</html>

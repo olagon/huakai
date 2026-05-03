@@ -1,0 +1,11 @@
+2026-05-02	22:47:51	SHOWPAGE	::1	Error: template '/Library/WebServer/Documents/ahupuaa/index.html' not found	/ahupuaa/	/Library/WebServer/Documents/ahupuaa/index.html
+2026-05-02	22:49:23	SHOWPAGE	::1	Error: template '/Library/WebServer/Documents/ahupuaa/index.html' not found	/ahupuaa/	/Library/WebServer/Documents/ahupuaa/index.html
+2026-05-02	22:49:31	SHOWPAGE	::1	Error: template '/Library/WebServer/Documents/ahupuaa/index.html' not found	/ahupuaa/	/Library/WebServer/Documents/ahupuaa/index.html
+2026-05-02	22:49:39	SHOWPAGE	::1	Error: template '/Library/WebServer/Documents/ahupuaa/index.html' not found	/ahupuaa/index.html	/Library/WebServer/Documents/ahupuaa/index.html
+2026-05-02	22:51:09	SHOWPAGE	::1	Error: template '/Library/WebServer/Documents/ahupuaa/index.html' not found	/ahupuaa/index.html	/Library/WebServer/Documents/ahupuaa/index.html
+2026-05-02	22:51:10	SHOWPAGE	::1	Error: template '/Library/WebServer/Documents/ahupuaa/index.html' not found	/ahupuaa/index.html	/Library/WebServer/Documents/ahupuaa/index.html
+2026-05-02	22:51:42	SHOWPAGE	::1	Error: template '/Library/WebServer/Documents/ahupuaa/index.html' not found	/ahupuaa/index.html	/Library/WebServer/Documents/ahupuaa/index.html
+2026-05-02	22:52:12	SHOWPAGE	::1	Error: template '/Library/WebServer/Documents/ahupuaa/index.html' not found	/ahupuaa/index.html	/Library/WebServer/Documents/ahupuaa/index.html
+2026-05-02	22:52:14	SHOWPAGE	::1	Error: template '/Library/WebServer/Documents/ahupuaa/index.html' not found	/ahupuaa/index.html	/Library/WebServer/Documents/ahupuaa/index.html
+2026-05-02	22:52:48	SHOWPAGE	::1	Error: template '/Library/WebServer/Documents/ahupuaa/index.html' not found	/ahupuaa/index.html	/Library/WebServer/Documents/ahupuaa/index.html
+2026-05-02	22:52:49	SHOWPAGE	::1	Error: template '/Library/WebServer/Documents/ahupuaa/index.html' not found	/ahupuaa/index.html	/Library/WebServer/Documents/ahupuaa/index.html

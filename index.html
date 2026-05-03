@@ -652,7 +652,7 @@
     <footer class="site-footer">
         <span class="footer-line">Built with aloha by <a href="https://www.linkedin.com/in/olinlagon/" target="_blank" rel="noopener">Olin Kealoha Lagon</a></span>
         <span class="footer-line"><a href="https://github.com/olagon/MokuMatch" target="_blank" rel="noopener">Open source</a> &middot; <a href="https://opensource.org/licenses/MIT" target="_blank" rel="noopener">MIT License</a> &middot; No ads</span>
-        <span class="footer-line"><a href="#" onclick="legal.open('privacy'); return false;">Privacy</a> &middot; <a href="#" onclick="legal.open('terms'); return false;">Terms</a> &middot; <a href="https://www.linkedin.com/in/olinlagon/" target="_blank" rel="noopener">Send feedback</a></span>
+        <span class="footer-line"><a href="#" onclick="legal.open('privacy'); return false;">Privacy</a> &middot; <a href="#" onclick="legal.open('terms'); return false;">Terms</a> &middot; <a href="#" onclick="legal.open('games'); return false;">More Games</a> &middot; <a href="https://www.linkedin.com/in/olinlagon/" target="_blank" rel="noopener">Send feedback</a></span>
         <span class="footer-line footer-version">© 2026 &middot; v1.0</span>
     </footer>
     <!-- Location dataset (split out of index.html for easier expansion) -->
@@ -1402,6 +1402,31 @@ const LOCATIONS = window.LOCATIONS || [];
                 <p>Send a message on <a href="https://www.linkedin.com/in/olinlagon/" target="_blank" rel="noopener">LinkedIn</a>. Corrections, ideas, bug reports, or just to say hello are all welcome.</p>
 
                 <p class="meta">Last updated: May 2, 2026.</p>
+            `
+        },
+        games: {
+            title: "More Games",
+            html: `
+                <h1>More Games</h1>
+
+                <div class="kindness">
+                    <p class="kind-headline">Aloha kākou.</p>
+                    <p>ʻO wau ʻo Olin Kealoha Lagon. Here are the Hawaiian language and culture learning games I have gifted. They are all open source. Make a copy, edit it, re-release as your own version, or even contact me if you want to take over any of these.</p>
+                </div>
+
+                <h2><a href="https://olagon.github.io/MokuMatch/" target="_blank" rel="noopener">MokuMatch</a> <span style="font-weight: 400; font-size: 0.85rem; color: var(--accent);">(you are here)</span></h2>
+                <p>The game you are playing right now. A Hawaiʻi place-knowledge game. Most people who grew up in Hawaiʻi can name the islands. Fewer can name the moku. Fewer still can place an ahupuaʻa. These names are not trivia. They tell you where the water flowed, who lived there, who fished there, and what was grown. MokuMatch uses live State of Hawaiʻi GIS data to teach the mokupuni, moku, and ahupuaʻa map one tap at a time.</p>
+
+                <h2><a href="https://olelodaily.com" target="_blank" rel="noopener">OleloDaily.com</a></h2>
+                <p>A daily ʻŌlelo Hawaiʻi vocabulary trainer. Bite-sized rounds, gentle streaks, an essentials track and a fluency track. The goal is small daily reps that compound, not a marathon. Built for learners who want to keep showing up.</p>
+
+                <h2><a href="https://shiftywords.com" target="_blank" rel="noopener">ShiftyWords.com</a></h2>
+                <p>A daily 5-letter word puzzle in six languages, including ʻŌlelo Hawaiʻi. Switch the puzzle into Hawaiian with one click. Your streak is tracked separately for each language so you can keep one going in English and start a fresh one in Hawaiian.</p>
+
+                <h2><a href="https://olagon.github.io/rootz/" target="_blank" rel="noopener">Rootz</a></h2>
+                <p>A daily category puzzle. You see a grid of 16 words. Four of them share a hidden theme. Find a set of four to clear that category, then the next, then the next, then the last. The themes lean into Hawaiian roots, places, words, and ideas. Fewer mistakes is better. Solve the whole grid before you run out of guesses.</p>
+
+                <p style="margin-top: 1.25rem; font-family: var(--font-display); color: var(--accent); font-size: 1.05rem;">Mahalo for playing and learning Hawaiian.</p>
             `
         }
     };

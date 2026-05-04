@@ -1369,7 +1369,10 @@ const LOCATIONS = window.LOCATIONS || [];
                     const moku = this.getMoku(f.properties);
                     const ahu = this.getAhupuaa(f.properties);
                     layer.bindTooltip(`<b>${moku}</b><br><span style="opacity:0.8">${ahu}</span>`, { sticky: true });
-                    layer.on('click', () => this.goAhupuaa(island, moku));
+                    // Pass the tapped polygon's bounds so the next view stays
+                    // focused around where the user actually tapped — not the
+                    // entire moku, which can sit miles away in any direction.
+                    layer.on('click', () => this.goAhupuaa(island, moku, layer.getBounds()));
                     layer.on('mouseover', () => layer.setStyle({ weight: 2.5, color: '#0F172A' }));
                     layer.on('mouseout', () => layer.setStyle({ weight: 1, color: '#ffffff' }));
                 }
@@ -1378,8 +1381,14 @@ const LOCATIONS = window.LOCATIONS || [];
             const view = ISLAND_VIEWS[island];
             try {
                 const b = this.layer.getBounds();
-                if (b.isValid()) this.map.fitBounds(b, { padding: [20, 20] });
-                else if (view) this.map.setView(view.center, view.zoom);
+                if (b.isValid()) {
+                    // For an island-level view, fit normally — this is a deliberate
+                    // navigation from the all-Hawaiʻi view, the user expects to land
+                    // on that island.
+                    this.map.fitBounds(b, { padding: [20, 20] });
+                } else if (view) {
+                    this.map.setView(view.center, view.zoom);
+                }
             } catch (e) {
                 if (view) this.map.setView(view.center, view.zoom);
             }
@@ -1397,7 +1406,7 @@ const LOCATIONS = window.LOCATIONS || [];
             selected: { color: '#FFFFFF', weight: 3,   fillColor: '#FF6F00', fillOpacity: 0.92 },
         },
 
-        async goAhupuaa(island, moku) {
+        async goAhupuaa(island, moku, focusBounds) {
             this.currentIsland = island;
             this.currentMoku = moku;
             this.updateCrumbs();
@@ -1439,8 +1448,21 @@ const LOCATIONS = window.LOCATIONS || [];
             }).addTo(this.map);
 
             try {
-                const b = this.layer.getBounds();
-                if (b.isValid()) this.map.fitBounds(b, { padding: [30, 30] });
+                // Prefer focusing on the polygon the user actually tapped.
+                // Falls back to the whole moku group only when called without
+                // a focus (e.g. from the breadcrumb navigation).
+                const target = (focusBounds && focusBounds.isValid && focusBounds.isValid())
+                                ? focusBounds
+                                : this.layer.getBounds();
+                if (target.isValid()) {
+                    // Never zoom OUT from where the user already is. If the
+                    // current view already contains the target, leave the
+                    // camera alone.
+                    const currentBounds = this.map.getBounds();
+                    if (!currentBounds.contains(target)) {
+                        this.map.fitBounds(target, { padding: [40, 40], maxZoom: 14 });
+                    }
+                }
             } catch (e) {}
 
             if (this.mode === 'select') {

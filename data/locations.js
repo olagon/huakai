@@ -10,7 +10,7 @@ window.LOCATIONS = [
         "name": "Lēʻahi (Diamond Head)",
         "island": "Oʻahu",
         "moku": "Kona",
-        "ahupuaa": "Kapahulu",
+        "ahupuaa": "Waikīkī",
         "coords": [21.2635, -157.8049],
         "img": "images/oahu/leahi-diamond-head.jpg",
         "attribution": "RL0919, CC BY-SA 4.0, via Wikimedia Commons"
@@ -20,7 +20,7 @@ window.LOCATIONS = [
         "island": "Oʻahu",
         "moku": "Kona",
         "ahupuaa": "Maunalua",
-        "coords": [21.2688, -157.6936],
+        "coords": [21.267103, -157.695297],
         "img": "images/oahu/hanauma-bay.jpg",
         "attribution": "Vadmom, CC BY-SA 3.0, via Wikimedia Commons"
     },
@@ -29,7 +29,7 @@ window.LOCATIONS = [
         "island": "Oʻahu",
         "moku": "Kona",
         "ahupuaa": "Waikīkī",
-        "coords": [21.2761, -157.8275],
+        "coords": [21.2769, -157.8275],
         "img": "images/oahu/waikiki-beach-sunset.jpg",
         "attribution": "Alan Light, CC BY 2.0, via Wikimedia Commons"
     },
@@ -37,7 +37,7 @@ window.LOCATIONS = [
         "name": "Mānoa Falls",
         "island": "Oʻahu",
         "moku": "Kona",
-        "ahupuaa": "Mānoa",
+        "ahupuaa": "Waikīkī",
         "coords": [21.3323, -157.8009],
         "img": "images/oahu/manoa-falls.jpg",
         "attribution": "Edmund Garman, CC BY 2.0, via Wikimedia Commons"
@@ -64,8 +64,8 @@ window.LOCATIONS = [
         "name": "Ala Moana Beach Park",
         "island": "Oʻahu",
         "moku": "Kona",
-        "ahupuaa": "Waikīkī",
-        "coords": [21.2908, -157.8488],
+        "ahupuaa": "Honolulu",
+        "coords": [21.2916, -157.8488],
         "img": "images/oahu/ala-moana-beach-park.jpg",
         "attribution": "angelcandy.baby, CC BY 2.0, via Wikimedia Commons"
     },
@@ -82,8 +82,8 @@ window.LOCATIONS = [
         "name": "Kualoa / Mokoliʻi (Chinaman's Hat)",
         "island": "Oʻahu",
         "moku": "Koʻolaupoko",
-        "ahupuaa": "Kualoa",
-        "coords": [21.5055, -157.8286],
+        "ahupuaa": "Kualoa 1",
+        "coords": [21.512288, -157.835388],
         "img": "images/oahu/kualoa-mokolii-chinamans-hat.jpg",
         "attribution": "Daniel Ramirez, CC BY 2.0, via Wikimedia Commons"
     },
@@ -91,7 +91,7 @@ window.LOCATIONS = [
         "name": "Nuʻuanu Pali Lookout",
         "island": "Oʻahu",
         "moku": "Kona",
-        "ahupuaa": "Nuʻuanu",
+        "ahupuaa": "Honolulu",
         "coords": [21.3661, -157.7931],
         "img": "images/oahu/nuuanu-pali-lookout.jpg",
         "attribution": "Holly Cheng, CC BY-SA 3.0, via Wikimedia Commons"
@@ -99,8 +99,8 @@ window.LOCATIONS = [
     {
         "name": "Makapuʻu Point Lighthouse",
         "island": "Oʻahu",
-        "moku": "Koʻolaupoko",
-        "ahupuaa": "Waimānalo",
+        "moku": "Kona",
+        "ahupuaa": "Maunalua",
         "coords": [21.3092, -157.6489],
         "img": "images/oahu/makapuu-point-lighthouse.jpg",
         "attribution": "Kaleismith, CC BY-SA 3.0, via Wikimedia Commons"
@@ -110,7 +110,7 @@ window.LOCATIONS = [
         "island": "Oʻahu",
         "moku": "Koʻolaupoko",
         "ahupuaa": "Waimānalo",
-        "coords": [21.334, -157.6943],
+        "coords": [21.3332, -157.6943],
         "img": "images/oahu/waimanalo-beach.jpg",
         "attribution": "AlaskaDave, CC BY-SA 3.0, via Wikimedia Commons"
     },
@@ -119,7 +119,7 @@ window.LOCATIONS = [
         "island": "Oʻahu",
         "moku": "ʻEwa",
         "ahupuaa": "Hālawa",
-        "coords": [21.3649, -157.9499],
+        "coords": [21.3649, -157.9515],
         "img": "images/oahu/pearl-harbor-uss-arizona.jpg",
         "attribution": "U.S. Navy, Public Domain"
     },
@@ -127,7 +127,7 @@ window.LOCATIONS = [
         "name": "Laniakea Beach (Turtle Beach)",
         "island": "Oʻahu",
         "moku": "Waialua",
-        "ahupuaa": "Kawailoa",
+        "ahupuaa": "Kuikuiloloa",
         "coords": [21.6179, -158.0864],
         "img": "images/oahu/laniakea-beach-turtle-beach.jpg",
         "attribution": "Syced, CC0 1.0, via Wikimedia Commons"
@@ -136,7 +136,7 @@ window.LOCATIONS = [
         "name": "Haleʻiwa Bridge",
         "island": "Oʻahu",
         "moku": "Waialua",
-        "ahupuaa": "Paʻalaʻa",
+        "ahupuaa": "Kawailoa",
         "coords": [21.5927, -158.103],
         "img": "images/oahu/haleiwa-bridge.jpg",
         "attribution": "Eric Guinther, CC BY-SA 3.0, via Wikimedia Commons"
@@ -145,8 +145,8 @@ window.LOCATIONS = [
         "name": "Hāpuna Beach",
         "island": "Hawaiʻi",
         "moku": "Kohala",
-        "ahupuaa": "Lālāmilo",
-        "coords": [19.9926, -155.8265],
+        "ahupuaa": "ʻŌuli",
+        "coords": [19.993166, -155.825934],
         "img": "images/hawaii/hapuna-beach.jpg",
         "attribution": "Larry D. Moore, CC BY 4.0, via Wikimedia Commons"
     },
@@ -154,7 +154,7 @@ window.LOCATIONS = [
         "name": "Puʻukoholā Heiau",
         "island": "Hawaiʻi",
         "moku": "Kohala",
-        "ahupuaa": "Kawaihae",
+        "ahupuaa": "Kawaihae 2",
         "coords": [20.0267, -155.8222],
         "img": "images/hawaii/puukohola-heiau.jpg",
         "attribution": "Ken Lund, CC BY-SA 2.0, via Flickr/Wikimedia Commons"
@@ -164,7 +164,7 @@ window.LOCATIONS = [
         "island": "Hawaiʻi",
         "moku": "Hāmākua",
         "ahupuaa": "Waipiʻo",
-        "coords": [20.1205, -155.5891],
+        "coords": [20.1189, -155.5891],
         "img": "images/hawaii/waipio-valley-lookout.jpg",
         "attribution": "Paul Hirst, CC BY-SA 2.5, via Wikimedia Commons"
     },
@@ -172,7 +172,7 @@ window.LOCATIONS = [
         "name": "Akaka Falls",
         "island": "Hawaiʻi",
         "moku": "Hilo",
-        "ahupuaa": "Honomū",
+        "ahupuaa": "Honomū, Kuhua",
         "coords": [19.8544, -155.1531],
         "img": "images/hawaii/akaka-falls.jpg",
         "attribution": "Charles O'Rear / NARA, Public Domain, via Wikimedia Commons"
@@ -190,7 +190,7 @@ window.LOCATIONS = [
         "name": "Rainbow Falls (Waiānuenue)",
         "island": "Hawaiʻi",
         "moku": "Hilo",
-        "ahupuaa": "Punahoa",
+        "ahupuaa": "Piʻihonua",
         "coords": [19.7196, -155.1097],
         "img": "images/hawaii/rainbow-falls-waianuenue.jpg",
         "attribution": "Gr0ph0n, CC BY-SA 4.0, via Wikimedia Commons"
@@ -208,7 +208,7 @@ window.LOCATIONS = [
         "name": "Maunakea Observatories",
         "island": "Hawaiʻi",
         "moku": "Hāmākua",
-        "ahupuaa": "Kaʻohe",
+        "ahupuaa": "Kaʻohe Mauka",
         "coords": [19.8207, -155.4681],
         "img": "images/hawaii/maunakea-observatories.jpg",
         "attribution": "Bmurphy380, CC BY-SA 4.0, via Wikimedia Commons"
@@ -217,8 +217,8 @@ window.LOCATIONS = [
         "name": "Kealakekua Bay / Captain Cook Monument",
         "island": "Hawaiʻi",
         "moku": "Kona",
-        "ahupuaa": "Kealakekua",
-        "coords": [19.4816, -155.9324],
+        "ahupuaa": "Kaʻawaloa",
+        "coords": [19.4832, -155.9324],
         "img": "images/hawaii/kealakekua-bay-captain-cook-monument.jpg",
         "attribution": "Bamse, CC BY-SA 4.0, via Wikimedia Commons"
     },
@@ -234,8 +234,8 @@ window.LOCATIONS = [
     {
         "name": "Thurston Lava Tube (Nāhuku)",
         "island": "Hawaiʻi",
-        "moku": "Hilo",
-        "ahupuaa": "Waiākea",
+        "moku": "Kaʻū",
+        "ahupuaa": "Keauhou",
         "coords": [19.4139, -155.2384],
         "img": "images/hawaii/thurston-lava-tube-nahuku.jpg",
         "attribution": "Hermann Luyken, CC0 1.0, via Wikimedia Commons"
@@ -243,8 +243,8 @@ window.LOCATIONS = [
     {
         "name": "Haleakalā Crater",
         "island": "Maui",
-        "moku": "Makawao",
-        "ahupuaa": "Kealahou",
+        "moku": "Honuaʻula",
+        "ahupuaa": "Papaʻanui",
         "coords": [20.7097, -156.2535],
         "img": "images/maui/haleakala-crater.jpg",
         "attribution": "Michael Oswald, Public Domain, via Wikimedia Commons"
@@ -261,7 +261,7 @@ window.LOCATIONS = [
     {
         "name": "ʻĪao Needle (Kukaʻemoku)",
         "island": "Maui",
-        "moku": "Wailuku",
+        "moku": "Pūʻali Komohana",
         "ahupuaa": "Wailuku",
         "coords": [20.881, -156.536],
         "img": "images/maui/iao-needle-kukaemoku.jpg",
@@ -272,7 +272,7 @@ window.LOCATIONS = [
         "island": "Maui",
         "moku": "Honuaʻula",
         "ahupuaa": "Keauhou",
-        "coords": [20.6315, -156.4962],
+        "coords": [20.630934, -156.495634],
         "img": "images/maui/molokini-crater.jpg",
         "attribution": "Bossfrog, CC BY-SA 4.0, via Wikimedia Commons"
     },
@@ -280,7 +280,7 @@ window.LOCATIONS = [
         "name": "Seven Sacred Pools (ʻOheʻo Gulch)",
         "island": "Maui",
         "moku": "Kīpahulu",
-        "ahupuaa": "Kīpahulu",
+        "ahupuaa": "ʻAlaeiki",
         "coords": [20.6617, -156.0456],
         "img": "images/maui/seven-sacred-pools-oheo-gulch.jpg",
         "attribution": "JHill, CC BY-SA 2.0, via Wikimedia Commons"
@@ -289,8 +289,8 @@ window.LOCATIONS = [
         "name": "Makena Beach (Big Beach)",
         "island": "Maui",
         "moku": "Honuaʻula",
-        "ahupuaa": "Mākena",
-        "coords": [20.6326, -156.4496],
+        "ahupuaa": "Mohopilo",
+        "coords": [20.6334, -156.4496],
         "img": "images/maui/makena-beach-big-beach.jpg",
         "attribution": "Shaund, CC BY-SA 4.0, via Wikimedia Commons"
     },
@@ -343,8 +343,8 @@ window.LOCATIONS = [
         "name": "Spouting Horn",
         "island": "Kauaʻi",
         "moku": "Kona",
-        "ahupuaa": "Kōloa",
-        "coords": [21.8757, -159.4939],
+        "ahupuaa": "Lāwai",
+        "coords": [21.8853, -159.4939],
         "img": "images/kauai/spouting-horn.jpg",
         "attribution": "Tori Sloane, CC BY-SA 3.0, via Wikimedia Commons"
     },
@@ -352,7 +352,7 @@ window.LOCATIONS = [
         "name": "Poʻipū Beach",
         "island": "Kauaʻi",
         "moku": "Kona",
-        "ahupuaa": "Poʻipū",
+        "ahupuaa": "Kōloa",
         "coords": [21.8795, -159.4566],
         "img": "images/kauai/poipu-beach.jpg",
         "attribution": "Redshirt, Public Domain, via Wikimedia Commons"
@@ -378,26 +378,26 @@ window.LOCATIONS = [
     {
         "name": "Puʻu Pehe (Sweetheart Rock)",
         "island": "Lānaʻi",
-        "moku": "Lānaʻi",
-        "ahupuaa": "Kaunolū",
-        "coords": [20.7344, -156.8903],
+        "moku": "Lāhainā",
+        "ahupuaa": "Pālāwai",
+        "coords": [20.7352, -156.8903],
         "img": "images/lanai/puu-pehe-sweetheart-rock.jpg",
         "attribution": "Steve Jurvetson, CC BY 2.0, via Wikimedia Commons"
     },
     {
         "name": "Shipwreck Beach (Kaiolohia)",
         "island": "Lānaʻi",
-        "moku": "Koʻolau",
-        "ahupuaa": "Hauola",
-        "coords": [20.9167, -156.9],
+        "moku": "Lāhainā",
+        "ahupuaa": "Mahana",
+        "coords": [20.9143, -156.9],
         "img": "images/lanai/shipwreck-beach-kaiolohia.jpg",
         "attribution": "Halibut Thyme, Public Domain, via Wikimedia Commons"
     },
     {
         "name": "Garden of the Gods (Keahiakawelo)",
         "island": "Lānaʻi",
-        "moku": "Lānaʻi",
-        "ahupuaa": "Mahana",
+        "moku": "Lāhainā",
+        "ahupuaa": "Kaʻā",
         "coords": [20.8694, -156.988],
         "img": "images/lanai/garden-of-the-gods-keahiakawelo.jpg",
         "attribution": "Halibut Thyme, Public Domain, via Wikimedia Commons"
@@ -407,7 +407,7 @@ window.LOCATIONS = [
         "island": "Oʻahu",
         "moku": "Kona",
         "ahupuaa": "Honolulu",
-        "coords": [21.3074, -157.8657],
+        "coords": [21.309097, -157.864003],
         "img": "images/oahu/aloha-tower.jpg",
         "attribution": "Cliff, CC BY 2.0, via Wikimedia Commons"
     },
@@ -478,7 +478,7 @@ window.LOCATIONS = [
         "name": "Kaniakapūpū Ruins",
         "island": "Oʻahu",
         "moku": "Kona",
-        "ahupuaa": "Nuʻuanu",
+        "ahupuaa": "Honolulu",
         "coords": [21.3489, -157.8133],
         "img": "images/oahu/kaniakapupu-ruins.jpg",
         "attribution": "Joel Bradshaw, Public Domain, via Wikimedia Commons"
@@ -488,7 +488,7 @@ window.LOCATIONS = [
         "island": "Oʻahu",
         "moku": "Koʻolaupoko",
         "ahupuaa": "Kailua",
-        "coords": [21.3933, -157.7156],
+        "coords": [21.3925, -157.7156],
         "img": "images/oahu/lanikai-beach.jpg",
         "attribution": "Cristo Vlahos, CC BY-SA 4.0, via Wikimedia Commons"
     },
@@ -505,7 +505,7 @@ window.LOCATIONS = [
         "name": "Kualoa Regional Park",
         "island": "Oʻahu",
         "moku": "Koʻolaupoko",
-        "ahupuaa": "Kualoa",
+        "ahupuaa": "Kualoa 1",
         "coords": [21.5167, -157.8389],
         "img": "images/oahu/kualoa-regional-park.jpg",
         "attribution": "Joel Bradshaw, Public Domain, via Wikimedia Commons"
@@ -514,7 +514,7 @@ window.LOCATIONS = [
         "name": "Polynesian Cultural Center",
         "island": "Oʻahu",
         "moku": "Koʻolauloa",
-        "ahupuaa": "Lāʻie",
+        "ahupuaa": "Lāʻiemaloʻo",
         "coords": [21.6403, -157.9244],
         "img": "images/oahu/polynesian-cultural-center.jpg",
         "attribution": "Daniel Ramirez, CC BY 2.0, via Wikimedia Commons"
@@ -523,7 +523,7 @@ window.LOCATIONS = [
         "name": "Lāʻie Hawaiʻi Temple",
         "island": "Oʻahu",
         "moku": "Koʻolauloa",
-        "ahupuaa": "Lāʻie",
+        "ahupuaa": "Lāʻiewai",
         "coords": [21.645, -157.9239],
         "img": "images/oahu/laie-hawaii-temple.jpg",
         "attribution": "Joao Maximo, CC BY-SA 4.0, via Wikimedia Commons"
@@ -533,23 +533,23 @@ window.LOCATIONS = [
         "island": "Oʻahu",
         "moku": "Koʻolauloa",
         "ahupuaa": "Pūpūkea",
-        "coords": [21.665, -158.0533],
+        "coords": [21.664434, -158.052734],
         "img": "images/oahu/banzai-pipeline-ehukai-beach.jpg",
         "attribution": "Brocken Inaglory, CC BY-SA 3.0, via Wikimedia Commons"
     },
     {
         "name": "Waimea Bay",
         "island": "Oʻahu",
-        "moku": "Waialua",
+        "moku": "Koʻolauloa",
         "ahupuaa": "Waimea",
-        "coords": [21.6411, -158.0664],
+        "coords": [21.639403, -158.064703],
         "img": "images/oahu/waimea-bay.jpg",
         "attribution": "Joel Bradshaw, Public Domain, via Wikimedia Commons"
     },
     {
         "name": "Waimea Valley",
         "island": "Oʻahu",
-        "moku": "Waialua",
+        "moku": "Koʻolauloa",
         "ahupuaa": "Waimea",
         "coords": [21.6383, -158.0594],
         "img": "images/oahu/waimea-valley.jpg",
@@ -558,8 +558,8 @@ window.LOCATIONS = [
     {
         "name": "Mauna Loa",
         "island": "Hawaiʻi",
-        "moku": "Kaʻū",
-        "ahupuaa": "Kapāpala",
+        "moku": "Kona",
+        "ahupuaa": "Keauhou 2",
         "coords": [19.4756, -155.6083],
         "img": "images/hawaii/mauna-loa.jpg",
         "attribution": "USGS, Public Domain, via Wikimedia Commons"
@@ -568,7 +568,7 @@ window.LOCATIONS = [
         "name": "Halemaʻumaʻu Crater",
         "island": "Hawaiʻi",
         "moku": "Kaʻū",
-        "ahupuaa": "Kapāpala",
+        "ahupuaa": "Keauhou",
         "coords": [19.4069, -155.2834],
         "img": "images/hawaii/halemaumau-crater.jpg",
         "attribution": "USGS, Public Domain, via Wikimedia Commons"
@@ -586,8 +586,8 @@ window.LOCATIONS = [
         "name": "Green Sand Beach (Papakōlea)",
         "island": "Hawaiʻi",
         "moku": "Kaʻū",
-        "ahupuaa": "Kamaʻoa",
-        "coords": [18.9356, -155.6464],
+        "ahupuaa": "Kamāʻoa, Puʻuʻeo, Ke",
+        "coords": [18.9364, -155.6464],
         "img": "images/hawaii/green-sand-beach-papakolea.jpg",
         "attribution": "Tomintx, CC BY-SA 3.0, via Wikimedia Commons"
     },
@@ -595,7 +595,7 @@ window.LOCATIONS = [
         "name": "Honokaʻa Town",
         "island": "Hawaiʻi",
         "moku": "Hāmākua",
-        "ahupuaa": "Honokaʻa",
+        "ahupuaa": "Haina",
         "coords": [20.0794, -155.4683],
         "img": "images/hawaii/honokaa-town.jpg",
         "attribution": "W Nowicki, CC BY-SA 3.0, via Wikimedia Commons"
@@ -604,8 +604,8 @@ window.LOCATIONS = [
         "name": "Laupāhoehoe Point",
         "island": "Hawaiʻi",
         "moku": "Hilo",
-        "ahupuaa": "Laupāhoehoe",
-        "coords": [19.9897, -155.235],
+        "ahupuaa": "Laupāhoehoe, Welokā",
+        "coords": [19.9857, -155.235],
         "img": "images/hawaii/laupahoehoe-point.jpg",
         "attribution": "W Nowicki, CC BY-SA 3.0, via Wikimedia Commons"
     },
@@ -614,7 +614,7 @@ window.LOCATIONS = [
         "island": "Hawaiʻi",
         "moku": "Hilo",
         "ahupuaa": "Waiākea",
-        "coords": [19.7322, -155.0764],
+        "coords": [19.725977, -155.070177],
         "img": "images/hawaii/liliuokalani-park-and-gardens.jpg",
         "attribution": "W Nowicki, CC BY-SA 3.0, via Wikimedia Commons"
     },
@@ -631,7 +631,7 @@ window.LOCATIONS = [
         "name": "Kaunaʻoa Bay (Mauna Kea Beach)",
         "island": "Hawaiʻi",
         "moku": "Kohala",
-        "ahupuaa": "Kawaihae",
+        "ahupuaa": "ʻŌuli",
         "coords": [20.0019, -155.8267],
         "img": "images/hawaii/kaunaoa-bay-mauna-kea-beach.jpg",
         "attribution": "W Nowicki, CC BY-SA 3.0, via Wikimedia Commons"
@@ -640,7 +640,7 @@ window.LOCATIONS = [
         "name": "Hulihee Palace",
         "island": "Hawaiʻi",
         "moku": "Kona",
-        "ahupuaa": "Kailua",
+        "ahupuaa": "Lanihau 1-2, Moeauo",
         "coords": [19.6403, -155.9961],
         "img": "images/hawaii/hulihee-palace.jpg",
         "attribution": "W Nowicki, CC BY-SA 3.0, via Wikimedia Commons"
@@ -649,8 +649,8 @@ window.LOCATIONS = [
         "name": "Mokuʻaikaua Church",
         "island": "Hawaiʻi",
         "moku": "Kona",
-        "ahupuaa": "Kailua",
-        "coords": [19.6394, -155.9956],
+        "ahupuaa": "Lanihau 1-2, Moeauo",
+        "coords": [19.6402, -155.9956],
         "img": "images/hawaii/mokuaikaua-church.jpg",
         "attribution": "W Nowicki, CC BY-SA 3.0, via Wikimedia Commons"
     },
@@ -658,7 +658,7 @@ window.LOCATIONS = [
         "name": "Lāhainā Banyan Tree",
         "island": "Maui",
         "moku": "Lāhainā",
-        "ahupuaa": "Lāhainā",
+        "ahupuaa": "Paunau",
         "coords": [20.8722, -156.6772],
         "img": "images/maui/lahaina-banyan-tree.jpg",
         "attribution": "Forest & Kim Starr, CC BY 3.0, via Wikimedia Commons"
@@ -667,8 +667,8 @@ window.LOCATIONS = [
         "name": "Waiola Church",
         "island": "Maui",
         "moku": "Lāhainā",
-        "ahupuaa": "Lāhainā",
-        "coords": [20.8689, -156.6783],
+        "ahupuaa": "Paunau",
+        "coords": [20.870031, -156.677169],
         "img": "images/maui/waiola-church.jpg",
         "attribution": "Joel Bradshaw, Public Domain, via Wikimedia Commons"
     },
@@ -676,7 +676,7 @@ window.LOCATIONS = [
         "name": "Old Lāhainā Courthouse",
         "island": "Maui",
         "moku": "Lāhainā",
-        "ahupuaa": "Lāhainā",
+        "ahupuaa": "Paunau",
         "coords": [20.8719, -156.6775],
         "img": "images/maui/old-lahaina-courthouse.jpg",
         "attribution": "Joel Bradshaw, Public Domain, via Wikimedia Commons"
@@ -684,9 +684,9 @@ window.LOCATIONS = [
     {
         "name": "Honolua Bay",
         "island": "Maui",
-        "moku": "Lāhainā",
+        "moku": "Kāʻanapali",
         "ahupuaa": "Honolua",
-        "coords": [21.0136, -156.6394],
+        "coords": [21.013034, -156.638834],
         "img": "images/maui/honolua-bay.jpg",
         "attribution": "Forest & Kim Starr, CC BY 3.0, via Wikimedia Commons"
     },
@@ -702,26 +702,26 @@ window.LOCATIONS = [
     {
         "name": "Nāpili Bay",
         "island": "Maui",
-        "moku": "Lāhainā",
-        "ahupuaa": "Nāpili",
-        "coords": [20.9956, -156.6678],
+        "moku": "Kāʻanapali",
+        "ahupuaa": "Nāpili 2-3",
+        "coords": [20.9956, -156.6662],
         "img": "images/maui/napili-bay.jpg",
         "attribution": "Forest & Kim Starr, CC BY 3.0, via Wikimedia Commons"
     },
     {
         "name": "Kahakuloa Head",
         "island": "Maui",
-        "moku": "Wailuku",
+        "moku": "Kāʻanapali",
         "ahupuaa": "Kahakuloa",
-        "coords": [21.005, -156.54],
+        "coords": [21.000475, -156.544525],
         "img": "images/maui/kahakuloa-head.jpg",
         "attribution": "Forest & Kim Starr, CC BY 3.0, via Wikimedia Commons"
     },
     {
         "name": "Pāʻia Town",
         "island": "Maui",
-        "moku": "Lāhainā",
-        "ahupuaa": "Pāʻia",
+        "moku": "Hāmākuapoko",
+        "ahupuaa": "Hāmākuapoko",
         "coords": [20.9022, -156.3697],
         "img": "images/maui/paia-town.jpg",
         "attribution": "Forest & Kim Starr, CC BY 3.0, via Wikimedia Commons"
@@ -730,7 +730,7 @@ window.LOCATIONS = [
         "name": "Hāna Bay",
         "island": "Maui",
         "moku": "Hāna",
-        "ahupuaa": "Hāna",
+        "ahupuaa": "Kawaipapa",
         "coords": [20.76, -155.9889],
         "img": "images/maui/hana-bay.jpg",
         "attribution": "Forest & Kim Starr, CC BY 3.0, via Wikimedia Commons"
@@ -738,8 +738,8 @@ window.LOCATIONS = [
     {
         "name": "Wailea Beach",
         "island": "Maui",
-        "moku": "Honuaʻula",
-        "ahupuaa": "Wailea",
+        "moku": "Kula",
+        "ahupuaa": "Paeahu",
         "coords": [20.6856, -156.4422],
         "img": "images/maui/wailea-beach.jpg",
         "attribution": "Forest & Kim Starr, CC BY 3.0, via Wikimedia Commons"
@@ -748,7 +748,7 @@ window.LOCATIONS = [
         "name": "Kula Botanical Garden",
         "island": "Maui",
         "moku": "Kula",
-        "ahupuaa": "Kula",
+        "ahupuaa": "Kamehamenui",
         "coords": [20.7708, -156.3406],
         "img": "images/maui/kula-botanical-garden.jpg",
         "attribution": "Forest & Kim Starr, CC BY 3.0, via Wikimedia Commons"
@@ -819,9 +819,9 @@ window.LOCATIONS = [
     {
         "name": "Hanakāpīʻai Beach",
         "island": "Kauaʻi",
-        "moku": "Haleleʻa",
+        "moku": "Nāpali",
         "ahupuaa": "Hanakāpīʻai",
-        "coords": [22.2161, -159.6053],
+        "coords": [22.208746, -159.597946],
         "img": "images/kauai/hanakapiai-beach.jpg",
         "attribution": "Forest & Kim Starr, CC BY 3.0, via Wikimedia Commons"
     },
@@ -829,8 +829,8 @@ window.LOCATIONS = [
         "name": "Hanalei Bay",
         "island": "Kauaʻi",
         "moku": "Haleleʻa",
-        "ahupuaa": "Hanalei",
-        "coords": [22.2061, -159.5028],
+        "ahupuaa": "Waiʻoli",
+        "coords": [22.204403, -159.501103],
         "img": "images/kauai/hanalei-bay.jpg",
         "attribution": "Forest & Kim Starr, CC BY 3.0, via Wikimedia Commons"
     },
@@ -838,7 +838,7 @@ window.LOCATIONS = [
         "name": "Lumahaʻi Beach",
         "island": "Kauaʻi",
         "moku": "Haleleʻa",
-        "ahupuaa": "Lumahaʻi",
+        "ahupuaa": "Wainiha",
         "coords": [22.22, -159.5567],
         "img": "images/kauai/lumahai-beach.jpg",
         "attribution": "Forest & Kim Starr, CC BY 3.0, via Wikimedia Commons"
@@ -873,8 +873,8 @@ window.LOCATIONS = [
     {
         "name": "Pāpōhaku Beach",
         "island": "Molokaʻi",
-        "moku": "Kaluakoʻi",
-        "ahupuaa": "Kaluakoʻi",
+        "moku": "Kona",
+        "ahupuaa": "Kaluako‘i",
         "coords": [21.1856, -157.2456],
         "img": "images/molokai/papohaku-beach.jpg",
         "attribution": "Forest & Kim Starr, CC BY 3.0 US, via Wikimedia Commons"
@@ -882,17 +882,17 @@ window.LOCATIONS = [
     {
         "name": "Mokuhoʻoniki (Elephant Rock)",
         "island": "Molokaʻi",
-        "moku": "Manaʻe",
-        "ahupuaa": "Hālawa",
-        "coords": [21.1469, -156.705],
+        "moku": "Kona",
+        "ahupuaa": "Keōpukaloa",
+        "coords": [21.1469, -156.713],
         "img": "images/molokai/mokuhooniki-elephant-rock.jpg",
         "attribution": "Forest & Kim Starr, CC BY 3.0 US, via Wikimedia Commons"
     },
     {
         "name": "St. Joseph Church (Kamalō)",
         "island": "Molokaʻi",
-        "moku": "Kawela",
-        "ahupuaa": "Kamalo",
+        "moku": "Kona",
+        "ahupuaa": "Kamalō",
         "coords": [21.0517, -156.8794],
         "img": "images/molokai/st-joseph-church-kamalo.jpg",
         "attribution": "W. Nowicki, CC BY-SA 3.0, via Wikimedia Commons"
@@ -900,9 +900,9 @@ window.LOCATIONS = [
     {
         "name": "Hālawa Bay",
         "island": "Molokaʻi",
-        "moku": "Manaʻe",
+        "moku": "Koʻolau",
         "ahupuaa": "Hālawa",
-        "coords": [21.1633, -156.7344],
+        "coords": [21.161603, -156.736097],
         "img": "images/molokai/halawa-bay.jpg",
         "attribution": "Anonymous contributor, CC BY-SA 3.0, via Wikimedia Commons"
     },
@@ -910,16 +910,16 @@ window.LOCATIONS = [
         "name": "Kalaupapa Mule Trail",
         "island": "Molokaʻi",
         "moku": "Koʻolau",
-        "ahupuaa": "Makanalua",
-        "coords": [21.1817, -156.9939],
+        "ahupuaa": "Kalaupapa",
+        "coords": [21.1801, -156.9939],
         "img": "images/molokai/kalaupapa-mule-trail.jpg",
         "attribution": "James Brennan Hawaii, CC BY-SA 3.0, via Wikimedia Commons"
     },
     {
         "name": "Lānaʻi City",
         "island": "Lānaʻi",
-        "moku": "Kona",
-        "ahupuaa": "Pālāwai",
+        "moku": "Lāhainā",
+        "ahupuaa": "Kamoku",
         "coords": [20.8264, -156.9197],
         "img": "images/lanai/lanai-city.jpg",
         "attribution": "Joel Bradshaw, Public Domain, via Wikimedia Commons"
@@ -927,8 +927,8 @@ window.LOCATIONS = [
     {
         "name": "Hotel Lānaʻi",
         "island": "Lānaʻi",
-        "moku": "Kona",
-        "ahupuaa": "Pālāwai",
+        "moku": "Lāhainā",
+        "ahupuaa": "Kamoku",
         "coords": [20.8275, -156.9211],
         "img": "images/lanai/hotel-lanai.jpg",
         "attribution": "Joel Bradshaw, CC BY-SA 4.0, via Wikimedia Commons"
@@ -954,8 +954,8 @@ window.LOCATIONS = [
     {
         "name": "Hulopoʻe Bay (Lava Flows)",
         "island": "Lānaʻi",
-        "moku": "Kona",
-        "ahupuaa": "Mānele",
+        "moku": "Lāhainā",
+        "ahupuaa": "Pālāwai",
         "coords": [20.7411, -156.8911],
         "img": "images/lanai/hulopoe-bay-lava-flows.jpg",
         "attribution": "Frank Schulenburg, CC BY-SA 4.0, via Wikimedia Commons"
@@ -963,8 +963,8 @@ window.LOCATIONS = [
     {
         "name": "Polihua Beach",
         "island": "Lānaʻi",
-        "moku": "Koʻolau",
-        "ahupuaa": "Hauola",
+        "moku": "Lāhainā",
+        "ahupuaa": "Kaʻā",
         "coords": [20.9119, -157.0367],
         "img": "images/lanai/polihua-beach.jpg",
         "attribution": "Bernard Spragg, CC0, via Wikimedia Commons"
@@ -972,8 +972,8 @@ window.LOCATIONS = [
     {
         "name": "Niʻihau Sea Cliffs (aerial)",
         "island": "Niʻihau",
-        "moku": "Paniʻo",
-        "ahupuaa": "Pūʻuwai",
+        "moku": "Kona",
+        "ahupuaa": "Waimea",
         "coords": [21.8736, -160.1828],
         "img": "images/niihau/niihau-sea-cliffs-aerial.jpg",
         "attribution": "Polihale, CC BY-SA 3.0, via Wikimedia Commons"
@@ -981,8 +981,8 @@ window.LOCATIONS = [
     {
         "name": "Lehua Island (NARA aerial)",
         "island": "Niʻihau",
-        "moku": "Paniʻo",
-        "ahupuaa": "Pūʻuwai",
+        "moku": "Kona",
+        "ahupuaa": "Waimea",
         "coords": [22.0167, -160.1],
         "img": "images/niihau/lehua-island-nara-aerial.jpg",
         "attribution": "U.S. National Archives (NARA), Public Domain, via Wikimedia Commons"

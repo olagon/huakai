@@ -527,6 +527,73 @@
         .journey-tile .journey-status { font-size: 10px; }
     }
 
+    /* Map-only game screen: the action card and its single big CTA. */
+    .action-card {
+        background: rgba(255, 255, 255, 0.92);
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: 24px;
+        padding: 22px 22px 18px;
+        box-shadow: 0 18px 48px rgba(15, 23, 42, 0.10);
+        backdrop-filter: blur(10px);
+    }
+    @media (min-width: 640px) {
+        .action-card { padding: 28px 28px 22px; }
+    }
+
+    .answer-btn {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        padding: 18px 22px;
+        border-radius: 18px;
+        background: linear-gradient(135deg, #00838F 0%, #006B75 100%);
+        color: #fff;
+        font-weight: 800;
+        font-size: 16px;
+        letter-spacing: -0.01em;
+        border: none;
+        cursor: pointer;
+        box-shadow:
+            0 12px 28px rgba(0, 131, 143, 0.35),
+            inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        transition: transform 140ms ease, box-shadow 140ms ease, filter 140ms ease;
+        position: relative;
+    }
+    @media (min-width: 640px) {
+        .answer-btn { font-size: 18px; padding: 22px 26px; }
+    }
+    .answer-btn:hover {
+        transform: translateY(-1px);
+        filter: brightness(1.05);
+        box-shadow:
+            0 16px 36px rgba(0, 131, 143, 0.42),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+    .answer-btn:active { transform: translateY(0); }
+    .answer-btn .answer-btn-arrow {
+        font-size: 18px;
+        margin-left: 4px;
+        transition: transform 160ms ease;
+    }
+    .answer-btn:hover .answer-btn-arrow { transform: translateX(4px); }
+    /* Soft pulsing ring on first appearance so the affordance is instant. */
+    .answer-btn::after {
+        content: "";
+        position: absolute;
+        inset: -2px;
+        border-radius: 20px;
+        pointer-events: none;
+        box-shadow: 0 0 0 0 rgba(0, 131, 143, 0.45);
+        animation: answer-pulse 2.4s ease-out 2;
+    }
+    @keyframes answer-pulse {
+        0%   { box-shadow: 0 0 0 0   rgba(0, 131, 143, 0.45); }
+        70%  { box-shadow: 0 0 0 14px rgba(0, 131, 143, 0); }
+        100% { box-shadow: 0 0 0 0   rgba(0, 131, 143, 0); }
+    }
+
     /* Click-to-enlarge CTA at the bottom of the round photo. Subtle pulse
        on first appearance so the affordance is obvious without being noisy. */
     .enlarge-cta {
@@ -671,114 +738,93 @@
                 Hana Hou (Start)
             </button>
         </div>
-        <!-- View: Game Round -->
+        <!-- View: Game Round (map-only) -->
         <div id="game-screen" class="hidden w-full animate-fade-in">
-            <!-- Progress Bar -->
+            <!-- Round + score header. Subtle, doesn't compete with the photo. -->
             <div class="w-full mb-5">
-                <div class="flex items-center justify-between mb-2">
-                    <p class="text-xs font-semibold text-black/50">Round <span id="round-number">1</span>/3</p>
-                    <p class="text-xs font-semibold text-black/50"><span class="tabular-nums" id="current-score-inline">0</span>/3</p>
+                <div class="flex items-center justify-between mb-2 text-xs">
+                    <span class="font-extrabold tracking-widest uppercase text-black/55">Round <span id="round-number" class="text-kapa-ocean">1</span> <span class="text-black/35">of 3</span></span>
+                    <span class="font-semibold text-black/55">Score <span class="tabular-nums font-extrabold text-kapa-ocean" id="current-score-inline">0</span> <span class="text-black/35">/ 3</span></span>
                 </div>
-                <div class="w-full bg-black/5 rounded-full h-2 overflow-hidden">
-                    <div id="progress-bar" class="bg-kapa-ocean h-2 rounded-full transition-all duration-500" style="width: 10%"></div>
+                <div class="w-full bg-black/5 rounded-full h-1.5 overflow-hidden">
+                    <div id="progress-bar" class="bg-kapa-ocean h-1.5 rounded-full transition-all duration-500" style="width: 33%"></div>
                 </div>
             </div>
-            <div class="glass-panel rounded-3xl overflow-hidden mb-6">
-                <div class="grid md:grid-cols-2">
-                    <!-- Image Container -->
-                    <div class="relative aspect-video md:aspect-auto md:min-h-[420px] bg-black/5 flex items-center justify-center overflow-hidden">
-                        <!-- Loading -->
-                        <div class="absolute inset-0 flex items-center justify-center z-0">
-                            <div class="text-black/35 animate-pulse font-semibold text-sm">Loading</div>
-                        </div>
 
-                        <!-- Image Element (click to enlarge) -->
-                        <img id="location-img" referrerpolicy="no-referrer" src="" alt="Guess the location" onclick="imageLightbox.openCurrent()" style="cursor: zoom-in;" class="relative z-0 w-full h-full object-cover transition-opacity duration-500 opacity-0">
-
-                        <!-- Soft Gradient Overlay -->
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent z-10 pointer-events-none"></div>
-
-                        <!-- Attribution (Always visible) -->
-                        <div class="absolute top-3 left-3 right-3 z-20 flex items-center justify-between gap-3">
-                            <div class="ui-pill bg-black/45 border-white/15 text-white text-[11px] max-w-[78%] overflow-hidden">
-                                <span id="attribution-text" class="truncate"></span>
-                            </div>
-                            <div class="ui-pill bg-black/45 border-white/15 text-white text-[11px] px-3 py-1">
-                                CC
-                            </div>
-                        </div>
-
-                        <!-- Hidden mobile attribution hook (kept for JS compatibility) -->
-                        <span id="attribution-text-mobile" class="hidden"></span>
-
-                        <!-- Bottom click-to-enlarge hint (replaces the previous map button) -->
-                        <button type="button" onclick="imageLightbox.openCurrent()"
-                            class="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 enlarge-cta"
-                            aria-label="Open larger image">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-                            <span>Tap photo to enlarge</span>
-                        </button>
+            <!-- Photo card: the hero. Big, clean, click anywhere to enlarge. -->
+            <div class="glass-panel rounded-3xl overflow-hidden mb-5">
+                <div class="relative aspect-video sm:aspect-[16/10] bg-black/5 flex items-center justify-center overflow-hidden">
+                    <!-- Loading -->
+                    <div class="absolute inset-0 flex items-center justify-center z-0">
+                        <div class="text-black/35 animate-pulse font-semibold text-sm">Loading</div>
                     </div>
 
-                    <!-- Controls -->
-                    <div class="p-6 sm:p-7 md:p-8 space-y-5">
-                        <!-- Island Select -->
-                        <div>
-                            <label class="block text-[11px] font-extrabold tracking-widest text-black/45 mb-2 uppercase">1 Mokupuni</label>
-                            <select id="island-select" onchange="game.handleIslandChange()" class="ui-select">
-                                <option value="">Select Island...</option>
-                                <option value="Oʻahu">Oʻahu</option>
-                                <option value="Maui">Maui</option>
-                                <option value="Hawaiʻi">Hawaiʻi</option>
-                                <option value="Kauaʻi">Kauaʻi</option>
-                                <option value="Molokaʻi">Molokaʻi</option>
-                                <option value="Lānaʻi">Lānaʻi</option>
-                                <option value="Niʻihau">Niʻihau</option>
-                                <option value="Kahoʻolawe">Kahoʻolawe</option>
-                            </select>
+                    <!-- Image -->
+                    <img id="location-img" referrerpolicy="no-referrer" src="" alt="Guess the location" onclick="imageLightbox.openCurrent()" style="cursor: zoom-in;" class="relative z-0 w-full h-full object-cover transition-opacity duration-500 opacity-0">
+
+                    <!-- Soft gradient -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent z-10 pointer-events-none"></div>
+
+                    <!-- Attribution -->
+                    <div class="absolute top-3 left-3 right-3 z-20 flex items-center justify-between gap-3">
+                        <div class="ui-pill bg-black/45 border-white/15 text-white text-[11px] max-w-[78%] overflow-hidden">
+                            <span id="attribution-text" class="truncate"></span>
                         </div>
-
-                        <!-- Moku Select -->
-                        <div>
-                            <label class="block text-[11px] font-extrabold tracking-widest text-black/45 mb-2 uppercase">2 Moku</label>
-                            <select id="moku-select" onchange="game.handleMokuChange()" disabled class="ui-select">
-                                <option value="">Select Moku...</option>
-                            </select>
-                        </div>
-
-                        <!-- Ahupuaa Select -->
-                        <div>
-                            <label class="block text-[11px] font-extrabold tracking-widest text-black/45 mb-2 uppercase">3 Ahupuaʻa</label>
-                            <select id="ahupuaa-select" disabled class="ui-select">
-                                <option value="">Select Ahupuaʻa...</option>
-                            </select>
-                        </div>
-
-                        <!-- Submit Button -->
-                        <button id="submit-btn" onclick="game.submitGuess()" class="ui-btn ui-btn-primary" disabled>
-                            Huli
-                        </button>
-
-                        <!-- Map Mode: alternate input method. Tap through 3 levels to answer. -->
-                        <button type="button" onclick="helpMap.openMapMode()" class="ui-btn ui-btn-secondary text-sm" style="border-color: rgba(0,131,143,0.35); color: #00838F;">
-                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="M9 20l-5-2V6l5 2 6-2 5 2v12l-5-2-6 2z"/>
-                                <path d="M9 8v12"/><path d="M15 6v12"/>
-                            </svg>
-                            Or use Map Mode (skip the dropdowns)
-                        </button>
-
-                        <p class="text-xs text-black/55 leading-relaxed">
-                            Use the dropdowns and Huli, or tap through the map. You score only when all 3 are right.
-                        </p>
-                        <p class="text-[11px] text-black/45 leading-relaxed border-t border-black/10 pt-3">
-                            Boundaries here come from the State of Hawaiʻi modern GIS layer.
-                            Some traditional ahupuaʻa (like Mānoa, Makiki, Pālolo) sit inside larger
-                            modern polygons (Honolulu) and won't appear separately.
-                            <a href="#" onclick="legal.open('terms'); return false;" class="text-kapa-ocean font-semibold">More on this</a>.
-                        </p>
+                        <div class="ui-pill bg-black/45 border-white/15 text-white text-[11px] px-3 py-1">CC</div>
                     </div>
+                    <span id="attribution-text-mobile" class="hidden"></span>
+
+                    <!-- Tap-to-enlarge -->
+                    <button type="button" onclick="imageLightbox.openCurrent()"
+                        class="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 enlarge-cta"
+                        aria-label="Open larger image">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                        <span>Tap photo to enlarge</span>
+                    </button>
                 </div>
+            </div>
+
+            <!-- Action card: a single confident CTA. The whole game funnels here. -->
+            <div class="action-card">
+                <div class="text-center mb-4">
+                    <div class="text-[11px] uppercase tracking-[0.2em] font-extrabold text-black/45 mb-1">Where in Hawaiʻi was this?</div>
+                    <div class="text-sm text-black/65">Tap through mokupuni → moku → ahupuaʻa to answer.</div>
+                </div>
+                <button onclick="helpMap.openMapMode()" class="answer-btn">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M9 20l-5-2V6l5 2 6-2 5 2v12l-5-2-6 2z"/>
+                        <path d="M9 8v12"/><path d="M15 6v12"/>
+                    </svg>
+                    <span>Open the map to answer</span>
+                    <span class="answer-btn-arrow" aria-hidden="true">→</span>
+                </button>
+                <p class="text-[11px] text-black/45 mt-4 leading-relaxed text-center">
+                    Boundaries from the State of Hawaiʻi GIS layer. Some traditional ahupuaʻa
+                    are merged into larger modern polygons. <a href="#" onclick="legal.open('terms'); return false;" class="text-kapa-ocean font-semibold">More on this</a>.
+                </p>
+            </div>
+
+            <!-- Hidden form state. Map Mode populates these, then submitGuess reads them.
+                 Keeping them in the DOM lets every existing helper keep working. -->
+            <div class="hidden" aria-hidden="true">
+                <select id="island-select" onchange="game.handleIslandChange()">
+                    <option value="">Select Island...</option>
+                    <option value="Oʻahu">Oʻahu</option>
+                    <option value="Maui">Maui</option>
+                    <option value="Hawaiʻi">Hawaiʻi</option>
+                    <option value="Kauaʻi">Kauaʻi</option>
+                    <option value="Molokaʻi">Molokaʻi</option>
+                    <option value="Lānaʻi">Lānaʻi</option>
+                    <option value="Niʻihau">Niʻihau</option>
+                    <option value="Kahoʻolawe">Kahoʻolawe</option>
+                </select>
+                <select id="moku-select" onchange="game.handleMokuChange()" disabled>
+                    <option value="">Select Moku...</option>
+                </select>
+                <select id="ahupuaa-select" disabled>
+                    <option value="">Select Ahupuaʻa...</option>
+                </select>
+                <button id="submit-btn" onclick="game.submitGuess()" disabled>Submit</button>
             </div>
         </div>
         <!-- View: Result Overlay (Feedback) -->

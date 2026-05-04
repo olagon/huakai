@@ -612,6 +612,12 @@
                         <p class="text-xs text-black/55 leading-relaxed">
                             Use the dropdowns and Huli, or tap through the map. You score only when all 3 are right.
                         </p>
+                        <p class="text-[11px] text-black/45 leading-relaxed border-t border-black/10 pt-3">
+                            Boundaries here come from the State of Hawaiʻi modern GIS layer.
+                            Some traditional ahupuaʻa (like Mānoa, Makiki, Pālolo) sit inside larger
+                            modern polygons (Honolulu) and won't appear separately.
+                            <a href="#" onclick="legal.open('terms'); return false;" class="text-kapa-ocean font-semibold">More on this</a>.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -710,6 +716,7 @@
                 <div id="help-map" class="flex-1 bg-gray-200" style="min-height:0"></div>
                 <div id="help-info" class="px-3 sm:px-4 py-2 text-xs text-black/75 bg-white/95 border-t border-black/10 leading-snug">
                     Tap any island to see its moku, then tap a moku to see its ahupuaʻa.
+                    <span class="text-black/45">Modern boundaries from State GIS — some traditional ahupuaʻa are merged.</span>
                 </div>
             </div>
         </div>
@@ -1663,9 +1670,11 @@ const LOCATIONS = window.LOCATIONS || [];
                 <p>Photos come from <a href="https://commons.wikimedia.org/" target="_blank" rel="noopener">Wikimedia Commons</a>. Each photo is shown with its credit and license on the photo itself.</p>
                 <p>If you find a wrong attribution, a misspelled place name, or a photo that does not match the ahupuaʻa it is placed in, please let us know.</p>
 
-                <h2>Accuracy</h2>
-                <p>Hawaiian place name boundaries are not always crisp. There are competing historical sources, and some ahupuaʻa names have been spelled differently over time. We use the official state GIS layer as our reference, but we will be wrong sometimes. If you spot an error, tell us.</p>
-                <p>This game is a learning tool, not an authoritative record. For deeper study, work with a kumu, take a Hawaiian Studies class, or read the original mahele records.</p>
+                <h2>About the boundaries</h2>
+                <p>Moku Match uses the modern ahupuaʻa boundary layer published by the Hawaiʻi Statewide GIS Program. This is an administrative dataset built originally from Office of Hawaiian Affairs records. It is the most authoritative single source we have access to, and using it means the answer the game scores is the same answer the help map shows.</p>
+                <p>The trade-off is that this modern layer is not the full traditional record. In several places it merges historical ahupuaʻa into larger modern polygons. The most visible example is the Honolulu area on Oʻahu: traditional ahupuaʻa like Mānoa, Pauoa, Makiki, Pālolo, Waiʻalae and others all sit inside one big "Honolulu" polygon in the State layer. So if a photo of Mānoa Falls is scored as "Honolulu," that is what the State map says, not a mistake on our end.</p>
+                <p>If you want to study the older, finer-grained traditional boundaries, work with a kumu, take a Hawaiian Studies class, or read the original mahele records. Sources like Awaiaulu and the Bishop Museum archive the historical detail this game cannot fully represent.</p>
+                <p>Hawaiian place name spellings also vary across sources. We follow the State layer's diacriticals where present. If you spot a misspelling or an attribution error, tell us.</p>
 
                 <h2>No warranty</h2>
                 <p>Moku Match is provided "as is." We do our best, but we cannot promise every photo loads, every place is correctly attributed, or that the help map data is always available. The third party services Moku Match relies on can go down, change their URLs, or alter their data.</p>

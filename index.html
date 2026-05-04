@@ -5,6 +5,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moku Match | A Hawaiʻi Geography Game</title>
+
+    <!-- Google Analytics 4 (privacy-friendly).
+         Measurement ID: G-TJDPNRFD4K (Moku Match property).
+         IP anonymization on, no Google signals, no ad personalization. -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TJDPNRFD4K"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){ dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-TJDPNRFD4K', {
+            anonymize_ip: true,
+            allow_google_signals: false,
+            allow_ad_personalization_signals: false
+        });
+    </script>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Leaflet CSS -->
@@ -798,6 +813,11 @@
                     <span>Open the map to answer</span>
                     <span class="answer-btn-arrow" aria-hidden="true">→</span>
                 </button>
+                <div class="text-center mt-3">
+                    <button onclick="game.giveUp()" type="button" class="text-xs text-black/55 hover:text-kapa-clay underline-offset-2 hover:underline transition-colors" aria-label="Show me the answer">
+                        No idea? <span class="font-semibold">Show me the answer</span>
+                    </button>
+                </div>
                 <p class="text-[11px] text-black/45 mt-4 leading-relaxed text-center">
                     Boundaries from the State of Hawaiʻi GIS layer. Some traditional ahupuaʻa
                     are merged into larger modern polygons. <a href="#" onclick="legal.open('terms'); return false;" class="text-kapa-ocean font-semibold">More on this</a>.
@@ -1123,6 +1143,7 @@ const LOCATIONS = window.LOCATIONS || [];
     // ----------------------------------------------------------------
     const progressView = {
         open() {
+            track('progress_opened', { sites_solved: stats.solvedCount(), total_sites: LOCATIONS.length });
             this.render();
             document.getElementById('progress-modal').classList.remove('hidden');
         },
@@ -1187,6 +1208,17 @@ const LOCATIONS = window.LOCATIONS || [];
         if (e.key === 'Escape') progressView.close();
     });
 
+    // ----------------------------------------------------------------
+    // ANALYTICS — thin wrapper around GA4 gtag. No-ops gracefully if
+    // gtag isn't loaded (offline, ad blockers, dev with empty ID).
+    // Every event passes through here, so we have one place to flip
+    // the kill switch if we ever want to.
+    // ----------------------------------------------------------------
+    function track(eventName, params) {
+        if (typeof gtag !== 'function') return;
+        try { gtag('event', eventName, params || {}); } catch (e) {}
+    }
+
     // Tiny HTML escape helper (used by the journey grid reveal)
     function escapeHTML(s) {
         return String(s == null ? '' : s)
@@ -1240,6 +1272,13 @@ const LOCATIONS = window.LOCATIONS || [];
             this.currentRoundIndex = 0;
             this.score = 0;
             this.gameHistory = [];
+
+            track('game_start', {
+                rounds: this.rounds,
+                sites_solved: stats.solvedCount(),
+                total_sites: LOCATIONS.length,
+                from_unsolved_only: unsolved.length >= this.rounds,
+            });
 
             this.updateScoreUI();
 
@@ -1371,6 +1410,16 @@ const LOCATIONS = window.LOCATIONS || [];
                 this.score++;
                 newlySolved = stats.markSolved(loc.name);
             }
+            track('round_answered', {
+                round: this.currentRoundIndex + 1,
+                correct: isFullyCorrect,
+                newly_solved: newlySolved,
+                island_correct: isIslandCorrect,
+                moku_correct: isMokuCorrect,
+                ahupuaa_correct: isAhupuaaCorrect,
+                location: loc.name,
+                location_island: loc.island,
+            });
 
             this.gameHistory.push({
                 location: loc,
@@ -1383,7 +1432,26 @@ const LOCATIONS = window.LOCATIONS || [];
             this.showFeedback(isFullyCorrect, loc);
         },
 
-        showFeedback(isCorrect, loc) {
+        // Player gave up. Reveal the answer in the feedback overlay,
+        // mark this round as wrong + skipped, and let them advance.
+        giveUp() {
+            const loc = this.deck[this.currentRoundIndex];
+            track('give_up', {
+                round: this.currentRoundIndex + 1,
+                location: loc.name,
+                location_island: loc.island,
+            });
+            this.gameHistory.push({
+                location: loc,
+                correct: false,
+                gaveUp: true,
+                guess: { island: '(skipped)', moku: '(skipped)', ahupuaa: '(skipped)' }
+            });
+            this.updateScoreUI();
+            this.showFeedback(false, loc, /* gaveUp */ true);
+        },
+
+        showFeedback(isCorrect, loc, gaveUp) {
             const overlay = this.elements.feedbackOverlay;
             const header = document.getElementById('feedback-header');
             const title = document.getElementById('feedback-title');
@@ -1395,7 +1463,11 @@ const LOCATIONS = window.LOCATIONS || [];
             document.getElementById('reveal-ahupuaa').textContent = loc.ahupuaa;
             document.getElementById('reveal-moku').textContent = `${loc.moku}, ${loc.island}`;
 
-            if (isCorrect) {
+            if (gaveUp) {
+                header.className = 'px-6 py-5 sm:px-7 sm:py-6 text-center text-white bg-kapa-brown';
+                title.textContent = "Skipped";
+                icon.textContent = "🤓";
+            } else if (isCorrect) {
                 header.className = 'px-6 py-5 sm:px-7 sm:py-6 text-center text-white bg-kapa-green';
                 title.textContent = "Pololei!";
                 icon.textContent = "🤙";
@@ -1433,6 +1505,13 @@ const LOCATIONS = window.LOCATIONS || [];
             // Record game-level stats and how many NEW sites this round added.
             const newlySolved = this.gameHistory.filter(r => r.newlySolved).length;
             stats.recordGame(this.score, this.rounds);
+            track('game_complete', {
+                score: this.score,
+                rounds: this.rounds,
+                newly_solved: newlySolved,
+                total_solved_after: stats.solvedCount(),
+                gave_up_count: this.gameHistory.filter(r => r.gaveUp).length,
+            });
             const totalSolved = stats.solvedCount();
             const totalSites = LOCATIONS.length;
 
@@ -1552,6 +1631,7 @@ const LOCATIONS = window.LOCATIONS || [];
 
         open(opts) {
             this.mode = (opts && opts.mode === 'select') ? 'select' : 'study';
+            track('map_opened', { mode: this.mode });
             document.getElementById('help-overlay').classList.remove('hidden');
             if (!this.map) this.initMap();
             // Wait for layout, then size + draw
@@ -1994,9 +2074,11 @@ const LOCATIONS = window.LOCATIONS || [];
                 </div>
 
                 <h2>What we collect</h2>
-                <p>Nothing personal leaves your device. Moku Match runs entirely in your browser.</p>
-                <p>We do use one bit of <strong>localStorage</strong> to remember which sites you have solved across sessions. This is so the game can show your progress (X of N sites solved) and pull rounds from sites you have not seen yet. The data lives only in your browser, never sent anywhere. You can clear it at any time using your browser's site data tools.</p>
-                <p>We do not set cookies. We do not run analytics. We do not have user accounts.</p>
+                <p>Nothing personally identifying. We do not have user accounts and you never sign in.</p>
+                <p>We use one bit of <strong>localStorage</strong> to remember which sites you have solved across sessions, so the game can show your progress and pull rounds from sites you have not seen yet. That data lives only in your browser, never sent anywhere. You can clear it any time with your browser's site data tools.</p>
+                <p>We use <strong>Google Analytics 4</strong> to count how the game is being used in aggregate — how many rounds get played, how often the map mode is opened, what percent of rounds end in "show me the answer." This is set up to be as private as we know how to make it. IP addresses are anonymized before storage. Cross-device tracking via Google accounts is disabled. Ad personalization signals are disabled.</p>
+                <p>The events we record include: game starts and finishes, round answered (correct or not), give-ups, map mode opened, image enlarged, progress page opened, footer link clicks. None of these include your IP, your name, or anything that identifies you. They are counts and aggregates, not a record of any individual person's behavior.</p>
+                <p>The reason we record any of this is to make the game better. If 80% of players never finish a round, that tells us the round screen needs work. If the give-up button is hit a lot on Lānaʻi entries, that tells us those rounds may be too obscure. We are not trying to build a profile of you. We are trying to make the game more fun.</p>
 
                 <h2>What third party services see</h2>
                 <p>Moku Match pulls a few things from the open web. Each of those services sees your IP address as part of any normal web request. We do not get a copy.</p>
@@ -2097,6 +2179,7 @@ const LOCATIONS = window.LOCATIONS || [];
         open(which) {
             const doc = LEGAL_DOCS[which];
             if (!doc) return;
+            track('legal_opened', { doc: which });
             document.getElementById('legal-title').textContent = doc.title;
             const body = document.getElementById('legal-body');
             body.innerHTML = '<div class="legal-doc"><div class="legal-inner">' + doc.html + '</div></div>';
@@ -2129,6 +2212,7 @@ const LOCATIONS = window.LOCATIONS || [];
         },
 
         open(src, alt, attribution) {
+            track('lightbox_opened', {});
             const modal = document.getElementById('image-lightbox');
             const img   = document.getElementById('lightbox-img');
             const attr  = document.getElementById('lightbox-attribution');

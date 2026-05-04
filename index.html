@@ -854,17 +854,19 @@
                     <h3 id="feedback-title" class="text-3xl font-black uppercase tracking-widest mb-2"></h3>
                     <div id="feedback-icon" class="text-5xl"></div>
                 </div>
-                <div class="p-6 text-center space-y-3">
-                    <div>
+                <div class="p-5 sm:p-6 space-y-3">
+                    <div class="text-center">
                         <p class="text-xs uppercase tracking-wide text-gray-500">Location</p>
-                        <p id="reveal-name" class="text-2xl font-bold text-kapa-dark"></p>
+                        <p id="reveal-name" class="text-xl sm:text-2xl font-bold text-kapa-dark"></p>
                     </div>
-                    <div class="grid grid-cols-2 gap-4 border-t border-b border-gray-100 py-4">
-                        <div>
+                    <!-- Mini map showing the actual ahupuaʻa polygon -->
+                    <div id="reveal-map" class="w-full h-48 sm:h-56 rounded-xl overflow-hidden border border-black/10 bg-gray-100"></div>
+                    <div class="grid grid-cols-2 gap-4 border-t border-gray-100 pt-3">
+                        <div class="text-center">
                             <p class="text-xs uppercase tracking-wide text-gray-500">Ahupuaʻa</p>
                             <p id="reveal-ahupuaa" class="font-semibold text-kapa-ocean"></p>
                         </div>
-                        <div>
+                        <div class="text-center">
                             <p class="text-xs uppercase tracking-wide text-gray-500">Moku</p>
                             <p id="reveal-moku" class="font-semibold text-kapa-ocean"></p>
                         </div>
@@ -1476,6 +1478,78 @@ const LOCATIONS = window.LOCATIONS || [];
                 title.textContent = "Auwē!";
                 icon.textContent = "🤔";
             }
+
+            // Render the mini map showing the actual ahupuaʻa polygon.
+            this.renderRevealMap(loc, isCorrect, gaveUp);
+        },
+
+        // Renders the mini map inside the feedback overlay. Shows the
+        // ahupuaʻa polygon highlighted, with a marker at the photo's coords.
+        async renderRevealMap(loc, isCorrect, gaveUp) {
+            const container = document.getElementById('reveal-map');
+            if (!container) return;
+            // Tear down any previous instance so the modal can re-render cleanly.
+            if (this._revealMap) {
+                try { this._revealMap.remove(); } catch (e) {}
+                this._revealMap = null;
+            }
+            container.innerHTML = '';
+
+            const map = L.map(container, {
+                zoomControl: false,
+                attributionControl: false,
+                dragging: false,
+                scrollWheelZoom: false,
+                doubleClickZoom: false,
+                touchZoom: false,
+                boxZoom: false,
+                keyboard: false,
+            });
+            this._revealMap = map;
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 17
+            }).addTo(map);
+
+            // Default view in case the polygon fetch is slow or fails
+            map.setView(loc.coords, 12);
+
+            // Marker showing the photo's actual coords
+            const markerColor = gaveUp ? '#8D6E63' : (isCorrect ? '#2E7D32' : '#D84315');
+            L.circleMarker(loc.coords, {
+                radius: 7,
+                color: '#fff',
+                weight: 2.5,
+                fillColor: markerColor,
+                fillOpacity: 1
+            }).addTo(map);
+
+            // Try to load the actual ahupuaʻa polygon and highlight it
+            try {
+                const data = await helpMap.loadIsland(loc.island);
+                if (!data) return;
+                const match = data.features.find(f =>
+                    helpMap.getMoku(f.properties) === loc.moku &&
+                    helpMap.getAhupuaa(f.properties) === loc.ahupuaa
+                );
+                if (match) {
+                    const layer = L.geoJSON(match, {
+                        style: {
+                            color: markerColor,
+                            weight: 2.5,
+                            fillColor: markerColor,
+                            fillOpacity: 0.30,
+                        }
+                    }).addTo(map);
+                    try {
+                        const b = layer.getBounds();
+                        if (b.isValid()) map.fitBounds(b, { padding: [16, 16], maxZoom: 13 });
+                    } catch (e) {}
+                }
+            } catch (e) { /* fall back to just the marker */ }
+
+            // Force a size recalc once the modal layout settles
+            setTimeout(() => map.invalidateSize(), 60);
         },
 
         nextRound() {

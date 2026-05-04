@@ -390,6 +390,54 @@
         border: none;
     }
     .lightbox-chip:hover { background: #fff; }
+    /* Journey grid tiles — hover/tap to reveal the answer + caption */
+    .journey-tile { cursor: pointer; }
+    .journey-tile .journey-reveal {
+        position: absolute;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.86);
+        color: #fff;
+        opacity: 0;
+        transition: opacity 140ms ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6px;
+        text-align: center;
+    }
+    .journey-tile:hover .journey-reveal,
+    .journey-tile:focus .journey-reveal,
+    .journey-tile.show-reveal .journey-reveal {
+        opacity: 1;
+    }
+    .journey-tile .journey-reveal-inner {
+        display: flex; flex-direction: column; gap: 2px;
+        max-width: 100%;
+    }
+    .journey-tile .journey-name {
+        font-weight: 800;
+        font-size: 11px;
+        line-height: 1.2;
+        word-break: break-word;
+    }
+    .journey-tile .journey-place {
+        font-size: 9px;
+        line-height: 1.2;
+        margin-top: 2px;
+    }
+    .journey-tile .journey-status {
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 0.05em;
+        margin-top: 4px;
+        opacity: 0.85;
+    }
+    @media (min-width: 640px) {
+        .journey-tile .journey-name  { font-size: 12px; }
+        .journey-tile .journey-place { font-size: 10px; }
+        .journey-tile .journey-status { font-size: 10px; }
+    }
+
     /* Click-to-enlarge CTA at the bottom of the round photo. Subtle pulse
        on first appearance so the affordance is obvious without being noisy. */
     .enlarge-cta {
@@ -659,11 +707,8 @@
                     <div class="text-6xl font-black text-kapa-ocean mb-4"><span id="final-score">0</span><span class="text-3xl text-gray-400">/10</span></div>
                     <p id="final-message" class="font-bold text-lg"></p>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 justify-center mb-7">
-                    <button onclick="game.copyResults()" class="ui-btn ui-btn-secondary">
-                        <span aria-hidden="true">📋</span> Copy Result
-                    </button>
-                    <button onclick="location.reload()" class="ui-btn ui-btn-primary">
+                <div class="flex justify-center mb-7">
+                    <button onclick="location.reload()" class="ui-btn ui-btn-primary max-w-sm w-full">
                         <span aria-hidden="true">↺</span> Play Again
                     </button>
                 </div>
@@ -868,6 +913,13 @@ const LOCATIONS = window.LOCATIONS || [];
     }
 })();
 
+
+    // Tiny HTML escape helper (used by the journey grid reveal)
+    function escapeHTML(s) {
+        return String(s == null ? '' : s)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
 
     // --- GAME LOGIC ---
     const game = {
@@ -1101,13 +1153,27 @@ const LOCATIONS = window.LOCATIONS || [];
         renderHistoryGrid() {
             const grid = document.getElementById('history-grid');
             grid.innerHTML = '';
-            this.gameHistory.forEach(record => {
-                const div = document.createElement('div');
-                div.className = `aspect-square rounded overflow-hidden border-2 ${record.correct ? 'border-kapa-green' : 'border-kapa-clay'}`;
-
-                const imgSrc = record.location.img;
-                div.innerHTML = `<img src="${imgSrc}" class="w-full h-full object-cover">`;
-                grid.appendChild(div);
+            this.gameHistory.forEach((record, i) => {
+                const tile = document.createElement('div');
+                tile.className = `journey-tile relative aspect-square rounded overflow-hidden border-2 ${record.correct ? 'border-kapa-green' : 'border-kapa-clay'}`;
+                tile.tabIndex = 0;
+                const loc = record.location;
+                // Build the reveal panel that appears on hover / tap
+                const reveal = `
+                    <div class="journey-reveal">
+                        <div class="journey-reveal-inner">
+                            <div class="journey-name">${escapeHTML(loc.name)}</div>
+                            <div class="journey-place">${escapeHTML(loc.ahupuaa)} <span class="opacity-70">/ ${escapeHTML(loc.moku)} / ${escapeHTML(loc.island)}</span></div>
+                            <div class="journey-status">${record.correct ? '✓ Correct' : '✗ Missed'}</div>
+                        </div>
+                    </div>`;
+                tile.innerHTML = `
+                    <img src="${loc.img}" class="w-full h-full object-cover" alt="${escapeHTML(loc.name)}">
+                    ${reveal}
+                `;
+                // Touch: tap to toggle (since hover doesn't exist on touch)
+                tile.addEventListener('click', () => tile.classList.toggle('show-reveal'));
+                grid.appendChild(tile);
             });
         },
 
@@ -1132,21 +1198,6 @@ const LOCATIONS = window.LOCATIONS || [];
                         .bindPopup(`<b>${record.location.name}</b><br>${record.location.ahupuaa}, ${record.location.moku}`);
                 });
             }, 100);
-        },
-
-        copyResults() {
-            const text = `Moku Match Results:\nScore: ${this.score}/10\nExplore Hawaiʻi's geography!`;
-            const textArea = document.createElement("textarea");
-            textArea.value = text;
-            document.body.appendChild(textArea);
-            textArea.select();
-            try {
-                document.execCommand('copy');
-                alert("Result copied to clipboard!");
-            } catch (err) {
-                console.error('Unable to copy', err);
-            }
-            document.body.removeChild(textArea);
         }
     };
 

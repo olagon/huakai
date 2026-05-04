@@ -297,7 +297,7 @@ window.LOCATIONS = [
     {
         "name": "Waimea Canyon",
         "island": "Kauaʻi",
-        "moku": "Waimea",
+        "moku": "Kona",
         "ahupuaa": "Waimea",
         "coords": [22.0719, -159.6626],
         "img": "images/kauai/waimea-canyon.jpg",
@@ -774,7 +774,7 @@ window.LOCATIONS = [
     {
         "name": "Russian Fort Elizabeth",
         "island": "Kauaʻi",
-        "moku": "Waimea",
+        "moku": "Kona",
         "ahupuaa": "Waimea",
         "coords": [21.9544, -159.6694],
         "img": "images/kauai/russian-fort-elizabeth.jpg",
@@ -783,7 +783,7 @@ window.LOCATIONS = [
     {
         "name": "Waimea Town (Kauaʻi)",
         "island": "Kauaʻi",
-        "moku": "Waimea",
+        "moku": "Kona",
         "ahupuaa": "Waimea",
         "coords": [21.9572, -159.67],
         "img": "images/kauai/waimea-town-kauai.jpg",
@@ -792,8 +792,8 @@ window.LOCATIONS = [
     {
         "name": "Polihale Beach",
         "island": "Kauaʻi",
-        "moku": "Waimea",
-        "ahupuaa": "Mānā",
+        "moku": "Kona",
+        "ahupuaa": "Waimea",
         "coords": [22.0833, -159.7611],
         "img": "images/kauai/polihale-beach.jpg",
         "attribution": "Forest & Kim Starr, CC BY 3.0, via Wikimedia Commons"

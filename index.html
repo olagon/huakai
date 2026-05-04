@@ -619,7 +619,7 @@
                 <div id="score-display" class="hidden ui-pill">
                     <span class="text-black/45 text-xs font-semibold">Score</span>
                     <span id="current-score" class="tabular-nums font-extrabold text-kapa-ocean">0</span>
-                    <span class="text-black/40 text-xs font-semibold">/10</span>
+                    <span class="text-black/40 text-xs font-semibold">/3</span>
                 </div>
             </div>
         </div>
@@ -642,7 +642,7 @@
             <div class="rounded-2xl border border-black/10 bg-white/60 p-4 sm:p-5 mb-7 text-left text-sm text-black/70">
                 <p class="font-extrabold text-black/80 tracking-tight">How scoring works</p>
                 <ul class="mt-3 space-y-1.5 pl-5 list-disc marker:text-black/30">
-                    <li>10 Rounds per game.</li>
+                    <li>3 Rounds per game (a quick round).</li>
                     <li>First: Identify the Island.</li>
                     <li>Second: Identify the Moku (District).</li>
                     <li>Third: Identify the Ahupuaʻa (Land Division).</li>
@@ -676,8 +676,8 @@
             <!-- Progress Bar -->
             <div class="w-full mb-5">
                 <div class="flex items-center justify-between mb-2">
-                    <p class="text-xs font-semibold text-black/50">Round <span id="round-number">1</span>/10</p>
-                    <p class="text-xs font-semibold text-black/50"><span class="tabular-nums" id="current-score-inline">0</span>/10</p>
+                    <p class="text-xs font-semibold text-black/50">Round <span id="round-number">1</span>/3</p>
+                    <p class="text-xs font-semibold text-black/50"><span class="tabular-nums" id="current-score-inline">0</span>/3</p>
                 </div>
                 <div class="w-full bg-black/5 rounded-full h-2 overflow-hidden">
                     <div id="progress-bar" class="bg-kapa-ocean h-2 rounded-full transition-all duration-500" style="width: 10%"></div>
@@ -815,7 +815,7 @@
                 <div class="text-center mb-6">
                     <p class="text-xs uppercase tracking-[0.25em] text-black/55 font-extrabold">Pau Ka Pāʻani</p>
                     <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-2">Final Score</h2>
-                    <div class="text-6xl font-black text-kapa-ocean mb-4"><span id="final-score">0</span><span class="text-3xl text-gray-400">/10</span></div>
+                    <div class="text-6xl font-black text-kapa-ocean mb-4"><span id="final-score">0</span><span class="text-3xl text-gray-400">/3</span></div>
                     <p id="final-message" class="font-bold text-lg"></p>
                 </div>
                 <div class="flex justify-center mb-7">
@@ -1089,10 +1089,10 @@ const LOCATIONS = window.LOCATIONS || [];
         },
         isSolved(name) { return !!this.data.solved[name]; },
         solvedCount() { return Object.keys(this.data.solved).length; },
-        recordGame(score) {
+        recordGame(score, rounds) {
             this.data.gamesPlayed++;
             if (score > this.data.bestScore) this.data.bestScore = score;
-            if (score === LOCATIONS.length) this.data.perfectGames++;
+            if (rounds && score === rounds) this.data.perfectGames++;
             const today = new Date().toISOString().slice(0, 10);
             if (!this.data.firstPlayed) this.data.firstPlayed = today;
             this.data.lastPlayed = today;
@@ -1215,7 +1215,7 @@ const LOCATIONS = window.LOCATIONS || [];
 
     // --- GAME LOGIC ---
     const game = {
-        rounds: 10,
+        rounds: 3,
         currentRoundIndex: 0,
         score: 0,
         gameHistory: [],
@@ -1451,14 +1451,14 @@ const LOCATIONS = window.LOCATIONS || [];
 
             // Record game-level stats and how many NEW sites this round added.
             const newlySolved = this.gameHistory.filter(r => r.newlySolved).length;
-            stats.recordGame(this.score);
+            stats.recordGame(this.score, this.rounds);
             const totalSolved = stats.solvedCount();
             const totalSites = LOCATIONS.length;
 
             const msg = document.getElementById('final-message');
             const lines = [];
-            if (this.score === 10) lines.push("He Kumu ʻOe! (You are an expert!)");
-            else if (this.score >= 7) lines.push("Maikaʻi Loa! (Very Good!)");
+            if (this.score === this.rounds) lines.push("He Kumu ʻOe! (You are an expert!)");
+            else if (this.score >= Math.ceil(this.rounds * 0.66)) lines.push("Maikaʻi Loa! (Very Good!)");
             else lines.push("E Hoʻomaʻamaʻa Hou. (Keep practicing.)");
             if (newlySolved > 0) {
                 lines.push(`<span class="text-kapa-green">+${newlySolved} new site${newlySolved === 1 ? '' : 's'} solved.</span>`);

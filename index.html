@@ -390,6 +390,95 @@
         border: none;
     }
     .lightbox-chip:hover { background: #fff; }
+    /* Progress modal tiles */
+    .progress-tile {
+        position: relative;
+        aspect-ratio: 1 / 1;
+        border-radius: 6px;
+        overflow: hidden;
+        background: #e8e1d6;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: transform 0.1s ease, border-color 0.1s ease;
+    }
+    .progress-tile img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+    .progress-tile.unsolved img {
+        filter: grayscale(1) brightness(0.55);
+    }
+    .progress-tile.unsolved::after {
+        content: "?";
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        font-weight: 900;
+        color: rgba(255,255,255,0.85);
+        text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+        pointer-events: none;
+    }
+    .progress-tile.solved {
+        border-color: #2E7D32;
+    }
+    .progress-tile.solved::after {
+        content: "✓";
+        position: absolute;
+        top: 2px;
+        right: 4px;
+        font-size: 13px;
+        font-weight: 900;
+        color: #fff;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+        pointer-events: none;
+    }
+    .progress-tile:hover {
+        transform: scale(1.05);
+        z-index: 2;
+    }
+    .progress-tile:hover .progress-tile-tip {
+        opacity: 1;
+    }
+    .progress-tile-tip {
+        position: absolute;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.88);
+        color: #fff;
+        opacity: 0;
+        transition: opacity 0.12s ease;
+        font-size: 9px;
+        font-weight: 700;
+        padding: 4px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        line-height: 1.15;
+        pointer-events: none;
+    }
+
+    /* Start-screen progress card */
+    .start-progress {
+        background: linear-gradient(135deg, rgba(46,125,50,0.08), rgba(0,131,143,0.08));
+        border: 1px solid rgba(46,125,50,0.18);
+        border-radius: 14px;
+        padding: 14px 16px;
+        margin-bottom: 1.25rem;
+    }
+    .start-progress .num {
+        font-weight: 900;
+        font-size: 22px;
+        color: #2E7D32;
+        line-height: 1;
+    }
+
     /* Journey grid tiles — hover/tap to reveal the answer + caption */
     .journey-tile { cursor: pointer; }
     .journey-tile .journey-reveal {
@@ -519,9 +608,13 @@
                 <p class="text-[11px] sm:text-xs text-black/55">Nā Moku o Hawaiʻi Geo Challenge</p>
             </div>
             <div class="flex items-center gap-2">
+                <button onclick="progressView.open()" class="ui-pill hover:bg-white" title="See which sites you've solved">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="text-kapa-green"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                    <span class="text-xs font-semibold tabular-nums"><span id="progress-count" class="text-kapa-green font-extrabold">0</span><span class="text-black/45">/<span id="progress-total">156</span></span></span>
+                </button>
                 <button onclick="helpMap.open()" class="ui-pill hover:bg-white" title="Map help: drill into Moku and Ahupuaʻa">
                     <span class="text-kapa-ocean font-extrabold">?</span>
-                    <span class="text-xs font-semibold text-black/70">Map</span>
+                    <span class="text-xs font-semibold text-black/70 hidden sm:inline">Map</span>
                 </button>
                 <div id="score-display" class="hidden ui-pill">
                     <span class="text-black/45 text-xs font-semibold">Score</span>
@@ -556,6 +649,24 @@
                     <li><strong class="text-black/85">You must get all 3 right to score a point!</strong></li>
                 </ul>
             </div>
+
+            <!-- Progress card on start screen (hidden until user has played at least once) -->
+            <div id="start-progress" class="hidden start-progress text-left">
+                <div class="flex items-center justify-between gap-3">
+                    <div>
+                        <div class="text-[11px] uppercase tracking-widest text-black/55 font-extrabold mb-0.5">Sites solved</div>
+                        <div><span id="start-progress-count" class="num">0</span><span class="text-black/55 font-bold"> / <span id="start-progress-total">156</span></span></div>
+                    </div>
+                    <button onclick="progressView.open()" class="ui-pill text-xs font-semibold hover:bg-white whitespace-nowrap">
+                        See progress →
+                    </button>
+                </div>
+                <div class="w-full bg-black/10 rounded-full h-2 mt-3 overflow-hidden">
+                    <div id="start-progress-bar" class="bg-kapa-green h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+                <div id="start-progress-msg" class="text-xs text-black/65 mt-2 leading-snug"></div>
+            </div>
+
             <button onclick="game.start()" class="ui-btn ui-btn-primary text-lg">
                 Hana Hou (Start)
             </button>
@@ -751,8 +862,9 @@
                         </button>
                     </div>
                 </div>
-                <!-- Floating photo peek (toggled with the camera button) -->
-                <div id="help-photo-peek" class="hidden absolute top-16 right-3 sm:right-4 w-44 sm:w-56 z-[5] pointer-events-auto">
+                <!-- Floating photo peek (toggled with the camera button).
+                     z-index must beat Leaflet panes (200–700) AND map controls (1000). -->
+                <div id="help-photo-peek" class="hidden absolute top-16 right-3 sm:right-4 w-44 sm:w-56 pointer-events-auto" style="z-index: 1100;">
                     <div class="bg-white rounded-xl overflow-hidden shadow-2xl border border-black/10">
                         <img id="help-photo-img" referrerpolicy="no-referrer" src="" alt="" class="w-full h-auto block cursor-pointer" onclick="imageLightbox.openCurrent()">
                         <div class="px-2 py-1 text-[10px] text-black/55 leading-tight">Tap photo to enlarge</div>
@@ -763,6 +875,28 @@
                     Tap any island to see its moku, then tap a moku to see its ahupuaʻa.
                     <span class="text-black/45">Modern boundaries from State GIS — some traditional ahupuaʻa are merged.</span>
                 </div>
+            </div>
+        </div>
+
+        <!-- Progress Modal: shows every site, color = solved, greyscale = not yet -->
+        <div id="progress-modal" class="fixed inset-0 z-[70] hidden bg-black/70 backdrop-blur-sm" onclick="if(event.target===this) progressView.close()">
+            <div class="absolute inset-0 sm:inset-6 md:inset-10 sm:rounded-2xl bg-white flex flex-col overflow-hidden" style="max-width: 920px; margin-left: auto; margin-right: auto;">
+                <div class="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-black/10 bg-white/95">
+                    <div>
+                        <div class="font-extrabold tracking-tight text-base sm:text-lg">Your Progress</div>
+                        <div class="text-xs text-black/55 mt-0.5"><span id="progress-modal-summary">Loading...</span></div>
+                    </div>
+                    <button onclick="progressView.close()" class="ui-pill text-xs sm:text-sm font-semibold hover:bg-white px-3 py-2 shrink-0" aria-label="Close">
+                        <span class="hidden sm:inline">Close</span> <span aria-hidden="true">✕</span>
+                    </button>
+                </div>
+                <div class="px-4 sm:px-6 pt-3 pb-2 border-b border-black/10 bg-white/85">
+                    <div class="w-full bg-black/5 rounded-full h-2.5 overflow-hidden">
+                        <div id="progress-modal-bar" class="bg-kapa-green h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                    <div id="progress-by-island" class="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-x-3 gap-y-1 text-[11px] text-black/65"></div>
+                </div>
+                <div id="progress-grid" class="flex-1 overflow-y-auto p-3 sm:p-4 grid gap-2" style="grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));"></div>
             </div>
         </div>
 
@@ -913,6 +1047,164 @@ const LOCATIONS = window.LOCATIONS || [];
     }
 })();
 
+    // ----------------------------------------------------------------
+    // STATS / PROGRESS — localStorage tracking of which sites the user
+    // has solved (got all 3 right on). Goal: solve every site to "beat"
+    // the game. The round picker prefers unsolved sites until they're
+    // all done.
+    // ----------------------------------------------------------------
+    const STATS_KEY = 'moku_match_progress_v1';
+
+    const stats = {
+        data: null,
+        load() {
+            try {
+                const raw = localStorage.getItem(STATS_KEY);
+                this.data = raw ? JSON.parse(raw) : this._empty();
+            } catch (e) { this.data = this._empty(); }
+        },
+        save() {
+            try { localStorage.setItem(STATS_KEY, JSON.stringify(this.data)); } catch (e) {}
+        },
+        _empty() {
+            return {
+                v: 1,
+                solved: {},        // map of locationName -> true
+                gamesPlayed: 0,
+                roundsPlayed: 0,
+                bestScore: 0,
+                perfectGames: 0,
+                firstPlayed: null,
+                lastPlayed: null,
+            };
+        },
+        markSolved(name) {
+            const isNew = !this.data.solved[name];
+            if (isNew) {
+                this.data.solved[name] = true;
+                this.save();
+                this.refreshUI();
+            }
+            return isNew;
+        },
+        isSolved(name) { return !!this.data.solved[name]; },
+        solvedCount() { return Object.keys(this.data.solved).length; },
+        recordGame(score) {
+            this.data.gamesPlayed++;
+            if (score > this.data.bestScore) this.data.bestScore = score;
+            if (score === LOCATIONS.length) this.data.perfectGames++;
+            const today = new Date().toISOString().slice(0, 10);
+            if (!this.data.firstPlayed) this.data.firstPlayed = today;
+            this.data.lastPlayed = today;
+            this.save();
+            this.refreshUI();
+        },
+        refreshUI() {
+            const total = LOCATIONS.length;
+            const solved = this.solvedCount();
+            const pct = total ? Math.round(100 * solved / total) : 0;
+            const headerCount = document.getElementById('progress-count');
+            const headerTotal = document.getElementById('progress-total');
+            if (headerCount) headerCount.textContent = solved;
+            if (headerTotal) headerTotal.textContent = total;
+
+            const startCard = document.getElementById('start-progress');
+            if (startCard) {
+                if (solved > 0) {
+                    startCard.classList.remove('hidden');
+                    document.getElementById('start-progress-count').textContent = solved;
+                    document.getElementById('start-progress-total').textContent = total;
+                    document.getElementById('start-progress-bar').style.width = pct + '%';
+                    const msg = document.getElementById('start-progress-msg');
+                    if (solved >= total) {
+                        msg.textContent = `You've solved every site. He kumu ʻoe! Keep playing to refresh.`;
+                    } else {
+                        const left = total - solved;
+                        msg.textContent = `${left} site${left === 1 ? '' : 's'} to go. New rounds will pull from sites you have not solved yet.`;
+                    }
+                } else {
+                    startCard.classList.add('hidden');
+                }
+            }
+        },
+        reset() {
+            this.data = this._empty();
+            this.save();
+            this.refreshUI();
+        },
+    };
+    stats.load();
+    // Refresh UI on next tick so the DOM elements exist
+    setTimeout(() => stats.refreshUI(), 0);
+
+    // ----------------------------------------------------------------
+    // PROGRESS MODAL — grid of every site, color = solved, grey = not.
+    // ----------------------------------------------------------------
+    const progressView = {
+        open() {
+            this.render();
+            document.getElementById('progress-modal').classList.remove('hidden');
+        },
+        close() {
+            document.getElementById('progress-modal').classList.add('hidden');
+        },
+        render() {
+            const total = LOCATIONS.length;
+            const solved = stats.solvedCount();
+            const pct = total ? Math.round(100 * solved / total) : 0;
+            document.getElementById('progress-modal-summary').textContent =
+                `${solved} of ${total} sites solved (${pct}%)`;
+            document.getElementById('progress-modal-bar').style.width = pct + '%';
+
+            // By-island summary
+            const byIsland = {};
+            for (const loc of LOCATIONS) {
+                const i = loc.island;
+                if (!byIsland[i]) byIsland[i] = { total: 0, solved: 0 };
+                byIsland[i].total++;
+                if (stats.isSolved(loc.name)) byIsland[i].solved++;
+            }
+            const islandList = document.getElementById('progress-by-island');
+            islandList.innerHTML = '';
+            for (const island of Object.keys(byIsland).sort()) {
+                const b = byIsland[island];
+                const row = document.createElement('div');
+                row.innerHTML = `<strong>${escapeHTML(island)}</strong> <span class="text-black/45 tabular-nums">${b.solved}/${b.total}</span>`;
+                islandList.appendChild(row);
+            }
+
+            // Grid: solved first (so they read at the top), then unsolved
+            const grid = document.getElementById('progress-grid');
+            grid.innerHTML = '';
+            const sorted = [...LOCATIONS].sort((a, b) => {
+                const sa = stats.isSolved(a.name) ? 0 : 1;
+                const sb = stats.isSolved(b.name) ? 0 : 1;
+                if (sa !== sb) return sa - sb;
+                return a.name.localeCompare(b.name);
+            });
+            for (const loc of sorted) {
+                const isSolved = stats.isSolved(loc.name);
+                const tile = document.createElement('div');
+                tile.className = `progress-tile ${isSolved ? 'solved' : 'unsolved'}`;
+                tile.title = isSolved
+                    ? `${loc.name} — ${loc.ahupuaa}, ${loc.moku}, ${loc.island}`
+                    : `Not yet solved (${loc.island})`;
+                const tipText = isSolved
+                    ? `<div>${escapeHTML(loc.name)}</div><div class="opacity-75">${escapeHTML(loc.ahupuaa)} · ${escapeHTML(loc.island)}</div>`
+                    : `<div>?</div><div class="opacity-75">${escapeHTML(loc.island)}</div>`;
+                tile.innerHTML = `
+                    <img src="${loc.img}" alt="${isSolved ? escapeHTML(loc.name) : 'unsolved'}" loading="lazy">
+                    <div class="progress-tile-tip">${tipText}</div>
+                `;
+                grid.appendChild(tile);
+            }
+        },
+    };
+
+    // ESC closes the progress modal
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') progressView.close();
+    });
 
     // Tiny HTML escape helper (used by the journey grid reveal)
     function escapeHTML(s) {
@@ -949,10 +1241,21 @@ const LOCATIONS = window.LOCATIONS || [];
         },
 
         start() {
-            // Removed shuffle so it plays the 10 specific locations in order or just sliced
-            // Since there are exactly 10, we can just use them all. 
-            // Randomized order of the 10 is still good for replayability.
-            this.deck = [...LOCATIONS].sort(() => 0.5 - Math.random()).slice(0, this.rounds);
+            // Build the round deck preferring sites the user has not yet solved.
+            // The goal is "find every site to beat the game" — so unsolved
+            // come first; once everything is solved, fall back to random.
+            const unsolved = LOCATIONS.filter(l => !stats.isSolved(l.name));
+            const solved   = LOCATIONS.filter(l =>  stats.isSolved(l.name));
+            const shuffle  = (arr) => [...arr].sort(() => 0.5 - Math.random());
+            let deck;
+            if (unsolved.length >= this.rounds) {
+                deck = shuffle(unsolved).slice(0, this.rounds);
+            } else {
+                // Mix all remaining unsolved + fill with solved
+                deck = shuffle(unsolved).concat(shuffle(solved).slice(0, this.rounds - unsolved.length));
+                deck = shuffle(deck);
+            }
+            this.deck = deck;
             this.currentRoundIndex = 0;
             this.score = 0;
             this.gameHistory = [];
@@ -1082,11 +1385,16 @@ const LOCATIONS = window.LOCATIONS || [];
             // ALL THREE must be correct
             const isFullyCorrect = isIslandCorrect && isMokuCorrect && isAhupuaaCorrect;
 
-            if (isFullyCorrect) this.score++;
+            let newlySolved = false;
+            if (isFullyCorrect) {
+                this.score++;
+                newlySolved = stats.markSolved(loc.name);
+            }
 
             this.gameHistory.push({
                 location: loc,
                 correct: isFullyCorrect,
+                newlySolved: newlySolved,
                 guess: { island: guessIsland, moku: guessMoku, ahupuaa: guessAhupuaa }
             });
 
@@ -1141,10 +1449,22 @@ const LOCATIONS = window.LOCATIONS || [];
 
             document.getElementById('final-score').textContent = this.score;
 
+            // Record game-level stats and how many NEW sites this round added.
+            const newlySolved = this.gameHistory.filter(r => r.newlySolved).length;
+            stats.recordGame(this.score);
+            const totalSolved = stats.solvedCount();
+            const totalSites = LOCATIONS.length;
+
             const msg = document.getElementById('final-message');
-            if (this.score === 10) msg.textContent = "He Kumu ʻOe! (You are an expert!)";
-            else if (this.score >= 7) msg.textContent = "Maikaʻi Loa! (Very Good!)";
-            else msg.textContent = "E Hoʻomaʻamaʻa Hou. (Keep practicing.)";
+            const lines = [];
+            if (this.score === 10) lines.push("He Kumu ʻOe! (You are an expert!)");
+            else if (this.score >= 7) lines.push("Maikaʻi Loa! (Very Good!)");
+            else lines.push("E Hoʻomaʻamaʻa Hou. (Keep practicing.)");
+            if (newlySolved > 0) {
+                lines.push(`<span class="text-kapa-green">+${newlySolved} new site${newlySolved === 1 ? '' : 's'} solved.</span>`);
+            }
+            lines.push(`<span class="text-black/55 text-sm font-semibold">${totalSolved} of ${totalSites} total.</span>`);
+            msg.innerHTML = lines.join('<br>');
 
             this.renderHistoryGrid();
             this.initMap();
@@ -1693,8 +2013,9 @@ const LOCATIONS = window.LOCATIONS || [];
                 </div>
 
                 <h2>What we collect</h2>
-                <p>Nothing personal. Moku Match runs entirely in your browser. Your score, the rounds you played, and the photos you saw all live in the page you have open and disappear when you close the tab.</p>
-                <p>We do not set cookies. We do not use localStorage to remember you. We do not run analytics.</p>
+                <p>Nothing personal leaves your device. Moku Match runs entirely in your browser.</p>
+                <p>We do use one bit of <strong>localStorage</strong> to remember which sites you have solved across sessions. This is so the game can show your progress (X of N sites solved) and pull rounds from sites you have not seen yet. The data lives only in your browser, never sent anywhere. You can clear it at any time using your browser's site data tools.</p>
+                <p>We do not set cookies. We do not run analytics. We do not have user accounts.</p>
 
                 <h2>What third party services see</h2>
                 <p>Moku Match pulls a few things from the open web. Each of those services sees your IP address as part of any normal web request. We do not get a copy.</p>

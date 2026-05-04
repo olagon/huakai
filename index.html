@@ -987,79 +987,14 @@
     <script>
     // --- DATA SOURCE ---
 
-    // All known Moku per Island
-    const MOKU_DATA = {
-        "Oʻahu": ["Kona", "ʻEwa", "Waiʻanae", "Waialua", "Koʻolauloa", "Koʻolaupoko"],
-        "Hawaiʻi": ["Hilo", "Puna", "Kaʻū", "Kona", "Kohala", "Hāmākua"],
-        "Maui": ["Lāhainā", "Wailuku", "Koʻolau", "Hāna", "Kīpahulu", "Kaupō", "Kahikinui", "Honuaʻula", "Kula", "Kāʻanapali", "Haleakalā", "Makawao"],
-        "Kauaʻi": ["Waimea", "Kona", "Puna", "Koʻolau", "Haleleʻa", "Nāpali"],
-        "Molokaʻi": ["Kaluakoʻi", "Palaʻau", "Kawela", "Manaʻe", "Koʻolau", "Kona"],
-        "Lānaʻi": ["Lānaʻi", "Kona", "Koʻolau"],
-        "Niʻihau": ["Paniʻo"],
-        "Kahoʻolawe": ["Kahikinui"]
-    };
+    // Moku and Ahupuaʻa lookup tables. Intentionally empty here — they
+    // are populated entirely from data/locations.js by syncDropdownsFromLocations()
+    // below. That keeps these in lockstep with whatever the calibrated
+    // dataset says, so traditional vs modern naming can't drift apart.
+    const MOKU_DATA = {};
 
-    // Ahupuaa Mappings
-    // Updated to support the new location set
-    const AHUPUAA_DATA = {
-        "Oʻahu": {
-            "Kona": ["Waikīkī", "Maunalua", "Mānoa", "Makiki", "Honolulu", "Nuʻuanu", "Pālolo", "Kaimukī", "Kapālama", "Kapahulu"],
-            "Koʻolaupoko": ["Heʻeia", "Waimānalo", "Kailua", "Kāneʻohe", "Kualoa", "Hakipuʻu", "Kahaluʻu"],
-            "Waialua": ["Waimea", "Kawailoa", "Mokulēʻia", "Paʻalaʻa", "Kamananui", "Kuaokala", "Kaʻena"],
-            "ʻEwa": ["Honouliuli", "Waipiʻo", "Hālawa", "Waimalu", "Mānana", "ʻAiea"],
-            "Koʻolauloa": ["Lāʻie", "Hauʻula", "Punaluʻu", "Kaʻaʻawa", "Kahuku", "Pūpūkea"],
-            "Waiʻanae": ["Waiʻanae", "Mākaha", "Nānākuli", "Māʻili", "Lualualei", "Keawaʻula"]
-        },
-        "Maui": {
-            "Kula": ["Kealahou", "Kula", "ʻUlupalakua", "Pūlehu", "Ōmaʻopio", "Palauea"],
-            "Wailuku": ["Wailuku", "Waikapū", "Waiheʻe", "Kahakuloa"],
-            "Koʻolau": ["Wailua", "Keʻanae", "Nāhiku", "Honomanū"],
-            "Honuaʻula": ["Papaʻanui", "Wailea", "Mākena", "Kanahena", "Keauhou"],
-            "Hāna": ["Hāna", "Hamoa", "Wakiu", "Kawela", "Honokalani"],
-            "Lāhainā": ["Lāhainā", "Pāʻia", "Honokōhau", "Ukumehame", "Olowalu", "Pāhea", "Hanakaʻōʻō", "Honolua", "Nāpili"],
-            "Kāʻanapali": ["Kāʻanapali", "Honokōwai", "Kahana"],
-            "Haleakalā": ["Kapalaoa"],
-            "Makawao": ["Kealahou"],
-            "Kīpahulu": ["Kīpahulu", "Kaumakani"],
-            "Kaupō": ["Kaupō", "Nuʻu"],
-            "Kahikinui": ["Auahi", "Lualaʻilua"]
-        },
-        "Kauaʻi": {
-            "Waimea": ["Waimea", "Hanapēpē", "Kekaha", "Mānā", "Makaweli"],
-            "Haleleʻa": ["Hanakāpīʻai", "Hanalei", "Wainiha", "Lumahaʻi", "Kalihiwai", "Kalalau", "Hāʻena"],
-            "Puna": ["Wailua", "Līhuʻe", "Hanamāʻulu", "Kīpū", "Nawiliwili"],
-            "Kona": ["Waimea", "Hanapēpē", "Kalāheo", "Lāwaʻi", "Kōloa", "Poʻipū", "Eleʻele"],
-            "Koʻolau": ["Anahola", "Moloaʻa", "Kīlauea"],
-            "Nāpali": ["Kalalau", "Miloliʻi", "Nuʻalolo"]
-        },
-        "Hawaiʻi": {
-            "Kaʻū": ["Kapāpala", "Pāhala", "Punaluʻu", "Nīnole", "Waiʻōhinu", "Ka Lae", "Kamaʻoa", "Keauhou"],
-            "Hāmākua": ["Waipiʻo", "Kaʻohe", "Honokaʻa", "Pāʻauhau", "Kalōpā", "Waimanu"],
-            "Hilo": ["Honomū", "Hilo", "Wainaku", "Paukaʻa", "Pāpaʻikou", "Pepeʻekeo", "Punahoa", "Waiākea", "Laupāhoehoe"],
-            "Kona": ["Hōnaunau", "Kealakekua", "Kailua", "Keauhou", "Kaluko", "Hōlualoa", "Kaʻūpūlehu", "Kaʻawaloa"],
-            "Kohala": ["Hāwī", "Kapaʻau", "Māhukona", "Kawaihae", "Puakō", "Pololū", "Lālāmilo"],
-            "Puna": ["Kapoho", "Keaʻau", "Pāhoa", "Kalapana", "ʻŌlaʻa", "Keahialaka"]
-        },
-        "Molokaʻi": {
-            "Koʻolau": ["Kalaupapa", "Kalawao", "Makanalua", "Waikananui", "Hālawa"],
-            "Kaluakoʻi": ["Kaluakoʻi", "Kepuhi", "Maunaloa"],
-            "Manaʻe": ["Hālawa", "Pūkoʻo", "Waialua"],
-            "Palaʻau": ["Hoʻolehua", "Pālāʻau", "Makanalua"],
-            "Kawela": ["Kawela", "Kamalo"],
-            "Kona": ["Kaunakakai", "Kalamaʻula"]
-        },
-        "Lānaʻi": {
-            "Lānaʻi": ["Kaunolū", "Mahana"],
-            "Kona": ["Kaunolū", "Pālāwai", "Mānele", "Kaa", "Paomaʻi"],
-            "Koʻolau": ["Keōmuku", "Maunalei", "Hauola"]
-        },
-        "Niʻihau": {
-            "Paniʻo": ["Pūʻuwai"]
-        },
-        "Kahoʻolawe": {
-            "Kahikinui": ["Lua Makika", "Hakioawa", "Honokanaiʻa", "Kealaikahiki"]
-        }
-    };
+    // Empty by design — built entirely from data/locations.js below.
+    const AHUPUAA_DATA = {};
 
 // LOCATIONS is loaded from data/locations.js (see <script> tag above).
 // Keep using the global name so the rest of the game code still works.

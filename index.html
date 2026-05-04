@@ -724,9 +724,11 @@
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="text-kapa-green"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
                     <span class="text-xs font-semibold tabular-nums"><span id="progress-count" class="text-kapa-green font-extrabold">0</span><span class="text-black/45">/<span id="progress-total">156</span></span></span>
                 </button>
-                <button onclick="helpMap.open()" class="ui-pill hover:bg-white" title="Map help: drill into Moku and Ahupuaʻa">
-                    <span class="text-kapa-ocean font-extrabold">?</span>
-                    <span class="text-xs font-semibold text-black/70 hidden sm:inline">Map</span>
+                <button onclick="helpMap.open()" class="ui-pill hover:bg-white" title="Open the ahupuaʻa map">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="text-kapa-ocean">
+                        <path d="M9 20l-5-2V6l5 2 6-2 5 2v12l-5-2-6 2z"/><path d="M9 8v12"/><path d="M15 6v12"/>
+                    </svg>
+                    <span class="text-xs font-semibold text-black/70">Open Map</span>
                 </button>
                 <div id="score-display" class="hidden ui-pill">
                     <span class="text-black/45 text-xs font-semibold">Score</span>
@@ -752,13 +754,14 @@
                 Test your knowledge of Hawaiʻi's geography. Can you identify the <strong class="text-black/85">Mokupuni</strong> (Island), <strong class="text-black/85">Moku</strong> (District), and <strong class="text-black/85">Ahupuaʻa</strong> (Land Division)?
             </p>
             <div class="rounded-2xl border border-black/10 bg-white/60 p-4 sm:p-5 mb-7 text-left text-sm text-black/70">
-                <p class="font-extrabold text-black/80 tracking-tight">How scoring works</p>
+                <p class="font-extrabold text-black/80 tracking-tight">How it works</p>
                 <ul class="mt-3 space-y-1.5 pl-5 list-disc marker:text-black/30">
-                    <li>3 Rounds per game (a quick round).</li>
-                    <li>First: Identify the Island.</li>
-                    <li>Second: Identify the Moku (District).</li>
-                    <li>Third: Identify the Ahupuaʻa (Land Division).</li>
-                    <li><strong class="text-black/85">You must get all 3 right to score a point!</strong></li>
+                    <li>3 quick rounds per game.</li>
+                    <li>You see a photo. Tap the map to drop a pin in the right ahupuaʻa.</li>
+                    <li>The map drills down for you: <strong class="text-black/85">mokupuni → moku → ahupuaʻa</strong>.</li>
+                    <li>Land on the right ahupuaʻa and that site is yours forever — your progress is saved.</li>
+                    <li>Don't know one? Tap <em>I don't know</em> and the answer is shown on the map.</li>
+                    <li><strong class="text-black/85">Goal:</strong> solve every site to beat the game.</li>
                 </ul>
             </div>
 
@@ -987,9 +990,15 @@
                         <div class="font-extrabold tracking-tight text-base sm:text-lg">Your Progress</div>
                         <div class="text-xs text-black/55 mt-0.5"><span id="progress-modal-summary">Loading...</span></div>
                     </div>
-                    <button onclick="progressView.close()" class="ui-pill text-xs sm:text-sm font-semibold hover:bg-white px-3 py-2 shrink-0" aria-label="Close">
-                        <span class="hidden sm:inline">Close</span> <span aria-hidden="true">✕</span>
-                    </button>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <button onclick="progressView.confirmReset()" class="ui-pill text-xs font-semibold text-kapa-clay hover:bg-kapa-clay/10 px-3 py-2" title="Clear all your progress and start fresh">
+                            <span aria-hidden="true">↺</span>
+                            <span class="hidden sm:inline">Reset</span>
+                        </button>
+                        <button onclick="progressView.close()" class="ui-pill text-xs sm:text-sm font-semibold hover:bg-white px-3 py-2" aria-label="Close">
+                            <span class="hidden sm:inline">Close</span> <span aria-hidden="true">✕</span>
+                        </button>
+                    </div>
                 </div>
                 <div class="px-4 sm:px-6 pt-3 pb-2 border-b border-black/10 bg-white/85">
                     <div class="w-full bg-black/5 rounded-full h-2.5 overflow-hidden">
@@ -1184,6 +1193,22 @@ const LOCATIONS = window.LOCATIONS || [];
         },
         close() {
             document.getElementById('progress-modal').classList.add('hidden');
+        },
+        confirmReset() {
+            const solved = stats.solvedCount();
+            const games = stats.data.gamesPlayed || 0;
+            const msg = solved === 0
+                ? 'Nothing to reset yet.'
+                : `Reset all progress? This will erase:\n\n` +
+                  `• ${solved} solved site${solved === 1 ? '' : 's'}\n` +
+                  `• ${games} played game${games === 1 ? '' : 's'}\n` +
+                  `• Best score and other stats\n\n` +
+                  `This cannot be undone.`;
+            if (solved === 0) { alert(msg); return; }
+            if (!confirm(msg)) return;
+            track('progress_reset', { had_solved: solved, had_games: games });
+            stats.reset();
+            this.render();   // re-render the modal grid showing all unsolved
         },
         render() {
             const total = LOCATIONS.length;
@@ -1741,6 +1766,19 @@ const LOCATIONS = window.LOCATIONS || [];
             track('map_opened', { mode: this.mode });
             document.getElementById('help-overlay').classList.remove('hidden');
             if (!this.map) this.initMap();
+            // Show the photo peek button only during an active round
+            // (game screen visible). When the user is just browsing the
+            // map from the start/end screens, there's no round photo.
+            const photoBtn = document.getElementById('help-photo-btn');
+            if (photoBtn) {
+                const gameActive = !document.getElementById('game-screen').classList.contains('hidden');
+                photoBtn.style.display = gameActive ? '' : 'none';
+            }
+            // Reset the photo peek to hidden whenever the map opens
+            const peek = document.getElementById('help-photo-peek');
+            if (peek) peek.classList.add('hidden');
+            const lbl = document.getElementById('help-photo-btn-label');
+            if (lbl) lbl.textContent = 'Show photo';
             // Wait for layout, then size + draw
             setTimeout(() => {
                 this.map.invalidateSize();

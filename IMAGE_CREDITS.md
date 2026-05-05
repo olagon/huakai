@@ -1,4 +1,4 @@
-# Moku Match: Image Credits
+# Huakaʻi: Image Credits
 
 Every photo in `/images/` is a copy of an originally-hosted file,
 downloaded once for stability. Each remains under the license of

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Moku Match: calibrate every entry's island/moku/ahupuaʻa against the
+Huakaʻi: calibrate every entry's island/moku/ahupuaʻa against the
 State of Hawaiʻi ArcGIS ahupuaʻa layer (the same source the help map uses).
 
 USAGE

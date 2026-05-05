@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Moku Match: dump the full island/moku/ahupuaʻa taxonomy from the
+Huakaʻi: dump the full island/moku/ahupuaʻa taxonomy from the
 State of Hawaiʻi GIS layer that the help map uses.
 
 USAGE

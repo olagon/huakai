@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Moku Match: find replacement image URLs for entries whose original
+Huakaʻi: find replacement image URLs for entries whose original
 Wikimedia URL 404'd.
 
 USAGE
@@ -158,7 +158,7 @@ def find_image_for(landmark_name, island_hint):
     return None, title
 
 def main():
-    print("Moku Match: replacement image finder\n")
+    print("Huakaʻi: replacement image finder\n")
     locations = parse_locations(LOCATIONS_FILE)
     print(f"Loaded {len(locations)} entries\n")
 

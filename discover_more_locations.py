@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Moku Match: auto-discover new locations from Wikimedia Commons.
+Huakaʻi: auto-discover new locations from Wikimedia Commons.
 
 For each Hawaii-related Commons category, walk the files, pull GPS
 coordinates from Commons metadata, and reverse-geocode the point
@@ -248,7 +248,7 @@ def in_hawaii(lat, lng):
 
 
 def main(target=200):
-    print(f"Moku Match auto-discovery (target {target} new entries)\n")
+    print(f"Huakaʻi auto-discovery (target {target} new entries)\n")
     locations = parse_locations(LOCATIONS_FILE)
     print(f"Loaded {len(locations)} existing entries\n")
 

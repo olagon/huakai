@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Moku Match: final cleanup for the last few entries that still have
+Huakaʻi: final cleanup for the last few entries that still have
 no working image. Queries Wikimedia Commons category listings to
 find a real file for each, then patches data/locations.js.
 
@@ -140,7 +140,7 @@ def find_image_for(landmark, cats):
     return None
 
 def main():
-    print("Moku Match: final image patcher\n")
+    print("Huakaʻi: final image patcher\n")
     locations = parse_locations(LOCATIONS_FILE)
     by_name   = {l["name"]: l for l in locations}
 

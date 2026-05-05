@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Moku Match: apply a curation patch from curate.html.
+Huakaʻi: apply a curation patch from curate.html.
 
 USAGE
     cd "/Library/WebServer/Documents/ahupuaa"

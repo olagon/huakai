@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Moku Match — Curate</title>
+<title>Huakaʻi — Curate</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
     body { background: #faf7f2; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
@@ -105,7 +105,7 @@
 <!-- Toolbar -->
 <div class="toolbar px-4 py-3 flex flex-wrap items-center gap-3">
     <div>
-        <h1 class="font-extrabold text-lg leading-none">Moku Match: Curate</h1>
+        <h1 class="font-extrabold text-lg leading-none">Huakaʻi: Curate</h1>
         <p class="text-xs text-slate-500 mt-0.5">Click an image to mark for delete. Edit a name to rename it.</p>
     </div>
     <div class="flex items-center gap-2 ml-auto flex-wrap">
@@ -133,17 +133,22 @@
     </div>
 </div>
 
-<!-- Patch output panel -->
-<div id="patch-panel" class="hidden px-4 py-4 bg-white border-b border-slate-200">
-    <div class="flex items-center justify-between mb-2">
-        <p class="text-sm font-bold">Copy this and paste it back to Claude:</p>
-        <div class="flex gap-2">
-            <button class="btn-secondary btn" onclick="copyPatch()">Copy</button>
-            <button class="btn-secondary btn" onclick="document.getElementById('patch-panel').classList.add('hidden')">Close</button>
+<!-- Patch output modal (overlay) -->
+<div id="patch-panel" class="hidden" style="position:fixed; inset:0; z-index:200; background:rgba(0,0,0,0.6); display:none; align-items:center; justify-content:center; padding:20px;" onclick="if(event.target===this) closePatch()">
+    <div style="background:#fff; border-radius:14px; max-width:760px; width:100%; max-height:90vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.4);">
+        <div class="flex items-center justify-between px-5 py-3 border-b border-slate-200">
+            <p class="text-sm font-bold">Copy this and paste it back to Claude</p>
+            <div class="flex gap-2">
+                <button class="btn-secondary btn" onclick="copyPatch()">Copy to clipboard</button>
+                <button class="btn-secondary btn" onclick="closePatch()">Close ✕</button>
+            </div>
+        </div>
+        <div class="px-5 py-4 overflow-auto" style="flex:1;">
+            <p id="patch-summary" class="text-xs text-slate-500 mb-2"></p>
+            <textarea id="patch-output" class="w-full border border-slate-200 rounded p-3" style="height:50vh; font-family:ui-monospace,SFMono-Regular,monospace; font-size:12px;" readonly></textarea>
+            <p id="copy-msg" class="text-xs text-emerald-700 mt-2 hidden">Copied to clipboard.</p>
         </div>
     </div>
-    <textarea id="patch-output" class="w-full h-56 border border-slate-200 rounded p-3" readonly></textarea>
-    <p id="copy-msg" class="text-xs text-emerald-700 mt-1 hidden">Copied.</p>
 </div>
 
 <!-- Grid of cards -->
@@ -297,26 +302,54 @@ function resetAll() {
 }
 
 function generatePatch() {
+    const deletes = Object.keys(state.deletes).sort();
+    const renames = Object.entries(state.renames).map(([from, to]) => ({ from, to }));
     const patch = {
         version: 1,
         generated_at: new Date().toISOString(),
-        deletes: Object.keys(state.deletes).sort(),
-        renames: Object.entries(state.renames).map(([from, to]) => ({ from, to })),
+        deletes: deletes,
+        renames: renames,
     };
     const out = document.getElementById('patch-output');
     out.value = JSON.stringify(patch, null, 2);
-    document.getElementById('patch-panel').classList.remove('hidden');
-    out.select();
+    document.getElementById('patch-summary').textContent =
+        `${deletes.length} marked for delete, ${renames.length} marked for rename.`;
+    const panel = document.getElementById('patch-panel');
+    panel.classList.remove('hidden');
+    panel.style.display = 'flex';
+    setTimeout(() => out.select(), 50);
+}
+
+function closePatch() {
+    const panel = document.getElementById('patch-panel');
+    panel.classList.add('hidden');
+    panel.style.display = 'none';
 }
 
 function copyPatch() {
     const out = document.getElementById('patch-output');
     out.select();
-    document.execCommand('copy');
+    let ok = false;
+    try {
+        ok = document.execCommand('copy');
+    } catch (e) { ok = false; }
+    if (!ok && navigator.clipboard) {
+        navigator.clipboard.writeText(out.value).then(() => showCopied()).catch(() => {});
+        return;
+    }
+    showCopied();
+}
+
+function showCopied() {
     const msg = document.getElementById('copy-msg');
     msg.classList.remove('hidden');
-    setTimeout(() => msg.classList.add('hidden'), 1500);
+    setTimeout(() => msg.classList.add('hidden'), 1800);
 }
+
+// ESC closes the patch modal
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closePatch();
+});
 
 // Wait for locations to be loaded
 if (window.LOCATIONS) {

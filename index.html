@@ -4,10 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moku Match | A Hawaiʻi Geography Game</title>
+    <title>Huakaʻi | A Hawaiʻi Geography Journey</title>
 
     <!-- Google Analytics 4 (privacy-friendly).
-         Measurement ID: G-TJDPNRFD4K (Moku Match property).
+         Measurement ID: G-TJDPNRFD4K (Huakaʻi property).
          IP anonymization on, no Google signals, no ad personalization. -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-TJDPNRFD4K"></script>
     <script>
@@ -769,8 +769,8 @@
     <header class="sticky top-0 z-50 border-b border-black/5 bg-white/70 backdrop-blur">
         <div class="max-w-3xl mx-auto px-2 sm:px-4 py-3 flex items-center justify-between">
             <div class="leading-tight">
-                <h1 class="text-lg sm:text-xl font-extrabold tracking-tight">Moku Match</h1>
-                <p class="text-[11px] sm:text-xs text-black/55">Nā Moku o Hawaiʻi Geo Challenge</p>
+                <h1 class="text-lg sm:text-xl font-extrabold tracking-tight">Huakaʻi</h1>
+                <p class="text-[11px] sm:text-xs text-black/55">A journey through the moku and ahupuaʻa of Hawaiʻi</p>
             </div>
             <div class="flex items-center gap-2">
                 <button onclick="progressView.open()" class="ui-pill hover:bg-white" title="See which sites you've solved">
@@ -802,9 +802,12 @@
                 </svg>
                 </div>
             </div>
-            <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-3">Aloha, Explorer!</h2>
-            <p class="text-base sm:text-lg text-black/75 mb-7 leading-relaxed">
-                Test your knowledge of Hawaiʻi's geography. Can you identify the <strong class="text-black/85">Mokupuni</strong> (Island), <strong class="text-black/85">Moku</strong> (District), and <strong class="text-black/85">Ahupuaʻa</strong> (Land Division)?
+            <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-3">E komo mai!</h2>
+            <p class="text-base sm:text-lg text-black/75 mb-3 leading-relaxed">
+                Set out on a <strong class="text-kapa-ocean">huakaʻi</strong> through Hawaiʻi. Each photo is a stop along the way. Find where it sits on the map: which <strong class="text-black/85">mokupuni</strong> (island), which <strong class="text-black/85">moku</strong> (district), which <strong class="text-black/85">ahupuaʻa</strong> (land division).
+            </p>
+            <p class="text-sm text-black/60 mb-7 leading-relaxed italic">
+                A huakaʻi is a journey. The aim here is not to get every round right on the first try — it is to keep returning, see new places, and slowly come to know the land.
             </p>
             <div class="rounded-2xl border border-black/10 bg-white/60 p-4 sm:p-5 mb-7 text-left text-sm text-black/70">
                 <p class="font-extrabold text-black/80 tracking-tight">How it works</p>
@@ -1723,9 +1726,14 @@ const LOCATIONS = window.LOCATIONS || [];
                             fillOpacity: 0.30,
                         }
                     }).addTo(map);
+                    // Show context. Cap the zoom so even tiny ahupuaʻa keep
+                    // surrounding island visible, and pad generously so the
+                    // polygon doesn't fill the whole frame.
                     try {
                         const b = layer.getBounds();
-                        if (b.isValid()) map.fitBounds(b, { padding: [16, 16], maxZoom: 13 });
+                        if (b.isValid()) {
+                            map.fitBounds(b, { padding: [50, 50], maxZoom: 10.5 });
+                        }
                     } catch (e) {}
                 }
             } catch (e) { /* fall back to just the marker */ }
@@ -2100,11 +2108,15 @@ const LOCATIONS = window.LOCATIONS || [];
                 : `${island}: ${mokuCount} moku, ${data.features.length} ahupuaʻa. Click any region to drill in.`);
         },
 
-        // Style presets for the ahupuaʻa polygons (used so highlight/clear can reset).
+        // Style presets for the ahupuaʻa polygons.
         _ahuStyles: {
-            base:     { color: '#0F172A', weight: 1.4, fillColor: '#00838F', fillOpacity: 0.40 },
-            hover:    { color: '#0F172A', weight: 2.2, fillColor: '#00838F', fillOpacity: 0.65 },
-            selected: { color: '#FFFFFF', weight: 3,   fillColor: '#FF6F00', fillOpacity: 0.92 },
+            // Polygons inside the focused moku — fully styled, labeled, selectable.
+            base:        { color: '#0F172A', weight: 1.4, fillColor: '#00838F', fillOpacity: 0.40 },
+            hover:       { color: '#0F172A', weight: 2.2, fillColor: '#00838F', fillOpacity: 0.65 },
+            selected:    { color: '#FFFFFF', weight: 3,   fillColor: '#FF6F00', fillOpacity: 0.92 },
+            // Polygons in OTHER moku — visible but muted, click to switch focus.
+            faded:       { color: '#94A3B8', weight: 0.8, fillColor: '#94A3B8', fillOpacity: 0.10, dashArray: '3,3' },
+            fadedHover:  { color: '#0F172A', weight: 1.8, fillColor: '#64748B', fillOpacity: 0.28, dashArray: null },
         },
 
         async goAhupuaa(island, moku, focusBounds) {
@@ -2117,48 +2129,54 @@ const LOCATIONS = window.LOCATIONS || [];
             const data = await this.loadIsland(island);
             if (!data) return;
 
-            const filtered = {
-                type: 'FeatureCollection',
-                features: data.features.filter(f => this.getMoku(f.properties) === moku)
-            };
-
             const styles = this._ahuStyles;
+            const focusedFeatures = data.features.filter(f => this.getMoku(f.properties) === moku);
 
-            this.layer = L.geoJSON(filtered, {
-                style: () => styles.base,
+            // Render ALL ahupuaʻa polygons on the island. Polygons in the
+            // focused moku get full styling + labels + selection logic;
+            // polygons in OTHER moku stay visible but faded — tap one to
+            // jump straight to that moku without going back to the breadcrumbs.
+            this.layer = L.geoJSON(data, {
+                style: f => this.getMoku(f.properties) === moku ? styles.base : styles.faded,
                 onEachFeature: (f, layer) => {
+                    const m = this.getMoku(f.properties);
                     const ahu = this.getAhupuaa(f.properties);
-                    layer.bindTooltip(ahu, {
-                        permanent: true,
-                        direction: 'center',
-                        className: 'help-ahu-label'
-                    });
-                    layer.on('mouseover', () => {
-                        if (this._selected !== layer) layer.setStyle(styles.hover);
-                    });
-                    layer.on('mouseout', () => {
-                        if (this._selected !== layer) layer.setStyle(styles.base);
-                    });
-                    // Map Mode: tap highlights the polygon. The Submit button
-                    // in the info bar commits. Tapping a different polygon
-                    // moves the selection. The map does NOT zoom or recenter.
-                    if (this.mode === 'select') {
-                        layer.on('click', () => this._selectAhu(layer, island, moku, ahu));
+                    const inFocusedMoku = (m === moku);
+
+                    if (inFocusedMoku) {
+                        layer.bindTooltip(ahu, {
+                            permanent: true,
+                            direction: 'center',
+                            className: 'help-ahu-label'
+                        });
+                        layer.on('mouseover', () => {
+                            if (this._selected !== layer) layer.setStyle(styles.hover);
+                        });
+                        layer.on('mouseout', () => {
+                            if (this._selected !== layer) layer.setStyle(styles.base);
+                        });
+                        // Map Mode: tap highlights the polygon, Submit commits.
+                        if (this.mode === 'select') {
+                            layer.on('click', () => this._selectAhu(layer, island, moku, ahu));
+                        }
+                    } else {
+                        // Adjacent moku — tap to switch focus there.
+                        layer.bindTooltip(`Switch to ${m}`, { sticky: true, opacity: 0.95 });
+                        layer.on('mouseover', () => layer.setStyle(styles.fadedHover));
+                        layer.on('mouseout',  () => layer.setStyle(styles.faded));
+                        layer.on('click', () => this.goAhupuaa(island, m, layer.getBounds()));
                     }
                 }
             }).addTo(this.map);
 
             try {
-                // Prefer focusing on the polygon the user actually tapped.
-                // Falls back to the whole moku group only when called without
-                // a focus (e.g. from the breadcrumb navigation).
+                // Focus the camera on the polygon the user tapped, falling
+                // back to the focused moku's bounds when navigating from
+                // breadcrumbs.
                 const target = (focusBounds && focusBounds.isValid && focusBounds.isValid())
                                 ? focusBounds
-                                : this.layer.getBounds();
+                                : L.geoJSON({ type: 'FeatureCollection', features: focusedFeatures }).getBounds();
                 if (target.isValid()) {
-                    // Never zoom OUT from where the user already is. If the
-                    // current view already contains the target, leave the
-                    // camera alone.
                     const currentBounds = this.map.getBounds();
                     if (!currentBounds.contains(target)) {
                         this.map.fitBounds(target, { padding: [40, 40], maxZoom: 14 });
@@ -2167,9 +2185,9 @@ const LOCATIONS = window.LOCATIONS || [];
             } catch (e) {}
 
             if (this.mode === 'select') {
-                this._renderSelectionInfo(island, moku);   // shows starting hint, no selection yet
+                this._renderSelectionInfo(island, moku);
             } else {
-                this.setInfo(`Moku o ${moku} (${island}): ${filtered.features.length} ahupuaʻa shown.`);
+                this.setInfo(`Moku o ${moku} (${island}): ${focusedFeatures.length} ahupuaʻa shown. Tap any greyed area to switch moku.`);
             }
         },
 
@@ -2207,7 +2225,7 @@ const LOCATIONS = window.LOCATIONS || [];
         _renderSelectionInfo(island, moku) {
             const info = document.getElementById('help-info');
             if (!this._selectedAhu) {
-                info.textContent = `${moku} (${island}): tap an ahupuaʻa to highlight it, then tap Submit.`;
+                info.textContent = `${moku} (${island}): tap an ahupuaʻa to highlight, then Submit. Tap a greyed area to switch moku.`;
                 return;
             }
             info.innerHTML = '';
@@ -2350,13 +2368,13 @@ const LOCATIONS = window.LOCATIONS || [];
                 <p>The reason we record any of this is to make the game better. If 80% of players never finish a round, that tells us the round screen needs work. If the give-up button is hit a lot on Lānaʻi entries, that tells us those rounds may be too obscure. We are not trying to build a profile of you. We are trying to make the game more fun.</p>
 
                 <h2>What third party services see</h2>
-                <p>Moku Match pulls a few things from the open web. Each of those services sees your IP address as part of any normal web request. We do not get a copy.</p>
+                <p>Huakaʻi pulls a few things from the open web. Each of those services sees your IP address as part of any normal web request. We do not get a copy.</p>
                 <p><strong>Wikimedia Commons</strong> serves the photos shown each round. Their privacy policy is at <a href="https://foundation.wikimedia.org/wiki/Privacy_policy" target="_blank" rel="noopener">foundation.wikimedia.org</a>.</p>
                 <p><strong>OpenStreetMap</strong> serves the base map tiles when you open the help map. Their policy is at <a href="https://wiki.osmfoundation.org/wiki/Privacy_Policy" target="_blank" rel="noopener">osmfoundation.org</a>.</p>
                 <p><strong>Hawaiʻi Statewide GIS Program</strong> serves the ahupuaʻa boundary polygons when you open the help map. Their site is at <a href="https://planning.hawaii.gov/gis/" target="_blank" rel="noopener">planning.hawaii.gov/gis</a>.</p>
 
                 <h2>Where this site is hosted</h2>
-                <p>Moku Match is hosted on GitHub Pages. GitHub may log standard web request information per their statement at <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">docs.github.com</a>.</p>
+                <p>Huakaʻi is hosted on GitHub Pages. GitHub may log standard web request information per their statement at <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">docs.github.com</a>.</p>
 
                 <h2>What we do not do</h2>
                 <p>No accounts. No sign in. No ads. No analytics. No cookies. No tracking. No newsletters. We do not sell anything because we do not have anything to sell.</p>
@@ -2380,16 +2398,16 @@ const LOCATIONS = window.LOCATIONS || [];
                     <p>That is the heart of how this game should be used. Be kind to the ʻāina you are learning about. Be kind to the kupuna who named these places. Be kind to the people who built and maintain this game. Everything else on this page is just the detail.</p>
                 </div>
 
-                <h2>Using Moku Match</h2>
-                <p>Moku Match is free. No sign up, no payment, no account. It runs entirely in your browser. Open the page, play, close the tab. That is the whole arrangement.</p>
+                <h2>Using Huakaʻi</h2>
+                <p>Huakaʻi is free. No sign up, no payment, no account. It runs entirely in your browser. Open the page, play, close the tab. That is the whole arrangement.</p>
 
                 <h2>Open source</h2>
-                <p>Moku Match is open source under the <a href="https://opensource.org/licenses/MIT" target="_blank" rel="noopener">MIT License</a> and lives on <a href="https://github.com/olagon/MokuMatch" target="_blank" rel="noopener">GitHub</a>. You can fork it, study it, or build on it.</p>
+                <p>Huakaʻi is open source under the <a href="https://opensource.org/licenses/MIT" target="_blank" rel="noopener">MIT License</a> and lives on <a href="https://github.com/olagon/MokuMatch" target="_blank" rel="noopener">GitHub</a>. You can fork it, study it, or build on it.</p>
 
                 <h2>What we ask of you</h2>
                 <p>Treat the place names with respect. They are not trivia. Each ahupuaʻa carries history, family ties, water rights, and stories that go back generations.</p>
-                <p>Treat other learners with kindness if you share scores or talk about Moku Match.</p>
-                <p>Do not try to break Moku Match or abuse the third party services it relies on.</p>
+                <p>Treat other learners with kindness if you share scores or talk about Huakaʻi.</p>
+                <p>Do not try to break Huakaʻi or abuse the third party services it relies on.</p>
 
                 <h2>Where the data comes from</h2>
                 <p>Place name boundaries (mokupuni, moku, ahupuaʻa) come from the Office of Hawaiian Affairs and the Department of Land and Natural Resources, published by the <a href="https://planning.hawaii.gov/gis/" target="_blank" rel="noopener">Hawaiʻi Statewide GIS Program</a>.</p>
@@ -2397,16 +2415,16 @@ const LOCATIONS = window.LOCATIONS || [];
                 <p>If you find a wrong attribution, a misspelled place name, or a photo that does not match the ahupuaʻa it is placed in, please let us know.</p>
 
                 <h2>About the boundaries</h2>
-                <p>Moku Match uses the modern ahupuaʻa boundary layer published by the Hawaiʻi Statewide GIS Program. This is an administrative dataset built originally from Office of Hawaiian Affairs records. It is the most authoritative single source we have access to, and using it means the answer the game scores is the same answer the help map shows.</p>
+                <p>Huakaʻi uses the modern ahupuaʻa boundary layer published by the Hawaiʻi Statewide GIS Program. This is an administrative dataset built originally from Office of Hawaiian Affairs records. It is the most authoritative single source we have access to, and using it means the answer the game scores is the same answer the help map shows.</p>
                 <p>The trade-off is that this modern layer is not the full traditional record. In several places it merges historical ahupuaʻa into larger modern polygons. The most visible example is the Honolulu area on Oʻahu: traditional ahupuaʻa like Mānoa, Pauoa, Makiki, Pālolo, Waiʻalae and others all sit inside one big "Honolulu" polygon in the State layer. So if a photo of Mānoa Falls is scored as "Honolulu," that is what the State map says, not a mistake on our end.</p>
                 <p>If you want to study the older, finer-grained traditional boundaries, work with a kumu, take a Hawaiian Studies class, or read the original mahele records. Sources like Awaiaulu and the Bishop Museum archive the historical detail this game cannot fully represent.</p>
                 <p>Hawaiian place name spellings also vary across sources. We follow the State layer's diacriticals where present. If you spot a misspelling or an attribution error, tell us.</p>
 
                 <h2>No warranty</h2>
-                <p>Moku Match is provided "as is." We do our best, but we cannot promise every photo loads, every place is correctly attributed, or that the help map data is always available. The third party services Moku Match relies on can go down, change their URLs, or alter their data.</p>
+                <p>Huakaʻi is provided "as is." We do our best, but we cannot promise every photo loads, every place is correctly attributed, or that the help map data is always available. The third party services Huakaʻi relies on can go down, change their URLs, or alter their data.</p>
 
                 <h2>If we ever shut it down</h2>
-                <p>Moku Match is one HTML file plus one data file plus a public dataset. If this hosting goes away, the code is on GitHub and the dataset is on the State of Hawaiʻi GIS site. Either could be revived by anyone.</p>
+                <p>Huakaʻi is one HTML file plus one data file plus a public dataset. If this hosting goes away, the code is on GitHub and the dataset is on the State of Hawaiʻi GIS site. Either could be revived by anyone.</p>
 
                 <h2>Changes to these terms</h2>
                 <p>If anything changes, we update this page and note it at the bottom.</p>
@@ -2427,8 +2445,8 @@ const LOCATIONS = window.LOCATIONS || [];
                     <p>ʻO wau ʻo Olin Kealoha Lagon. Here are the Hawaiian language and culture learning games I have gifted. They are all open source. Make a copy, edit it, re-release as your own version, or even contact me if you want to take over any of these.</p>
                 </div>
 
-                <h2><a href="https://olagon.github.io/MokuMatch/" target="_blank" rel="noopener">MokuMatch</a> <span style="font-weight: 400; font-size: 0.85rem; color: var(--accent);">(you are here)</span></h2>
-                <p>The game you are playing right now. A Hawaiʻi place-knowledge game. Most people who grew up in Hawaiʻi can name the islands. Fewer can name the moku. Fewer still can place an ahupuaʻa. These names are not trivia. They tell you where the water flowed, who lived there, who fished there, and what was grown. MokuMatch uses live State of Hawaiʻi GIS data to teach the mokupuni, moku, and ahupuaʻa map one tap at a time.</p>
+                <h2><a href="https://olagon.github.io/MokuMatch/" target="_blank" rel="noopener">Huakaʻi</a> <span style="font-weight: 400; font-size: 0.85rem; color: var(--accent);">(you are here)</span></h2>
+                <p>The journey you are on right now. A Hawaiʻi place-knowledge game. Most people who grew up in Hawaiʻi can name the islands. Fewer can name the moku. Fewer still can place an ahupuaʻa. These names are not trivia. They tell you where the water flowed, who lived there, who fished there, and what was grown. Huakaʻi uses live State of Hawaiʻi GIS data to teach the mokupuni, moku, and ahupuaʻa map one tap at a time.</p>
 
                 <h2><a href="https://olelodaily.com" target="_blank" rel="noopener">OleloDaily.com</a></h2>
                 <p>A daily ʻŌlelo Hawaiʻi vocabulary trainer. Bite-sized rounds, gentle streaks, an essentials track and a fluency track. The goal is small daily reps that compound, not a marathon. Built for learners who want to keep showing up.</p>

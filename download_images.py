@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Moku Match: download every image referenced in data/locations.js,
+Huakaʻi: download every image referenced in data/locations.js,
 resize, save locally to /images/, and rewrite data/locations.js to
 point at the local copies.
 
@@ -186,7 +186,7 @@ def fetch_and_save(url: str, dest: Path):
 # ---- Output writers ----
 def write_locations_js(locations, path: Path):
     lines = [
-        "// Moku Match: location dataset",
+        "// Huakaʻi: location dataset",
         "// Images downloaded once and hosted locally in /images/.",
         "// Original photographer credit preserved on each photo (see attribution).",
         "// Full attribution table: IMAGE_CREDITS.md",
@@ -213,7 +213,7 @@ def write_locations_js(locations, path: Path):
 
 def write_credits(locations, path: Path):
     lines = [
-        "# Moku Match: Image Credits",
+        "# Huakaʻi: Image Credits",
         "",
         "Every photo in `/images/` is a copy of an originally-hosted file,",
         "downloaded once for stability. Each remains under the license of",
@@ -241,7 +241,7 @@ def write_failures(failures, path: Path):
             path.unlink()
         return
     lines = [
-        f"Moku Match: {len(failures)} image(s) failed to download.",
+        f"Huakaʻi: {len(failures)} image(s) failed to download.",
         "Paste this list back to Claude so we can find replacements.",
         "",
     ]
@@ -254,7 +254,7 @@ def write_failures(failures, path: Path):
 
 # ---- Main ----
 def main():
-    print("Moku Match image downloader\n")
+    print("Huakaʻi image downloader\n")
 
     if not LOCATIONS_FILE.exists():
         print(f"Could not find {LOCATIONS_FILE}")

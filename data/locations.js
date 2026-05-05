@@ -1,4 +1,4 @@
-// Moku Match: location dataset
+// Huakaʻi: location dataset
 // Images downloaded once and hosted locally in /images/.
 // Original photographer credit preserved on each photo (see attribution).
 // Full attribution table: IMAGE_CREDITS.md

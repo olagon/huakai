@@ -1,34 +1,49 @@
-# Moku Match
+# Huakaʻi
 
-A guessing game for the geography of Hawaiʻi. You see a photo of a real place. You name the **mokupuni** (island), the **moku** (district), and the **ahupuaʻa** (land division) it sits in. All three right scores a point. Ten rounds per game.
+A geography journey through Hawaiʻi. You see a photo of a real place. You find where it sits on the map: which **mokupuni** (island), which **moku** (district), which **ahupuaʻa** (land division). Three quick rounds per game. Solve every site in the dataset to "beat" Huakaʻi.
 
-It runs in one HTML file, in your browser, with nothing to install and nothing to sign up for.
+A *huakaʻi* is a journey. The aim here is not to get every round right on the first try — it is to keep returning, see new places, and slowly come to know the land.
+
+It runs in one HTML file, in your browser. Nothing to install.
 
 [Play it now](https://olagon.github.io/MokuMatch/)
 
 ## Why
 
-Most people who grew up in Hawaiʻi can name the islands. Fewer can name the moku. Fewer still can place an ahupuaʻa. These names are not trivia. They tell you where the water flowed, who lived there, who fished there, and what was grown. The game is a small nudge toward learning them.
+Most people who grew up in Hawaiʻi can name the islands. Fewer can name the moku. Fewer still can place an ahupuaʻa. These names are not trivia. They tell you where the water flowed, who lived there, who fished there, and what was grown. Huakaʻi is a small nudge toward learning them.
 
 ## How to play
 
-1. Look at the photo.
-2. Pick the island.
-3. Pick the moku.
-4. Pick the ahupuaʻa.
-5. Tap **Huli** to flip your guess.
-6. You score one point only when all three are right.
+You see a photo. The action card has one big button: **Open the map to answer**.
 
-Stuck on a round? There is a **map** button on every screen. It opens a drill-down map of all eight islands. Tap an island to see its moku. Tap a moku to see its ahupuaʻa. The boundaries come straight from the State of Hawaiʻi GIS layer.
+Tap that and the State of Hawaiʻi GIS map opens, zoomed out to all eight islands. Three taps takes you to your guess:
+
+1. Tap an island.
+2. Tap a moku (the colored regions inside the island). Tap a different greyed-out moku at any point to jump there directly without going back.
+3. Tap the ahupuaʻa polygon you think is right. It highlights in orange. A Submit button appears in the info bar.
+4. Tap Submit.
+
+Get all three right and the site is yours forever — your progress is saved between sessions. The header pill shows you live progress (X / 156).
+
+When you're stuck, two safety nets:
+
+- **Use today's hint** — reveals the island and moku, leaving only the ahupuaʻa to find. One per calendar day.
+- **I don't know — show me the answer** — reveals the answer with a mini-map showing the actual ahupuaʻa polygon. Doesn't score a point but you learn where it was.
+
+When you're close, the game knows: getting the right moku but the wrong ahupuaʻa shows a soft "Almost!" instead of "Auwē!".
 
 ## Features
 
-- 130+ real photographed locations across all eight Hawaiian islands
-- Drill-down ahupuaʻa map (mokupuni → moku → ahupuaʻa) using live State GIS data
-- Round summary with the correct names
-- End-of-game recap with a map of where you were and a grid of every photo you saw
-- Mobile friendly. Works offline once the page loads, except for the help map
-- No sign in, no analytics, no cookies, no tracking, no ads
+- 156 real photographed locations across all eight Hawaiian islands
+- Live State of Hawaiʻi GIS data — the polygons you tap are the real ahupuaʻa boundaries
+- Tap-through map answering with smart camera (never zooms out unexpectedly)
+- Show-photo peek inside the map so you can see the round image while you navigate
+- Click any photo to enlarge with cycling zoom (1x → 2x → 4x)
+- Daily hint, give-up flow, "Almost!" grace credit when moku is right
+- Progress modal with thumbnail grid (color = solved, grey = not yet)
+- End-of-game recap map plus "Your Journey" grid with hover-to-reveal answers
+- Mobile friendly. The map is the only UI — no dropdowns to fight with
+- No sign-in, no accounts, no cookies. Anonymized GA4 only
 
 ## Run it locally
 
@@ -48,10 +63,21 @@ python3 -m http.server 8000
 ## Project layout
 
 ```
-index.html          Everything: markup, styles, game logic, help-map logic, modals
-data/locations.js   The 130+ location entries (name, coords, ahupuaʻa, image URL)
-LICENSE             MIT
-README.md           This file
+index.html                       Markup, styles, all game logic, modals
+data/locations.js                The 156 location entries (name, coords, ahupuaʻa, image URL)
+data/caption_suggestions.json    Hand-crafted caption suggestions for the curate page
+images/                          Self-hosted location photos (organized by island)
+LICENSE                          MIT
+README.md                        This file
+
+# Tooling (Python, only run when growing/cleaning the dataset)
+download_images.py               Mirror remote images to /images/, resize, write attribution
+discover_more_locations.py       Auto-discover new GPS-tagged Hawaii photos from Wikimedia
+calibrate_locations.py           Snap every entry to the State GIS layer
+list_gis_taxonomy.py             Dump the GIS taxonomy as a tree or CSV
+apply_patch.py                   Apply a curate.html patch (deletes + renames)
+curate.html                      Browser tool: bulk delete + rename via grid view
+curate_captions.html             Browser tool: review/edit captions, generate patch
 ```
 
 The location data is split out so you can add or fix entries without touching the game code. Each entry looks like this:
@@ -61,45 +87,46 @@ The location data is split out so you can add or fix entries without touching th
     "name": "Lēʻahi (Diamond Head)",
     "island": "Oʻahu",
     "moku": "Kona",
-    "ahupuaa": "Kapahulu",
+    "ahupuaa": "Waikīkī",
     "coords": [21.2635, -157.8049],
-    "img": "https://commons.wikimedia.org/wiki/Special:FilePath/Diamond_Head_crater_aerial_Jan_2022.png",
+    "img": "images/oahu/leahi-diamond-head.jpg",
     "attribution": "RL0919, CC BY-SA 4.0, via Wikimedia Commons"
 }
 ```
 
 ## Data sources
 
-**Ahupuaʻa boundaries** come from the [Hawaiʻi Statewide GIS Program](https://planning.hawaii.gov/gis/), Office of Planning and Sustainable Development. The specific layer is `HistoricCultural/MapServer/1`. Original source is the Office of Hawaiian Affairs (2009), with diacriticals corrected by DLNR/SHPD.
+**Ahupuaʻa boundaries** come from the [Hawaiʻi Statewide GIS Program](https://planning.hawaii.gov/gis/), Office of Planning and Sustainable Development. The specific layer is `HistoricCultural/MapServer/1`. Original source is the Office of Hawaiian Affairs (2009), with diacriticals corrected by DLNR/SHPD in 2017 and 2021.
 
-**Photos** come from [Wikimedia Commons](https://commons.wikimedia.org/), each under its own license. Every photo shows the credit in the game UI.
+This is the **modern administrative** layer. Some traditional ahupuaʻa are merged into larger modern polygons — Mānoa, Makiki, Pālolo on Oʻahu all sit inside one big "Honolulu" polygon, for example. The game labels and the answer always match the State layer, but the in-app Terms doc explains the trade-off so players can understand what they are seeing.
+
+**Photos** come from [Wikimedia Commons](https://commons.wikimedia.org/), each under its own CC license. Every photo shows the credit in the game UI. Full attribution table is in [IMAGE_CREDITS.md](IMAGE_CREDITS.md).
 
 **Map base tiles** come from [OpenStreetMap](https://www.openstreetmap.org/copyright).
 
 ## Privacy
 
-Moku Match collects nothing. There is no sign in, no localStorage, no cookies, no analytics. Your score and history live in the page tab and disappear when you close it. The only network requests the game makes are to the data sources listed above (Wikimedia for photos, OpenStreetMap for tiles, State GIS for boundary polygons). Each of those services sees your IP because that is how the web works, but Moku Match itself never gets a copy.
-
-The full Privacy Policy and Terms of Use are accessible from the footer of the site as in-page modals.
+Huakaʻi has no user accounts. It uses one bit of localStorage to track which sites you have solved across sessions, so progress carries over. We use Google Analytics 4 with privacy-friendly settings (anonymized IPs, no Google signals, no ad personalization) to count aggregate gameplay events. Full Privacy Policy and Terms of Use are in-page modals from the footer.
 
 ## Contributing
 
 Errors in this dataset are easy to make and easier to find. If you spot one:
 
 - A photo that does not match the ahupuaʻa it is placed in
-- A misspelled place name (missing ʻokina, missing kahakō, wrong vowel)
-- A boundary attribution that disagrees with the OHA / DLNR record
+- A misspelled place name (missing ʻokina, missing kahakō)
+- A boundary attribution that disagrees with the State GIS layer
 - A broken image link
 
-Please open an issue or send a pull request. For people not on GitHub, send a message on [LinkedIn](https://www.linkedin.com/in/olinlagon/).
+Open an issue or send a pull request. For people not on GitHub, send a message on [LinkedIn](https://www.linkedin.com/in/olinlagon/).
 
-If you want to add new locations, the rules are simple: the photo must be on Wikimedia Commons (so we have a real license and credit), the coordinates must be honest, and you must be confident about the ahupuaʻa. When in doubt, skip it. We would rather have 100 trustworthy entries than 200 sloppy ones.
+If you want to add new locations, the rules are simple: the photo must be on Wikimedia Commons (so we have a real license and credit), the coordinates must be honest, and the GIS layer must return a valid mokupuni/moku/ahupuaʻa for those coordinates. The `discover_more_locations.py` script automates this — it pulls Hawaii photos with GPS and reverse-geocodes them.
 
 ## Tech
 
 - Plain HTML, vanilla JavaScript, [Tailwind CSS](https://tailwindcss.com/) via CDN
-- [Leaflet](https://leafletjs.com/) for both the help map and the end-of-game recap map
+- [Leaflet](https://leafletjs.com/) for the help map, the recap map, and the answer-reveal mini-map
 - Hosted on [GitHub Pages](https://pages.github.com/)
+- GA4 for aggregate analytics
 
 No build step. No package manager. No framework. Open the HTML, ship the HTML.
 
@@ -116,5 +143,5 @@ Built with aloha by [Olin Kealoha Lagon](https://www.linkedin.com/in/olinlagon/)
 Mahalo to:
 
 - The Office of Hawaiian Affairs and the Hawaiʻi State Department of Land and Natural Resources, whose work on ahupuaʻa boundaries is the foundation of this game.
-- Every Wikimedia Commons photographer who shared their work under a Creative Commons license. Their names and links appear on each photo in the game.
+- Every Wikimedia Commons photographer who shared their work under a Creative Commons license. Their names and links appear on each photo.
 - The kupuna who carried these place names across generations, and the people working today to keep them alive.

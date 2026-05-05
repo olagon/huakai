@@ -542,6 +542,59 @@
         .journey-tile .journey-status { font-size: 10px; }
     }
 
+    /* Daily hint button — yellow/amber so it reads "free help, use it". */
+    .hint-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        width: 100%;
+        margin-top: 14px;
+        background: linear-gradient(135deg, #FFC83D 0%, #FBA425 100%);
+        color: #5C3D00;
+        font-weight: 800;
+        font-size: 14px;
+        padding: 13px 18px;
+        border-radius: 16px;
+        border: 1.5px solid rgba(252, 156, 0, 0.55);
+        cursor: pointer;
+        box-shadow: 0 6px 16px rgba(255, 168, 0, 0.30);
+        transition: filter 140ms ease, transform 80ms ease;
+        line-height: 1.2;
+    }
+    @media (min-width: 640px) {
+        .hint-btn { font-size: 15px; padding: 14px 20px; }
+    }
+    .hint-btn:hover { filter: brightness(1.05); }
+    .hint-btn:active { transform: translateY(1px); }
+    .hint-btn svg { color: #7A4F00; }
+    .hint-revealed {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 14px;
+        padding: 12px 16px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, rgba(255, 200, 61, 0.18), rgba(251, 164, 37, 0.18));
+        border: 1.5px solid rgba(252, 156, 0, 0.40);
+        color: #5C3D00;
+        flex-wrap: wrap;
+    }
+    .hint-revealed .hint-label {
+        font-size: 10px;
+        font-weight: 900;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        background: rgba(252, 156, 0, 0.28);
+        padding: 3px 8px;
+        border-radius: 999px;
+    }
+    .hint-revealed .hint-text {
+        font-weight: 800;
+        font-size: 14px;
+    }
+
     /* Give-up button — visible secondary CTA, sits below the primary
        answer button. Kapa brown so it reads "soft" not "destructive". */
     .skip-btn {
@@ -846,6 +899,22 @@
                     <span>Open the map to answer</span>
                     <span class="answer-btn-arrow" aria-hidden="true">→</span>
                 </button>
+                <!-- Daily hint: revealed once per calendar day. Hidden the rest of the day. -->
+                <button id="hint-btn" onclick="game.useHint()" type="button" class="hint-btn hidden" aria-label="Use today's hint">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M9 18h6"/><path d="M10 22h4"/>
+                        <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8a6 6 0 0 0-12 0c0 1.4.55 2.83 1.5 4 .76.76 1.23 1.52 1.41 2.5"/>
+                    </svg>
+                    <span>Use today's hint (Island + Moku)</span>
+                </button>
+                <!-- Hint reveal panel — appears for the rest of the round once the hint is used -->
+                <div id="hint-revealed" class="hidden hint-revealed">
+                    <span class="hint-label">Hint</span>
+                    <span class="hint-text">
+                        <span id="hint-island"></span> <span class="opacity-60">·</span> <span id="hint-moku"></span>
+                    </span>
+                </div>
+
                 <button onclick="game.giveUp()" type="button" class="skip-btn" aria-label="Show me the answer">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <circle cx="12" cy="12" r="10"/>
@@ -1121,7 +1190,18 @@ const LOCATIONS = window.LOCATIONS || [];
                 perfectGames: 0,
                 firstPlayed: null,
                 lastPlayed: null,
+                lastHintDate: null, // YYYY-MM-DD of last hint use
             };
+        },
+        _today() {
+            return new Date().toISOString().slice(0, 10);
+        },
+        canUseHint() {
+            return this.data.lastHintDate !== this._today();
+        },
+        markHintUsed() {
+            this.data.lastHintDate = this._today();
+            this.save();
         },
         markSolved(name) {
             const isNew = !this.data.solved[name];
@@ -1362,6 +1442,19 @@ const LOCATIONS = window.LOCATIONS || [];
             this.elements.ahupuaaSelect.disabled = true;
             this.elements.submitBtn.disabled = true;
 
+            // Reset hint UI: show button if hint is still available today,
+            // hide the revealed panel from any previous round.
+            const hintBtn = document.getElementById('hint-btn');
+            const hintReveal = document.getElementById('hint-revealed');
+            if (hintReveal) hintReveal.classList.add('hidden');
+            if (hintBtn) {
+                if (stats.canUseHint()) {
+                    hintBtn.classList.remove('hidden');
+                } else {
+                    hintBtn.classList.add('hidden');
+                }
+            }
+
             // Image Loading
             imgEl.classList.add('opacity-0');
             imgEl.alt = `${loc.name} - ${loc.attribution}`; // Add attribution to Alt text
@@ -1464,6 +1557,11 @@ const LOCATIONS = window.LOCATIONS || [];
 
             // ALL THREE must be correct
             const isFullyCorrect = isIslandCorrect && isMokuCorrect && isAhupuaaCorrect;
+            // "Close" = right island + right moku, wrong ahupuaʻa.
+            // The user picked an ahupuaʻa adjacent to the right one within
+            // the same moku (e.g., the Molokini case). Doesn't score a
+            // point, but earns a softer "Almost!" feedback variant.
+            const isClose = !isFullyCorrect && isIslandCorrect && isMokuCorrect;
 
             let newlySolved = false;
             if (isFullyCorrect) {
@@ -1473,6 +1571,7 @@ const LOCATIONS = window.LOCATIONS || [];
             track('round_answered', {
                 round: this.currentRoundIndex + 1,
                 correct: isFullyCorrect,
+                close: isClose,
                 newly_solved: newlySolved,
                 island_correct: isIslandCorrect,
                 moku_correct: isMokuCorrect,
@@ -1484,12 +1583,30 @@ const LOCATIONS = window.LOCATIONS || [];
             this.gameHistory.push({
                 location: loc,
                 correct: isFullyCorrect,
+                close: isClose,
                 newlySolved: newlySolved,
                 guess: { island: guessIsland, moku: guessMoku, ahupuaa: guessAhupuaa }
             });
 
             this.updateScoreUI();
-            this.showFeedback(isFullyCorrect, loc);
+            this.showFeedback(isFullyCorrect, loc, false, isClose);
+        },
+
+        // Daily hint — reveals the island + moku for the current round.
+        // One use per calendar day, tracked in localStorage.
+        useHint() {
+            if (!stats.canUseHint()) return;
+            const loc = this.deck[this.currentRoundIndex];
+            track('hint_used', {
+                round: this.currentRoundIndex + 1,
+                location: loc.name,
+                location_island: loc.island,
+            });
+            stats.markHintUsed();
+            document.getElementById('hint-island').textContent = loc.island;
+            document.getElementById('hint-moku').textContent   = loc.moku;
+            document.getElementById('hint-revealed').classList.remove('hidden');
+            document.getElementById('hint-btn').classList.add('hidden');
         },
 
         // Player gave up. Reveal the answer in the feedback overlay,
@@ -1511,7 +1628,7 @@ const LOCATIONS = window.LOCATIONS || [];
             this.showFeedback(false, loc, /* gaveUp */ true);
         },
 
-        showFeedback(isCorrect, loc, gaveUp) {
+        showFeedback(isCorrect, loc, gaveUp, isClose) {
             const overlay = this.elements.feedbackOverlay;
             const header = document.getElementById('feedback-header');
             const title = document.getElementById('feedback-title');
@@ -1531,8 +1648,15 @@ const LOCATIONS = window.LOCATIONS || [];
                 header.className = 'px-6 py-5 sm:px-7 sm:py-6 text-center text-white bg-kapa-green';
                 title.textContent = "Pololei!";
                 icon.textContent = "🤙";
+            } else if (isClose) {
+                // Right moku, wrong ahupuaʻa — give credit for being close.
+                header.className = 'px-6 py-5 sm:px-7 sm:py-6 text-center text-white';
+                header.style.background = '#E08A1B';   // warm amber, between green and clay
+                title.textContent = "Almost!";
+                icon.textContent = "🤏";
             } else {
                 header.className = 'px-6 py-5 sm:px-7 sm:py-6 text-center text-white bg-kapa-clay';
+                header.style.background = '';   // clear the inline override from "close" case
                 title.textContent = "Auwē!";
                 icon.textContent = "🤔";
             }

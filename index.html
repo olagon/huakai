@@ -761,6 +761,85 @@
         .site-footer { padding: 1.5rem 0.75rem 1.5rem; font-size: 0.78rem; }
         .site-footer .footer-line { margin-bottom: 0.45rem; }
     }
+
+    /* HOW IT WORKS — animated demo on the start screen.
+       Three phases on a 9-second loop: tap an island, tap a moku,
+       tap an ahupuaʻa. Pure CSS keyframes, no library. */
+    .demo-card {
+        background: linear-gradient(135deg, rgba(94,58,158,0.07), rgba(46,125,50,0.05));
+        border: 1px solid rgba(94,58,158,0.18);
+        border-radius: 18px;
+        padding: 12px 12px 14px;
+        margin-bottom: 1.25rem;
+    }
+    .demo-frame {
+        background: #fff;
+        border-radius: 12px;
+        overflow: hidden;
+        position: relative;
+        aspect-ratio: 320 / 160;
+    }
+    .demo-svg { width: 100%; height: 100%; display: block; }
+    .demo-svg .phase  { opacity: 0; }
+    .demo-svg .phase-1 { animation: dphase1 9s infinite ease-in-out; }
+    .demo-svg .phase-2 { animation: dphase2 9s infinite ease-in-out; }
+    .demo-svg .phase-3 { animation: dphase3 9s infinite ease-in-out; }
+    @keyframes dphase1 { 0%, 28% { opacity: 1; } 33%, 100% { opacity: 0; } }
+    @keyframes dphase2 { 0%, 30% { opacity: 0; } 35%, 60% { opacity: 1; } 65%, 100% { opacity: 0; } }
+    @keyframes dphase3 { 0%, 62% { opacity: 0; } 67%, 95% { opacity: 1; } 100% { opacity: 0; } }
+    .demo-svg .ripple {
+        transform-origin: center;
+        animation: dripple 1.6s infinite ease-out;
+    }
+    @keyframes dripple {
+        0%   { r: 6;  opacity: 1; stroke-width: 3; }
+        80%  { r: 24; opacity: 0; stroke-width: 1; }
+        100% { r: 24; opacity: 0; stroke-width: 1; }
+    }
+    .demo-svg .ahu-tap {
+        animation: dahutap 9s infinite ease-out;
+    }
+    @keyframes dahutap {
+        0%, 75%   { fill: #cbd5e1; }
+        85%, 95%  { fill: #FF6F00; }
+        100%      { fill: #cbd5e1; }
+    }
+    .demo-svg .check {
+        opacity: 0;
+        transform-origin: center;
+        animation: dcheck 9s infinite ease-out;
+    }
+    @keyframes dcheck {
+        0%, 86%  { opacity: 0; transform: scale(0.5); }
+        90%, 95% { opacity: 1; transform: scale(1); }
+        100%     { opacity: 0; transform: scale(0.5); }
+    }
+    .demo-caption {
+        position: relative;
+        height: 18px;
+        margin-top: 8px;
+        text-align: center;
+        font-weight: 700;
+        font-size: 12px;
+        color: #4a2d7e;
+    }
+    .demo-caption .cap {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+    }
+    .demo-caption .cap-1 { animation: dcap1 9s infinite ease-in-out; }
+    .demo-caption .cap-2 { animation: dcap2 9s infinite ease-in-out; }
+    .demo-caption .cap-3 { animation: dcap3 9s infinite ease-in-out; }
+    @keyframes dcap1 { 0%, 28% { opacity: 1; } 33%, 100% { opacity: 0; } }
+    @keyframes dcap2 { 0%, 30% { opacity: 0; } 35%, 60% { opacity: 1; } 65%, 100% { opacity: 0; } }
+    @keyframes dcap3 { 0%, 62% { opacity: 0; } 67%, 95% { opacity: 1; } 100% { opacity: 0; } }
+    /* Respect reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+        .demo-svg .phase, .demo-svg .ripple, .demo-svg .ahu-tap,
+        .demo-svg .check, .demo-caption .cap { animation: none; }
+        .demo-svg .phase-1, .demo-caption .cap-1 { opacity: 1; }
+    }
     </style>
 </head>
 
@@ -809,6 +888,58 @@
             <p class="text-sm text-black/60 mb-7 leading-relaxed italic">
                 A huakaʻi is a journey. The aim is not to get every round right on the first try. It is to keep returning, see new places, and slowly come to know the names of the land.
             </p>
+            <!-- Animated demo: tap island, tap moku, tap ahupuaʻa. -->
+            <div class="demo-card" aria-hidden="true">
+                <div class="demo-frame">
+                    <svg class="demo-svg" viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+                        <!-- Phase 1: all eight Hawaiian islands, tap on Maui -->
+                        <g class="phase phase-1">
+                            <ellipse cx="34"  cy="84"  rx="13" ry="8"  fill="#cbd5e1" /> <!-- Niʻihau -->
+                            <ellipse cx="68"  cy="76"  rx="22" ry="14" fill="#cbd5e1" /> <!-- Kauaʻi -->
+                            <ellipse cx="115" cy="86"  rx="28" ry="15" fill="#cbd5e1" /> <!-- Oʻahu -->
+                            <ellipse cx="160" cy="96"  rx="14" ry="8"  fill="#cbd5e1" /> <!-- Molokaʻi -->
+                            <ellipse cx="178" cy="103" rx="9"  ry="6"  fill="#cbd5e1" /> <!-- Lānaʻi -->
+                            <ellipse cx="186" cy="115" rx="6"  ry="4"  fill="#cbd5e1" /> <!-- Kahoʻolawe -->
+                            <ellipse cx="208" cy="100" rx="22" ry="14" fill="#5e3a9e" opacity="0.85" /> <!-- Maui (target) -->
+                            <ellipse cx="270" cy="125" rx="34" ry="22" fill="#cbd5e1" /> <!-- Hawaiʻi Island -->
+                            <circle cx="208" cy="100" r="12" fill="none" stroke="#5e3a9e" stroke-width="2.5" class="ripple" />
+                        </g>
+                        <!-- Phase 2: zoomed Maui shape with three moku regions, tap one -->
+                        <g class="phase phase-2">
+                            <path d="M 50 70 Q 80 45 140 55 Q 220 60 260 80 Q 280 100 260 125 Q 200 140 140 130 Q 70 125 50 105 Z"
+                                  fill="#e2e8f0" stroke="#94a3b8" stroke-width="1" />
+                            <!-- Moku regions -->
+                            <path d="M 50 70 Q 80 45 140 55 Q 145 80 140 105 Q 80 110 50 105 Z" fill="#5e3a9e" opacity="0.45" />
+                            <path d="M 140 55 Q 195 60 215 75 Q 220 100 215 115 Q 195 120 140 105 Q 145 80 140 55 Z" fill="#a78bfa" opacity="0.55" />
+                            <path d="M 215 75 Q 260 80 260 80 Q 280 100 260 125 Q 235 130 215 115 Q 220 100 215 75 Z" fill="#5e3a9e" opacity="0.55" />
+                            <!-- Tap on the middle moku -->
+                            <circle cx="180" cy="92" r="10" fill="none" stroke="#4a2d7e" stroke-width="2.5" class="ripple" />
+                        </g>
+                        <!-- Phase 3: zoomed moku with ahupuaʻa stripes, one taps to orange + check -->
+                        <g class="phase phase-3">
+                            <path d="M 40 50 Q 90 35 250 45 Q 280 70 270 110 Q 220 130 100 125 Q 50 115 30 85 Z"
+                                  fill="#e2e8f0" stroke="#94a3b8" stroke-width="1" />
+                            <!-- Mountain-to-sea ahupuaʻa stripes (vertical bands) -->
+                            <path d="M 70 45 Q 75 80 80 125 L 50 120 Q 40 100 50 70 Q 60 50 70 45 Z" fill="#cbd5e1" stroke="#fff" stroke-width="1.5" />
+                            <path d="M 110 45 Q 115 80 120 125 L 80 125 Q 75 80 70 45 Z" fill="#cbd5e1" stroke="#fff" stroke-width="1.5" />
+                            <path d="M 160 45 Q 165 80 170 125 L 120 125 Q 115 80 110 45 Z" class="ahu-tap" stroke="#fff" stroke-width="1.5" />
+                            <path d="M 215 45 Q 220 80 225 125 L 170 125 Q 165 80 160 45 Z" fill="#cbd5e1" stroke="#fff" stroke-width="1.5" />
+                            <path d="M 260 45 Q 265 80 268 122 Q 240 125 225 125 Q 220 80 215 45 Z" fill="#cbd5e1" stroke="#fff" stroke-width="1.5" />
+                            <!-- Check mark badge -->
+                            <g class="check">
+                                <circle cx="265" cy="35" r="18" fill="#2E7D32" />
+                                <path d="M 256 35 L 263 43 L 274 28" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+                            </g>
+                        </g>
+                    </svg>
+                </div>
+                <div class="demo-caption">
+                    <span class="cap cap-1">Tap an island</span>
+                    <span class="cap cap-2">Tap a moku</span>
+                    <span class="cap cap-3">Tap the ahupuaʻa &nbsp;·&nbsp; Pololei!</span>
+                </div>
+            </div>
+
             <div class="rounded-2xl border border-black/10 bg-white/60 p-4 sm:p-5 mb-7 text-left text-sm text-black/70">
                 <p class="font-extrabold text-black/80 tracking-tight">How it works</p>
                 <ul class="mt-3 space-y-1.5 pl-5 list-disc marker:text-black/30">

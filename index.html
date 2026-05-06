@@ -776,7 +776,7 @@
         .site-footer .footer-line { margin-bottom: 0.45rem; }
     }
 
-    /* HOW IT WORKS — animated demo on the start screen.
+    /* HOW IT WORKS - animated demo on the start screen.
        Three phases on a 9-second loop: tap an island, tap a moku,
        tap an ahupuaʻa. Pure CSS keyframes, no library. */
     .demo-card {
@@ -902,55 +902,88 @@
             <p class="text-sm text-black/60 mb-7 leading-relaxed italic">
                 A huakaʻi is a journey. The aim is not to get every round right on the first try. It is to keep returning, see new places, and slowly come to know the names of the land.
             </p>
-            <!-- Animated demo: tap island, tap moku, tap ahupuaʻa. -->
+            <!-- Animated demo: tap island, drill into Lānaʻi, tap an ahupuaʻa.
+                 The island and ahupuaʻa shapes are simplified SVG paths
+                 (not GIS-fetched) so the animation runs instantly. -->
             <div class="demo-card" aria-hidden="true">
                 <div class="demo-frame">
                     <svg class="demo-svg" viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
-                        <!-- Phase 1: all eight Hawaiian islands, tap on Maui -->
+                        <!-- Phase 1: Hawaiian archipelago with recognizable island silhouettes -->
                         <g class="phase phase-1">
-                            <ellipse cx="34"  cy="84"  rx="13" ry="8"  fill="#cbd5e1" /> <!-- Niʻihau -->
-                            <ellipse cx="68"  cy="76"  rx="22" ry="14" fill="#cbd5e1" /> <!-- Kauaʻi -->
-                            <ellipse cx="115" cy="86"  rx="28" ry="15" fill="#cbd5e1" /> <!-- Oʻahu -->
-                            <ellipse cx="160" cy="96"  rx="14" ry="8"  fill="#cbd5e1" /> <!-- Molokaʻi -->
-                            <ellipse cx="178" cy="103" rx="9"  ry="6"  fill="#cbd5e1" /> <!-- Lānaʻi -->
-                            <ellipse cx="186" cy="115" rx="6"  ry="4"  fill="#cbd5e1" /> <!-- Kahoʻolawe -->
-                            <ellipse cx="208" cy="100" rx="22" ry="14" fill="#5e3a9e" opacity="0.85" /> <!-- Maui (target) -->
-                            <ellipse cx="270" cy="125" rx="34" ry="22" fill="#cbd5e1" /> <!-- Hawaiʻi Island -->
-                            <circle cx="208" cy="100" r="12" fill="none" stroke="#5e3a9e" stroke-width="2.5" class="ripple" />
+                            <!-- Niʻihau: small NW-SE elongated -->
+                            <path d="M 14 78 Q 22 73 32 76 Q 36 82 32 88 Q 22 92 14 86 Q 12 82 14 78 Z" fill="#cbd5e1" />
+                            <!-- Kauaʻi: roughly round -->
+                            <path d="M 48 62 Q 60 56 76 60 Q 84 66 84 76 Q 80 86 68 88 Q 54 88 46 80 Q 44 70 48 62 Z" fill="#cbd5e1" />
+                            <!-- Oʻahu: rectangular with notch on east (Kāneʻohe Bay) -->
+                            <path d="M 100 78 Q 116 72 138 74 Q 145 70 152 76 Q 156 82 150 86 Q 140 92 116 92 Q 100 90 96 84 Q 96 80 100 78 Z" fill="#cbd5e1" />
+                            <!-- Molokaʻi: long thin east-west -->
+                            <path d="M 168 92 Q 188 88 210 90 Q 215 94 210 98 Q 188 100 168 96 Q 165 94 168 92 Z" fill="#cbd5e1" />
+                            <!-- Lānaʻi: roughly round, slight indent SE (Mānele) - TARGET -->
+                            <path d="M 188 110 Q 198 105 208 108 Q 213 114 211 122 Q 207 127 200 127 Q 191 126 187 120 Q 184 114 188 110 Z"
+                                  fill="#5e3a9e" opacity="0.92" />
+                            <!-- Kahoʻolawe: small narrow horizontal -->
+                            <path d="M 217 132 Q 225 130 234 133 Q 235 136 228 137 Q 218 137 217 134 Q 216 132 217 132 Z" fill="#cbd5e1" />
+                            <!-- Maui: famous head + body shape -->
+                            <path d="M 220 100 Q 228 94 236 98 Q 240 104 236 109 Q 246 105 258 110 Q 268 117 264 125 Q 254 130 240 127 Q 228 124 224 116 Q 220 108 220 100 Z" fill="#cbd5e1" />
+                            <!-- Hawaiʻi Island: rough triangle -->
+                            <path d="M 252 138 Q 270 124 296 130 Q 308 142 304 154 Q 286 158 268 154 Q 254 148 252 138 Z" fill="#cbd5e1" />
+                            <!-- Tap ripple on Lānaʻi -->
+                            <circle cx="200" cy="118" r="11" fill="none" stroke="#5e3a9e" stroke-width="2.5" class="ripple" />
                         </g>
-                        <!-- Phase 2: zoomed Maui shape with three moku regions, tap one -->
+
+                        <!-- Phase 2: zoomed Lānaʻi with its actual moku/ahupuaʻa subdivisions.
+                             Lānaʻi has the (modern GIS) Lāhainā moku containing Kamoku (Lānaʻi City area),
+                             Pālāwai south, Mahana west, Kaʻā north, Kaunolū southwest. -->
                         <g class="phase phase-2">
-                            <path d="M 50 70 Q 80 45 140 55 Q 220 60 260 80 Q 280 100 260 125 Q 200 140 140 130 Q 70 125 50 105 Z"
+                            <!-- Outline of Lānaʻi (scaled up) -->
+                            <path d="M 60 50 Q 100 38 180 42 Q 240 50 270 70 Q 285 90 270 115 Q 230 130 160 128 Q 90 125 55 110 Q 40 90 50 70 Q 55 58 60 50 Z"
                                   fill="#e2e8f0" stroke="#94a3b8" stroke-width="1" />
-                            <!-- Moku regions -->
-                            <path d="M 50 70 Q 80 45 140 55 Q 145 80 140 105 Q 80 110 50 105 Z" fill="#5e3a9e" opacity="0.45" />
-                            <path d="M 140 55 Q 195 60 215 75 Q 220 100 215 115 Q 195 120 140 105 Q 145 80 140 55 Z" fill="#a78bfa" opacity="0.55" />
-                            <path d="M 215 75 Q 260 80 260 80 Q 280 100 260 125 Q 235 130 215 115 Q 220 100 215 75 Z" fill="#5e3a9e" opacity="0.55" />
-                            <!-- Tap on the middle moku -->
-                            <circle cx="180" cy="92" r="10" fill="none" stroke="#4a2d7e" stroke-width="2.5" class="ripple" />
+                            <!-- Kaʻā ahupuaʻa (north / Garden of the Gods area) -->
+                            <path d="M 60 50 Q 100 38 180 42 Q 200 50 195 65 Q 145 65 95 65 Q 70 60 60 50 Z"
+                                  fill="#a78bfa" opacity="0.55" />
+                            <!-- Mahana ahupuaʻa (west) -->
+                            <path d="M 50 70 Q 70 60 95 65 Q 90 90 95 110 Q 65 110 55 100 Q 45 85 50 70 Z"
+                                  fill="#7c5fc2" opacity="0.55" />
+                            <!-- Kamoku ahupuaʻa (central / Lānaʻi City - the tap target) -->
+                            <path d="M 95 65 Q 145 65 195 65 Q 200 90 195 110 Q 145 115 95 110 Q 90 90 95 65 Z"
+                                  fill="#5e3a9e" opacity="0.55" />
+                            <!-- Pālāwai / Mānele ahupuaʻa (south) -->
+                            <path d="M 95 110 Q 145 115 195 110 Q 215 115 215 125 Q 165 130 95 125 Q 90 115 95 110 Z"
+                                  fill="#a78bfa" opacity="0.55" />
+                            <!-- Kaunolū area (southwest small) -->
+                            <path d="M 195 65 Q 240 50 270 70 Q 285 90 270 115 Q 250 120 215 125 Q 215 115 195 110 Q 200 90 195 65 Z"
+                                  fill="#7c5fc2" opacity="0.55" />
+                            <!-- Tap on Kamoku -->
+                            <circle cx="145" cy="88" r="11" fill="none" stroke="#4a2d7e" stroke-width="2.5" class="ripple" />
                         </g>
-                        <!-- Phase 3: zoomed moku with ahupuaʻa stripes, one taps to orange + check -->
+
+                        <!-- Phase 3: zoomed Kamoku ahupuaʻa with adjacent ahupuaʻa visible.
+                             Mountain-to-sea shape, the central one highlights. -->
                         <g class="phase phase-3">
-                            <path d="M 40 50 Q 90 35 250 45 Q 280 70 270 110 Q 220 130 100 125 Q 50 115 30 85 Z"
+                            <!-- Outline of the ahupuaʻa cluster -->
+                            <path d="M 40 45 Q 100 32 240 40 Q 280 60 280 100 Q 240 130 130 130 Q 60 125 35 100 Q 25 75 40 45 Z"
                                   fill="#e2e8f0" stroke="#94a3b8" stroke-width="1" />
-                            <!-- Mountain-to-sea ahupuaʻa stripes (vertical bands) -->
-                            <path d="M 70 45 Q 75 80 80 125 L 50 120 Q 40 100 50 70 Q 60 50 70 45 Z" fill="#cbd5e1" stroke="#fff" stroke-width="1.5" />
-                            <path d="M 110 45 Q 115 80 120 125 L 80 125 Q 75 80 70 45 Z" fill="#cbd5e1" stroke="#fff" stroke-width="1.5" />
-                            <path d="M 160 45 Q 165 80 170 125 L 120 125 Q 115 80 110 45 Z" class="ahu-tap" stroke="#fff" stroke-width="1.5" />
-                            <path d="M 215 45 Q 220 80 225 125 L 170 125 Q 165 80 160 45 Z" fill="#cbd5e1" stroke="#fff" stroke-width="1.5" />
-                            <path d="M 260 45 Q 265 80 268 122 Q 240 125 225 125 Q 220 80 215 45 Z" fill="#cbd5e1" stroke="#fff" stroke-width="1.5" />
+                            <!-- Adjacent ahupuaʻa (faded, mountain-to-sea slices) -->
+                            <path d="M 75 45 Q 80 80 88 130 Q 60 125 50 110 Q 35 85 45 60 Q 60 48 75 45 Z" fill="#cbd5e1" stroke="#fff" stroke-width="1.5" />
+                            <path d="M 130 42 Q 135 80 140 130 Q 110 130 88 130 Q 80 80 75 45 Z" fill="#cbd5e1" stroke="#fff" stroke-width="1.5" />
+                            <!-- KAMOKU (the tap target) - central, mountain-to-sea -->
+                            <path d="M 195 42 Q 198 80 202 130 Q 165 132 140 130 Q 135 80 130 42 Z" class="ahu-tap" stroke="#fff" stroke-width="2" />
+                            <path d="M 245 42 Q 245 80 248 130 Q 220 130 202 130 Q 198 80 195 42 Z" fill="#cbd5e1" stroke="#fff" stroke-width="1.5" />
+                            <path d="M 280 60 Q 280 100 280 100 Q 264 125 248 130 Q 245 80 245 42 Q 270 45 280 60 Z" fill="#cbd5e1" stroke="#fff" stroke-width="1.5" />
+                            <!-- Label faintly above -->
+                            <text x="167" y="28" text-anchor="middle" font-size="10" font-weight="700" fill="#4a2d7e" opacity="0.7">Kamoku</text>
                             <!-- Check mark badge -->
                             <g class="check">
-                                <circle cx="265" cy="35" r="18" fill="#2E7D32" />
-                                <path d="M 256 35 L 263 43 L 274 28" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+                                <circle cx="270" cy="30" r="18" fill="#2E7D32" />
+                                <path d="M 261 30 L 268 38 L 279 23" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" />
                             </g>
                         </g>
                     </svg>
                 </div>
                 <div class="demo-caption">
-                    <span class="cap cap-1">Tap an island</span>
-                    <span class="cap cap-2">Tap a moku</span>
-                    <span class="cap cap-3">Tap the ahupuaʻa &nbsp;·&nbsp; Pololei!</span>
+                    <span class="cap cap-1">Tap an island (Lānaʻi)</span>
+                    <span class="cap cap-2">Tap an ahupuaʻa</span>
+                    <span class="cap cap-3">Pololei! Kamoku</span>
                 </div>
             </div>
 
@@ -1184,7 +1217,7 @@
                     </div>
                 </div>
                 <!-- Floating photo peek (toggled with the camera button).
-                     z-index must beat Leaflet panes (200–700) AND map controls (1000). -->
+                     z-index must beat Leaflet panes (200 to 700) AND map controls (1000). -->
                 <div id="help-photo-peek" class="hidden absolute top-16 right-3 sm:right-4 w-44 sm:w-56 pointer-events-auto" style="z-index: 1100;">
                     <div class="bg-white rounded-xl overflow-hidden shadow-2xl border border-black/10">
                         <img id="help-photo-img" referrerpolicy="no-referrer" src="" alt="" class="w-full h-auto block cursor-pointer" onclick="imageLightbox.openCurrent()">

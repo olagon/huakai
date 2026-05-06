@@ -777,8 +777,8 @@
     }
 
     /* HOW IT WORKS - animated demo on the start screen.
-       Three phases on a 9-second loop: tap an island, tap a moku,
-       tap an ahupuaʻa. Pure CSS keyframes, no library. */
+       Four phases on a 12-second loop: see a photo, tap an island,
+       tap an ahupuaʻa, get it right. Pure CSS keyframes, no library. */
     .demo-card {
         background: linear-gradient(135deg, rgba(94,58,158,0.07), rgba(46,125,50,0.05));
         border: 1px solid rgba(94,58,158,0.18);
@@ -795,12 +795,14 @@
     }
     .demo-svg { width: 100%; height: 100%; display: block; }
     .demo-svg .phase  { opacity: 0; }
-    .demo-svg .phase-1 { animation: dphase1 9s infinite ease-in-out; }
-    .demo-svg .phase-2 { animation: dphase2 9s infinite ease-in-out; }
-    .demo-svg .phase-3 { animation: dphase3 9s infinite ease-in-out; }
-    @keyframes dphase1 { 0%, 28% { opacity: 1; } 33%, 100% { opacity: 0; } }
-    @keyframes dphase2 { 0%, 30% { opacity: 0; } 35%, 60% { opacity: 1; } 65%, 100% { opacity: 0; } }
-    @keyframes dphase3 { 0%, 62% { opacity: 0; } 67%, 95% { opacity: 1; } 100% { opacity: 0; } }
+    .demo-svg .phase-0 { animation: dphase0 12s infinite ease-in-out; }
+    .demo-svg .phase-1 { animation: dphase1 12s infinite ease-in-out; }
+    .demo-svg .phase-2 { animation: dphase2 12s infinite ease-in-out; }
+    .demo-svg .phase-3 { animation: dphase3 12s infinite ease-in-out; }
+    @keyframes dphase0 { 0%, 22% { opacity: 1; } 25%, 100% { opacity: 0; } }
+    @keyframes dphase1 { 0%, 23% { opacity: 0; } 27%, 47% { opacity: 1; } 50%, 100% { opacity: 0; } }
+    @keyframes dphase2 { 0%, 48% { opacity: 0; } 52%, 72% { opacity: 1; } 75%, 100% { opacity: 0; } }
+    @keyframes dphase3 { 0%, 73% { opacity: 0; } 77%, 100% { opacity: 1; } }
     .demo-svg .ripple {
         transform-origin: center;
         animation: dripple 1.6s infinite ease-out;
@@ -811,21 +813,21 @@
         100% { r: 24; opacity: 0; stroke-width: 1; }
     }
     .demo-svg .ahu-tap {
-        animation: dahutap 9s infinite ease-out;
+        animation: dahutap 12s infinite ease-out;
     }
     @keyframes dahutap {
-        0%, 75%   { fill: #cbd5e1; }
-        85%, 95%  { fill: #FF6F00; }
-        100%      { fill: #cbd5e1; }
+        0%, 78%  { fill: #cbd5e1; }
+        82%, 96% { fill: #FF6F00; }
+        100%     { fill: #cbd5e1; }
     }
     .demo-svg .check {
         opacity: 0;
         transform-origin: center;
-        animation: dcheck 9s infinite ease-out;
+        animation: dcheck 12s infinite ease-out;
     }
     @keyframes dcheck {
-        0%, 86%  { opacity: 0; transform: scale(0.5); }
-        90%, 95% { opacity: 1; transform: scale(1); }
+        0%, 88%  { opacity: 0; transform: scale(0.5); }
+        92%, 98% { opacity: 1; transform: scale(1); }
         100%     { opacity: 0; transform: scale(0.5); }
     }
     .demo-caption {
@@ -842,17 +844,19 @@
         inset: 0;
         opacity: 0;
     }
-    .demo-caption .cap-1 { animation: dcap1 9s infinite ease-in-out; }
-    .demo-caption .cap-2 { animation: dcap2 9s infinite ease-in-out; }
-    .demo-caption .cap-3 { animation: dcap3 9s infinite ease-in-out; }
-    @keyframes dcap1 { 0%, 28% { opacity: 1; } 33%, 100% { opacity: 0; } }
-    @keyframes dcap2 { 0%, 30% { opacity: 0; } 35%, 60% { opacity: 1; } 65%, 100% { opacity: 0; } }
-    @keyframes dcap3 { 0%, 62% { opacity: 0; } 67%, 95% { opacity: 1; } 100% { opacity: 0; } }
+    .demo-caption .cap-0 { animation: dcap0 12s infinite ease-in-out; }
+    .demo-caption .cap-1 { animation: dcap1 12s infinite ease-in-out; }
+    .demo-caption .cap-2 { animation: dcap2 12s infinite ease-in-out; }
+    .demo-caption .cap-3 { animation: dcap3 12s infinite ease-in-out; }
+    @keyframes dcap0 { 0%, 22% { opacity: 1; } 25%, 100% { opacity: 0; } }
+    @keyframes dcap1 { 0%, 23% { opacity: 0; } 27%, 47% { opacity: 1; } 50%, 100% { opacity: 0; } }
+    @keyframes dcap2 { 0%, 48% { opacity: 0; } 52%, 72% { opacity: 1; } 75%, 100% { opacity: 0; } }
+    @keyframes dcap3 { 0%, 73% { opacity: 0; } 77%, 100% { opacity: 1; } }
     /* Respect reduced motion */
     @media (prefers-reduced-motion: reduce) {
         .demo-svg .phase, .demo-svg .ripple, .demo-svg .ahu-tap,
         .demo-svg .check, .demo-caption .cap { animation: none; }
-        .demo-svg .phase-1, .demo-caption .cap-1 { opacity: 1; }
+        .demo-svg .phase-0, .demo-caption .cap-0 { opacity: 1; }
     }
     </style>
 </head>
@@ -908,6 +912,44 @@
             <div class="demo-card" aria-hidden="true">
                 <div class="demo-frame">
                     <svg class="demo-svg" viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+                        <!-- Phase 0: a stylized photo card. The real game starts by showing
+                             you a photo of a place. Sky gradient, mountain ridge, ocean foreground. -->
+                        <defs>
+                            <linearGradient id="dsky" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0" stop-color="#fde7c1" />
+                                <stop offset="0.55" stop-color="#fbb677" />
+                                <stop offset="1" stop-color="#f59367" />
+                            </linearGradient>
+                            <linearGradient id="docean" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0" stop-color="#4a8cba" />
+                                <stop offset="1" stop-color="#1f5a86" />
+                            </linearGradient>
+                        </defs>
+                        <g class="phase phase-0">
+                            <!-- Photo "frame" fills the demo area -->
+                            <rect x="0" y="0" width="320" height="160" fill="url(#dsky)" />
+                            <!-- Sun -->
+                            <circle cx="240" cy="55" r="14" fill="#fff3c2" opacity="0.85" />
+                            <!-- Far ridge -->
+                            <path d="M 0 92 Q 40 70 80 80 Q 120 60 160 78 Q 200 64 240 80 Q 280 70 320 86 L 320 110 L 0 110 Z"
+                                  fill="#5e3a9e" opacity="0.55" />
+                            <!-- Near ridge -->
+                            <path d="M 0 108 Q 50 90 100 100 Q 150 86 200 102 Q 250 90 320 104 L 320 130 L 0 130 Z"
+                                  fill="#3d2670" opacity="0.75" />
+                            <!-- Ocean -->
+                            <rect x="0" y="124" width="320" height="36" fill="url(#docean)" />
+                            <!-- Wave highlights -->
+                            <path d="M 0 134 Q 40 132 80 134 Q 120 136 160 134 Q 200 132 240 134 Q 280 136 320 134"
+                                  stroke="#cfe2f1" stroke-width="1" fill="none" opacity="0.6" />
+                            <path d="M 0 146 Q 40 144 80 146 Q 120 148 160 146 Q 200 144 240 146 Q 280 148 320 146"
+                                  stroke="#cfe2f1" stroke-width="1" fill="none" opacity="0.45" />
+                            <!-- "Where is this?" tag, like the photo caption in the real game -->
+                            <g>
+                                <rect x="14" y="14" width="120" height="22" rx="11" fill="rgba(0,0,0,0.45)" />
+                                <text x="74" y="29" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">Where is this?</text>
+                            </g>
+                        </g>
+
                         <!-- Phase 1: Hawaiian archipelago with recognizable island silhouettes -->
                         <g class="phase phase-1">
                             <!-- Niʻihau: small NW-SE elongated -->
@@ -981,6 +1023,7 @@
                     </svg>
                 </div>
                 <div class="demo-caption">
+                    <span class="cap cap-0">You see a photo</span>
                     <span class="cap cap-1">Tap an island (Lānaʻi)</span>
                     <span class="cap cap-2">Tap an ahupuaʻa</span>
                     <span class="cap cap-3">Pololei! Kamoku</span>

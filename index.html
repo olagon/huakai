@@ -1215,7 +1215,7 @@
                     <p id="final-message" class="font-bold text-lg"></p>
                 </div>
                 <div class="flex justify-center mb-7">
-                    <button onclick="location.reload()" class="ui-btn ui-btn-primary max-w-sm w-full">
+                    <button onclick="game.start()" class="ui-btn ui-btn-primary max-w-sm w-full">
                         <span aria-hidden="true">↺</span> Play Again
                     </button>
                 </div>
@@ -1238,7 +1238,10 @@
             <div class="absolute inset-0 sm:inset-4 md:inset-6 sm:rounded-2xl bg-white sm:glass-panel sm:overflow-hidden flex flex-col" style="overflow:hidden">
                 <div class="flex items-center justify-between px-3 sm:px-4 py-2.5 sm:py-3 border-b border-black/10 bg-white/90">
                     <div class="flex items-center gap-1.5 sm:gap-2 text-sm flex-wrap min-w-0">
-                        <button onclick="helpMap.goIslands()" class="font-extrabold text-black/80 hover:text-kapa-ocean px-2 py-1 -mx-2 rounded">Mokupuni</button>
+                        <button onclick="helpMap.goIslands()" class="ui-pill text-xs sm:text-sm font-bold hover:bg-white text-kapa-ocean px-2.5 py-1.5 shrink-0" title="Back to all islands">
+                            <span aria-hidden="true">←</span>
+                            <span>Islands</span>
+                        </button>
                         <span id="help-crumb-island-wrap" class="hidden items-center gap-1.5 sm:gap-2">
                             <span class="text-black/30">›</span>
                             <button onclick="helpMap.backToMoku()" id="help-crumb-island" class="font-extrabold text-black/80 hover:text-kapa-ocean px-2 py-1 -mx-2 rounded truncate max-w-[140px] sm:max-w-none"></button>
@@ -1336,7 +1339,7 @@
         <span class="footer-line">Built with aloha by <a href="https://www.linkedin.com/in/olinlagon/" target="_blank" rel="noopener">Olin Kealoha Lagon</a></span>
         <span class="footer-line"><a href="https://github.com/olagon/MokuMatch" target="_blank" rel="noopener">Open source</a> &middot; <a href="https://opensource.org/licenses/MIT" target="_blank" rel="noopener">MIT License</a> &middot; No ads</span>
         <span class="footer-line"><a href="#" onclick="legal.open('privacy'); return false;">Privacy</a> &middot; <a href="#" onclick="legal.open('terms'); return false;">Terms</a> &middot; <a href="#" onclick="legal.open('games'); return false;">More Games</a> &middot; <a href="https://www.linkedin.com/in/olinlagon/" target="_blank" rel="noopener">Send feedback</a></span>
-        <span class="footer-line footer-version">© 2026 &middot; v1.2</span>
+        <span class="footer-line footer-version">© 2026 &middot; v1.3</span>
     </footer>
     <!-- Location dataset (split out of index.html for easier expansion) -->
     <script src="data/locations.js"></script>
@@ -2343,7 +2346,7 @@ const LOCATIONS = window.LOCATIONS || [];
 
             const mokuCount = Object.keys(mokuColors).length;
             this.setInfo(this.mode === 'select'
-                ? `${island}: tap the moku you think the photo is in to drill into its ahupuaʻa.`
+                ? `${island}: tap the moku you think the photo is in. Wrong island? Tap Islands at the top to pick a different one.`
                 : `${island}: ${mokuCount} moku, ${data.features.length} ahupuaʻa. Click any region to drill in.`);
         },
 

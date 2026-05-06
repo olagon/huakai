@@ -777,8 +777,8 @@
     }
 
     /* HOW IT WORKS - animated demo on the start screen.
-       Four phases on a 12-second loop: see a photo, tap an island,
-       tap an ahupuaʻa, get it right. Pure CSS keyframes, no library. */
+       Five phases on a 15-second loop: see a photo, tap an island,
+       tap a moku, tap an ahupuaʻa, get it right. Pure CSS keyframes. */
     .demo-card {
         background: linear-gradient(135deg, rgba(94,58,158,0.07), rgba(46,125,50,0.05));
         border: 1px solid rgba(94,58,158,0.18);
@@ -795,14 +795,16 @@
     }
     .demo-svg { width: 100%; height: 100%; display: block; }
     .demo-svg .phase  { opacity: 0; }
-    .demo-svg .phase-0 { animation: dphase0 12s infinite ease-in-out; }
-    .demo-svg .phase-1 { animation: dphase1 12s infinite ease-in-out; }
-    .demo-svg .phase-2 { animation: dphase2 12s infinite ease-in-out; }
-    .demo-svg .phase-3 { animation: dphase3 12s infinite ease-in-out; }
-    @keyframes dphase0 { 0%, 22% { opacity: 1; } 25%, 100% { opacity: 0; } }
-    @keyframes dphase1 { 0%, 23% { opacity: 0; } 27%, 47% { opacity: 1; } 50%, 100% { opacity: 0; } }
-    @keyframes dphase2 { 0%, 48% { opacity: 0; } 52%, 72% { opacity: 1; } 75%, 100% { opacity: 0; } }
-    @keyframes dphase3 { 0%, 73% { opacity: 0; } 77%, 100% { opacity: 1; } }
+    .demo-svg .phase-0 { animation: dphase0 15s infinite ease-in-out; }
+    .demo-svg .phase-1 { animation: dphase1 15s infinite ease-in-out; }
+    .demo-svg .phase-2 { animation: dphase2 15s infinite ease-in-out; }
+    .demo-svg .phase-3 { animation: dphase3 15s infinite ease-in-out; }
+    .demo-svg .phase-4 { animation: dphase4 15s infinite ease-in-out; }
+    @keyframes dphase0 { 0%, 18% { opacity: 1; } 20%, 100% { opacity: 0; } }
+    @keyframes dphase1 { 0%, 19% { opacity: 0; } 21%, 38% { opacity: 1; } 40%, 100% { opacity: 0; } }
+    @keyframes dphase2 { 0%, 39% { opacity: 0; } 41%, 58% { opacity: 1; } 60%, 100% { opacity: 0; } }
+    @keyframes dphase3 { 0%, 59% { opacity: 0; } 61%, 78% { opacity: 1; } 80%, 100% { opacity: 0; } }
+    @keyframes dphase4 { 0%, 79% { opacity: 0; } 81%, 100% { opacity: 1; } }
     .demo-svg .ripple {
         transform-origin: center;
         animation: dripple 1.6s infinite ease-out;
@@ -812,22 +814,14 @@
         80%  { r: 24; opacity: 0; stroke-width: 1; }
         100% { r: 24; opacity: 0; stroke-width: 1; }
     }
-    .demo-svg .ahu-tap {
-        animation: dahutap 12s infinite ease-out;
-    }
-    @keyframes dahutap {
-        0%, 78%  { fill: #cbd5e1; }
-        82%, 96% { fill: #FF6F00; }
-        100%     { fill: #cbd5e1; }
-    }
     .demo-svg .check {
         opacity: 0;
         transform-origin: center;
-        animation: dcheck 12s infinite ease-out;
+        animation: dcheck 15s infinite ease-out;
     }
     @keyframes dcheck {
-        0%, 88%  { opacity: 0; transform: scale(0.5); }
-        92%, 98% { opacity: 1; transform: scale(1); }
+        0%, 86%  { opacity: 0; transform: scale(0.5); }
+        91%, 98% { opacity: 1; transform: scale(1); }
         100%     { opacity: 0; transform: scale(0.5); }
     }
     .demo-caption {
@@ -844,17 +838,19 @@
         inset: 0;
         opacity: 0;
     }
-    .demo-caption .cap-0 { animation: dcap0 12s infinite ease-in-out; }
-    .demo-caption .cap-1 { animation: dcap1 12s infinite ease-in-out; }
-    .demo-caption .cap-2 { animation: dcap2 12s infinite ease-in-out; }
-    .demo-caption .cap-3 { animation: dcap3 12s infinite ease-in-out; }
-    @keyframes dcap0 { 0%, 22% { opacity: 1; } 25%, 100% { opacity: 0; } }
-    @keyframes dcap1 { 0%, 23% { opacity: 0; } 27%, 47% { opacity: 1; } 50%, 100% { opacity: 0; } }
-    @keyframes dcap2 { 0%, 48% { opacity: 0; } 52%, 72% { opacity: 1; } 75%, 100% { opacity: 0; } }
-    @keyframes dcap3 { 0%, 73% { opacity: 0; } 77%, 100% { opacity: 1; } }
+    .demo-caption .cap-0 { animation: dcap0 15s infinite ease-in-out; }
+    .demo-caption .cap-1 { animation: dcap1 15s infinite ease-in-out; }
+    .demo-caption .cap-2 { animation: dcap2 15s infinite ease-in-out; }
+    .demo-caption .cap-3 { animation: dcap3 15s infinite ease-in-out; }
+    .demo-caption .cap-4 { animation: dcap4 15s infinite ease-in-out; }
+    @keyframes dcap0 { 0%, 18% { opacity: 1; } 20%, 100% { opacity: 0; } }
+    @keyframes dcap1 { 0%, 19% { opacity: 0; } 21%, 38% { opacity: 1; } 40%, 100% { opacity: 0; } }
+    @keyframes dcap2 { 0%, 39% { opacity: 0; } 41%, 58% { opacity: 1; } 60%, 100% { opacity: 0; } }
+    @keyframes dcap3 { 0%, 59% { opacity: 0; } 61%, 78% { opacity: 1; } 80%, 100% { opacity: 0; } }
+    @keyframes dcap4 { 0%, 79% { opacity: 0; } 81%, 100% { opacity: 1; } }
     /* Respect reduced motion */
     @media (prefers-reduced-motion: reduce) {
-        .demo-svg .phase, .demo-svg .ripple, .demo-svg .ahu-tap,
+        .demo-svg .phase, .demo-svg .ripple,
         .demo-svg .check, .demo-caption .cap { animation: none; }
         .demo-svg .phase-0, .demo-caption .cap-0 { opacity: 1; }
     }
@@ -995,16 +991,28 @@
                             <!-- Outline of the ahupuaʻa cluster -->
                             <path d="M 40 45 Q 100 32 240 40 Q 280 60 280 100 Q 240 130 130 130 Q 60 125 35 100 Q 25 75 40 45 Z"
                                   fill="#e2e8f0" stroke="#94a3b8" stroke-width="1" />
-                            <!-- Adjacent ahupuaʻa (faded, mountain-to-sea slices) -->
+                            <!-- Mountain-to-sea slices (the ahupuaʻa). All grey, ripple draws the eye to Kamoku. -->
                             <path d="M 75 45 Q 80 80 88 130 Q 60 125 50 110 Q 35 85 45 60 Q 60 48 75 45 Z" fill="#cbd5e1" stroke="#fff" stroke-width="1.5" />
                             <path d="M 130 42 Q 135 80 140 130 Q 110 130 88 130 Q 80 80 75 45 Z" fill="#cbd5e1" stroke="#fff" stroke-width="1.5" />
                             <!-- KAMOKU (the tap target) - central, mountain-to-sea -->
-                            <path d="M 195 42 Q 198 80 202 130 Q 165 132 140 130 Q 135 80 130 42 Z" class="ahu-tap" stroke="#fff" stroke-width="2" />
+                            <path d="M 195 42 Q 198 80 202 130 Q 165 132 140 130 Q 135 80 130 42 Z" fill="#cbd5e1" stroke="#fff" stroke-width="2" />
                             <path d="M 245 42 Q 245 80 248 130 Q 220 130 202 130 Q 198 80 195 42 Z" fill="#cbd5e1" stroke="#fff" stroke-width="1.5" />
                             <path d="M 280 60 Q 280 100 280 100 Q 264 125 248 130 Q 245 80 245 42 Q 270 45 280 60 Z" fill="#cbd5e1" stroke="#fff" stroke-width="1.5" />
-                            <!-- Label faintly above -->
-                            <text x="167" y="28" text-anchor="middle" font-size="10" font-weight="700" fill="#4a2d7e" opacity="0.7">Kamoku</text>
-                            <!-- Check mark badge -->
+                            <!-- Tap on Kamoku slice -->
+                            <circle cx="167" cy="86" r="11" fill="none" stroke="#5e3a9e" stroke-width="2.5" class="ripple" />
+                        </g>
+
+                        <!-- Phase 4: result. Same map, Kamoku highlighted in orange, check badge fades in. -->
+                        <g class="phase phase-4">
+                            <path d="M 40 45 Q 100 32 240 40 Q 280 60 280 100 Q 240 130 130 130 Q 60 125 35 100 Q 25 75 40 45 Z"
+                                  fill="#e2e8f0" stroke="#94a3b8" stroke-width="1" />
+                            <path d="M 75 45 Q 80 80 88 130 Q 60 125 50 110 Q 35 85 45 60 Q 60 48 75 45 Z" fill="#cbd5e1" stroke="#fff" stroke-width="1.5" />
+                            <path d="M 130 42 Q 135 80 140 130 Q 110 130 88 130 Q 80 80 75 45 Z" fill="#cbd5e1" stroke="#fff" stroke-width="1.5" />
+                            <!-- KAMOKU - orange highlight (the answer) -->
+                            <path d="M 195 42 Q 198 80 202 130 Q 165 132 140 130 Q 135 80 130 42 Z" fill="#FF6F00" stroke="#fff" stroke-width="2" />
+                            <path d="M 245 42 Q 245 80 248 130 Q 220 130 202 130 Q 198 80 195 42 Z" fill="#cbd5e1" stroke="#fff" stroke-width="1.5" />
+                            <path d="M 280 60 Q 280 100 280 100 Q 264 125 248 130 Q 245 80 245 42 Q 270 45 280 60 Z" fill="#cbd5e1" stroke="#fff" stroke-width="1.5" />
+                            <text x="167" y="28" text-anchor="middle" font-size="10" font-weight="700" fill="#4a2d7e" opacity="0.85">Kamoku</text>
                             <g class="check">
                                 <circle cx="270" cy="30" r="18" fill="#2E7D32" />
                                 <path d="M 261 30 L 268 38 L 279 23" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" />
@@ -1015,8 +1023,9 @@
                 <div class="demo-caption">
                     <span class="cap cap-0">You see a photo</span>
                     <span class="cap cap-1">Tap an island (Lānaʻi)</span>
-                    <span class="cap cap-2">Tap an ahupuaʻa</span>
-                    <span class="cap cap-3">Pololei! Kamoku</span>
+                    <span class="cap cap-2">Tap a moku</span>
+                    <span class="cap cap-3">Tap an ahupuaʻa</span>
+                    <span class="cap cap-4">Pololei! Kamoku</span>
                 </div>
             </div>
 

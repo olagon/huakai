@@ -494,7 +494,7 @@
         line-height: 1;
     }
 
-    /* Journey grid tiles — hover/tap to reveal the answer + caption */
+    /* Journey grid tiles. hover/tap to reveal the answer + caption */
     .journey-tile { cursor: pointer; }
     .journey-tile .journey-reveal {
         position: absolute;
@@ -542,7 +542,7 @@
         .journey-tile .journey-status { font-size: 10px; }
     }
 
-    /* Daily hint button — yellow/amber so it reads "free help, use it". */
+    /* Daily hint button. yellow/amber so it reads "free help, use it". */
     .hint-btn {
         display: flex;
         align-items: center;
@@ -595,7 +595,7 @@
         font-size: 14px;
     }
 
-    /* Give-up button — visible secondary CTA, sits below the primary
+    /* Give-up button. visible secondary CTA, sits below the primary
        answer button. Kapa brown so it reads "soft" not "destructive". */
     .skip-btn {
         display: flex;
@@ -770,7 +770,7 @@
         <div class="max-w-3xl mx-auto px-2 sm:px-4 py-3 flex items-center justify-between">
             <div class="leading-tight">
                 <h1 class="text-lg sm:text-xl font-extrabold tracking-tight">Huakaʻi</h1>
-                <p class="text-[11px] sm:text-xs text-black/55">A journey through the moku and ahupuaʻa of Hawaiʻi</p>
+                <p class="text-[11px] sm:text-xs text-black/55">A fun way to discover the moku and ahupuaʻa of Hawaiʻi</p>
             </div>
             <div class="flex items-center gap-2">
                 <button onclick="progressView.open()" class="ui-pill hover:bg-white" title="See which sites you've solved">
@@ -807,7 +807,7 @@
                 Set out on a <strong class="text-kapa-ocean">huakaʻi</strong> through Hawaiʻi. Each photo is a stop along the way. Find where it sits on the map: which <strong class="text-black/85">mokupuni</strong> (island), which <strong class="text-black/85">moku</strong> (district), which <strong class="text-black/85">ahupuaʻa</strong> (land division).
             </p>
             <p class="text-sm text-black/60 mb-7 leading-relaxed italic">
-                A huakaʻi is a journey. The aim here is not to get every round right on the first try — it is to keep returning, see new places, and slowly come to know the land.
+                A huakaʻi is a journey. The aim is not to get every round right on the first try. It is to keep returning, see new places, and slowly come to know the names of the land.
             </p>
             <div class="rounded-2xl border border-black/10 bg-white/60 p-4 sm:p-5 mb-7 text-left text-sm text-black/70">
                 <p class="font-extrabold text-black/80 tracking-tight">How it works</p>
@@ -815,7 +815,7 @@
                     <li>3 quick rounds per game.</li>
                     <li>You see a photo. Tap the map to drop a pin in the right ahupuaʻa.</li>
                     <li>The map drills down for you: <strong class="text-black/85">mokupuni → moku → ahupuaʻa</strong>.</li>
-                    <li>Land on the right ahupuaʻa and that site is yours forever — your progress is saved.</li>
+                    <li>Land on the right ahupuaʻa and weʻll track your progress.</li>
                     <li>Don't know one? Tap <em>I don't know</em> and the answer is shown on the map.</li>
                     <li><strong class="text-black/85">Goal:</strong> solve every site to beat the game.</li>
                 </ul>
@@ -910,7 +910,7 @@
                     </svg>
                     <span>Use today's hint (Island + Moku)</span>
                 </button>
-                <!-- Hint reveal panel — appears for the rest of the round once the hint is used -->
+                <!-- Hint reveal panel. appears for the rest of the round once the hint is used -->
                 <div id="hint-revealed" class="hidden hint-revealed">
                     <span class="hint-label">Hint</span>
                     <span class="hint-text">
@@ -924,7 +924,7 @@
                         <path d="M9.5 9a2.5 2.5 0 0 1 4.95.5c0 1.5-2 2.5-2.5 3.5"/>
                         <line x1="12" y1="17" x2="12" y2="17.01"/>
                     </svg>
-                    <span>I don't know — show me the answer</span>
+                    <span>I don't know. Show me the answer</span>
                 </button>
                 <p class="text-[11px] text-black/45 mt-4 leading-relaxed text-center">
                     Boundaries from the State of Hawaiʻi GIS layer. Some traditional ahupuaʻa
@@ -1049,7 +1049,7 @@
                 <div id="help-map" class="flex-1 bg-gray-200" style="min-height:0"></div>
                 <div id="help-info" class="px-3 sm:px-4 py-2 text-xs text-black/75 bg-white/95 border-t border-black/10 leading-snug">
                     Tap any island to see its moku, then tap a moku to see its ahupuaʻa.
-                    <span class="text-black/45">Modern boundaries from State GIS — some traditional ahupuaʻa are merged.</span>
+                    <span class="text-black/45">Modern boundaries from State GIS. Some traditional ahupuaʻa are merged.</span>
                 </div>
             </div>
         </div>
@@ -1123,13 +1123,13 @@
     <script>
     // --- DATA SOURCE ---
 
-    // Moku and Ahupuaʻa lookup tables. Intentionally empty here — they
+    // Moku and Ahupuaʻa lookup tables. Intentionally empty here. they
     // are populated entirely from data/locations.js by syncDropdownsFromLocations()
     // below. That keeps these in lockstep with whatever the calibrated
     // dataset says, so traditional vs modern naming can't drift apart.
     const MOKU_DATA = {};
 
-    // Empty by design — built entirely from data/locations.js below.
+    // Empty by design. built entirely from data/locations.js below.
     const AHUPUAA_DATA = {};
 
 // LOCATIONS is loaded from data/locations.js (see <script> tag above).
@@ -1138,7 +1138,7 @@ const LOCATIONS = window.LOCATIONS || [];
 
 // Augment MOKU_DATA and AHUPUAA_DATA with any island/moku/ahupuaʻa
 // combos that appear in LOCATIONS. This keeps the dropdowns in sync
-// when new entries are added by the discovery script — we don't have
+// when new entries are added by the discovery script. we don't have
 // to hand-edit MOKU_DATA / AHUPUAA_DATA every time.
 (function syncDropdownsFromLocations() {
     for (const loc of LOCATIONS) {
@@ -1165,7 +1165,7 @@ const LOCATIONS = window.LOCATIONS || [];
 })();
 
     // ----------------------------------------------------------------
-    // STATS / PROGRESS — localStorage tracking of which sites the user
+    // STATS / PROGRESS. localStorage tracking of which sites the user
     // has solved (got all 3 right on). Goal: solve every site to "beat"
     // the game. The round picker prefers unsolved sites until they're
     // all done.
@@ -1266,7 +1266,7 @@ const LOCATIONS = window.LOCATIONS || [];
     setTimeout(() => stats.refreshUI(), 0);
 
     // ----------------------------------------------------------------
-    // PROGRESS MODAL — grid of every site, color = solved, grey = not.
+    // PROGRESS MODAL. grid of every site, color = solved, grey = not.
     // ----------------------------------------------------------------
     const progressView = {
         open() {
@@ -1332,7 +1332,7 @@ const LOCATIONS = window.LOCATIONS || [];
                 const tile = document.createElement('div');
                 tile.className = `progress-tile ${isSolved ? 'solved' : 'unsolved'}`;
                 tile.title = isSolved
-                    ? `${loc.name} — ${loc.ahupuaa}, ${loc.moku}, ${loc.island}`
+                    ? `${loc.name}. ${loc.ahupuaa}, ${loc.moku}, ${loc.island}`
                     : `Not yet solved (${loc.island})`;
                 const tipText = isSolved
                     ? `<div>${escapeHTML(loc.name)}</div><div class="opacity-75">${escapeHTML(loc.ahupuaa)} · ${escapeHTML(loc.island)}</div>`
@@ -1352,7 +1352,7 @@ const LOCATIONS = window.LOCATIONS || [];
     });
 
     // ----------------------------------------------------------------
-    // ANALYTICS — thin wrapper around GA4 gtag. No-ops gracefully if
+    // ANALYTICS. thin wrapper around GA4 gtag. No-ops gracefully if
     // gtag isn't loaded (offline, ad blockers, dev with empty ID).
     // Every event passes through here, so we have one place to flip
     // the kill switch if we ever want to.
@@ -1398,7 +1398,7 @@ const LOCATIONS = window.LOCATIONS || [];
 
         start() {
             // Build the round deck preferring sites the user has not yet solved.
-            // The goal is "find every site to beat the game" — so unsolved
+            // The goal is "find every site to beat the game". so unsolved
             // come first; once everything is solved, fall back to random.
             const unsolved = LOCATIONS.filter(l => !stats.isSolved(l.name));
             const solved   = LOCATIONS.filter(l =>  stats.isSolved(l.name));
@@ -1595,7 +1595,7 @@ const LOCATIONS = window.LOCATIONS || [];
             this.showFeedback(isFullyCorrect, loc, false, isClose);
         },
 
-        // Daily hint — reveals the island + moku for the current round.
+        // Daily hint. reveals the island + moku for the current round.
         // One use per calendar day, tracked in localStorage.
         useHint() {
             if (!stats.canUseHint()) return;
@@ -1652,7 +1652,7 @@ const LOCATIONS = window.LOCATIONS || [];
                 title.textContent = "Pololei!";
                 icon.textContent = "🤙";
             } else if (isClose) {
-                // Right moku, wrong ahupuaʻa — give credit for being close.
+                // Right moku, wrong ahupuaʻa. give credit for being close.
                 header.className = 'px-6 py-5 sm:px-7 sm:py-6 text-center text-white';
                 header.style.background = '#E08A1B';   // warm amber, between green and clay
                 title.textContent = "Almost!";
@@ -2079,7 +2079,7 @@ const LOCATIONS = window.LOCATIONS || [];
                     const ahu = this.getAhupuaa(f.properties);
                     layer.bindTooltip(`<b>${moku}</b><br><span style="opacity:0.8">${ahu}</span>`, { sticky: true });
                     // Pass the tapped polygon's bounds so the next view stays
-                    // focused around where the user actually tapped — not the
+                    // focused around where the user actually tapped. not the
                     // entire moku, which can sit miles away in any direction.
                     layer.on('click', () => this.goAhupuaa(island, moku, layer.getBounds()));
                     layer.on('mouseover', () => layer.setStyle({ weight: 2.5, color: '#0F172A' }));
@@ -2091,7 +2091,7 @@ const LOCATIONS = window.LOCATIONS || [];
             try {
                 const b = this.layer.getBounds();
                 if (b.isValid()) {
-                    // For an island-level view, fit normally — this is a deliberate
+                    // For an island-level view, fit normally. this is a deliberate
                     // navigation from the all-Hawaiʻi view, the user expects to land
                     // on that island.
                     this.map.fitBounds(b, { padding: [20, 20] });
@@ -2110,11 +2110,11 @@ const LOCATIONS = window.LOCATIONS || [];
 
         // Style presets for the ahupuaʻa polygons.
         _ahuStyles: {
-            // Polygons inside the focused moku — fully styled, labeled, selectable.
+            // Polygons inside the focused moku. fully styled, labeled, selectable.
             base:        { color: '#0F172A', weight: 1.4, fillColor: '#00838F', fillOpacity: 0.40 },
             hover:       { color: '#0F172A', weight: 2.2, fillColor: '#00838F', fillOpacity: 0.65 },
             selected:    { color: '#FFFFFF', weight: 3,   fillColor: '#FF6F00', fillOpacity: 0.92 },
-            // Polygons in OTHER moku — visible but muted, click to switch focus.
+            // Polygons in OTHER moku. visible but muted, click to switch focus.
             faded:       { color: '#94A3B8', weight: 0.8, fillColor: '#94A3B8', fillOpacity: 0.10, dashArray: '3,3' },
             fadedHover:  { color: '#0F172A', weight: 1.8, fillColor: '#64748B', fillOpacity: 0.28, dashArray: null },
         },
@@ -2134,7 +2134,7 @@ const LOCATIONS = window.LOCATIONS || [];
 
             // Render ALL ahupuaʻa polygons on the island. Polygons in the
             // focused moku get full styling + labels + selection logic;
-            // polygons in OTHER moku stay visible but faded — tap one to
+            // polygons in OTHER moku stay visible but faded. tap one to
             // jump straight to that moku without going back to the breadcrumbs.
             this.layer = L.geoJSON(data, {
                 style: f => this.getMoku(f.properties) === moku ? styles.base : styles.faded,
@@ -2160,7 +2160,7 @@ const LOCATIONS = window.LOCATIONS || [];
                             layer.on('click', () => this._selectAhu(layer, island, moku, ahu));
                         }
                     } else {
-                        // Adjacent moku — tap to switch focus there.
+                        // Adjacent moku. tap to switch focus there.
                         layer.bindTooltip(`Switch to ${m}`, { sticky: true, opacity: 0.95 });
                         layer.on('mouseover', () => layer.setStyle(styles.fadedHover));
                         layer.on('mouseout',  () => layer.setStyle(styles.faded));
@@ -2363,7 +2363,7 @@ const LOCATIONS = window.LOCATIONS || [];
                 <h2>What we collect</h2>
                 <p>Nothing personally identifying. We do not have user accounts and you never sign in.</p>
                 <p>We use one bit of <strong>localStorage</strong> to remember which sites you have solved across sessions, so the game can show your progress and pull rounds from sites you have not seen yet. That data lives only in your browser, never sent anywhere. You can clear it any time with your browser's site data tools.</p>
-                <p>We use <strong>Google Analytics 4</strong> to count how the game is being used in aggregate — how many rounds get played, how often the map mode is opened, what percent of rounds end in "show me the answer." This is set up to be as private as we know how to make it. IP addresses are anonymized before storage. Cross-device tracking via Google accounts is disabled. Ad personalization signals are disabled.</p>
+                <p>We use <strong>Google Analytics 4</strong> to count how the game is being used in aggregate. How many rounds get played, how often the map mode is opened, what percent of rounds end in "show me the answer." This is set up to be as private as we know how to make it. IP addresses are anonymized before storage. Cross-device tracking via Google accounts is disabled. Ad personalization signals are disabled.</p>
                 <p>The events we record include: game starts and finishes, round answered (correct or not), give-ups, map mode opened, image enlarged, progress page opened, footer link clicks. None of these include your IP, your name, or anything that identifies you. They are counts and aggregates, not a record of any individual person's behavior.</p>
                 <p>The reason we record any of this is to make the game better. If 80% of players never finish a round, that tells us the round screen needs work. If the give-up button is hit a lot on Lānaʻi entries, that tells us those rounds may be too obscure. We are not trying to build a profile of you. We are trying to make the game more fun.</p>
 
@@ -2445,7 +2445,7 @@ const LOCATIONS = window.LOCATIONS || [];
                     <p>ʻO wau ʻo Olin Kealoha Lagon. Here are the Hawaiian language and culture learning games I have gifted. They are all open source. Make a copy, edit it, re-release as your own version, or even contact me if you want to take over any of these.</p>
                 </div>
 
-                <h2><a href="https://olagon.github.io/MokuMatch/" target="_blank" rel="noopener">Huakaʻi</a> <span style="font-weight: 400; font-size: 0.85rem; color: var(--accent);">(you are here)</span></h2>
+                <h2><a href="https://olagon.github.io/huakai/" target="_blank" rel="noopener">Huakaʻi</a> <span style="font-weight: 400; font-size: 0.85rem; color: var(--accent);">(you are here)</span></h2>
                 <p>The journey you are on right now. A Hawaiʻi place-knowledge game. Most people who grew up in Hawaiʻi can name the islands. Fewer can name the moku. Fewer still can place an ahupuaʻa. These names are not trivia. They tell you where the water flowed, who lived there, who fished there, and what was grown. Huakaʻi uses live State of Hawaiʻi GIS data to teach the mokupuni, moku, and ahupuaʻa map one tap at a time.</p>
 
                 <h2><a href="https://olelodaily.com" target="_blank" rel="noopener">OleloDaily.com</a></h2>
@@ -2483,7 +2483,7 @@ const LOCATIONS = window.LOCATIONS || [];
     });
 
     // ----------------------------------------------------------------
-    // IMAGE LIGHTBOX — click round photo to see it big, click again to
+    // IMAGE LIGHTBOX. click round photo to see it big, click again to
     // cycle zoom (1x → 2x → 4x → 1x). When zoomed, the stage scrolls
     // so you can drag/swipe to pan around.
     // ----------------------------------------------------------------

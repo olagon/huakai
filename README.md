@@ -2,11 +2,11 @@
 
 A geography journey through Hawaiʻi. You see a photo of a real place. You find where it sits on the map: which **mokupuni** (island), which **moku** (district), which **ahupuaʻa** (land division). Three quick rounds per game. Solve every site in the dataset to "beat" Huakaʻi.
 
-A *huakaʻi* is a journey. The aim here is not to get every round right on the first try — it is to keep returning, see new places, and slowly come to know the land.
+A *huakaʻi* is a journey. The aim is not to get every round right on the first try. It is to keep returning, see new places, and slowly come to know the names of the land.
 
 It runs in one HTML file, in your browser. Nothing to install.
 
-[Play it now](https://olagon.github.io/MokuMatch/)
+[Play it now](https://olagon.github.io/huakai/)
 
 ## Why
 
@@ -23,26 +23,26 @@ Tap that and the State of Hawaiʻi GIS map opens, zoomed out to all eight island
 3. Tap the ahupuaʻa polygon you think is right. It highlights in orange. A Submit button appears in the info bar.
 4. Tap Submit.
 
-Get all three right and the site is yours forever — your progress is saved between sessions. The header pill shows you live progress (X / 156).
+Get all three right and we save your progress between sessions. The header pill shows you live progress (X / 156).
 
 When you're stuck, two safety nets:
 
-- **Use today's hint** — reveals the island and moku, leaving only the ahupuaʻa to find. One per calendar day.
-- **I don't know — show me the answer** — reveals the answer with a mini-map showing the actual ahupuaʻa polygon. Doesn't score a point but you learn where it was.
+- **Use today's hint**: reveals the island and moku, leaving only the ahupuaʻa to find. One per calendar day.
+- **I don't know, show me the answer**: reveals the answer with a mini-map showing the actual ahupuaʻa polygon. Doesn't score a point but you learn where it was.
 
 When you're close, the game knows: getting the right moku but the wrong ahupuaʻa shows a soft "Almost!" instead of "Auwē!".
 
 ## Features
 
 - 156 real photographed locations across all eight Hawaiian islands
-- Live State of Hawaiʻi GIS data — the polygons you tap are the real ahupuaʻa boundaries
+- Live State of Hawaiʻi GIS data: the polygons you tap are the real ahupuaʻa boundaries
 - Tap-through map answering with smart camera (never zooms out unexpectedly)
 - Show-photo peek inside the map so you can see the round image while you navigate
 - Click any photo to enlarge with cycling zoom (1x → 2x → 4x)
 - Daily hint, give-up flow, "Almost!" grace credit when moku is right
 - Progress modal with thumbnail grid (color = solved, grey = not yet)
 - End-of-game recap map plus "Your Journey" grid with hover-to-reveal answers
-- Mobile friendly. The map is the only UI — no dropdowns to fight with
+- Mobile friendly. The map is the only UI. No dropdowns to fight with.
 - No sign-in, no accounts, no cookies. Anonymized GA4 only
 
 ## Run it locally
@@ -98,7 +98,7 @@ The location data is split out so you can add or fix entries without touching th
 
 **Ahupuaʻa boundaries** come from the [Hawaiʻi Statewide GIS Program](https://planning.hawaii.gov/gis/), Office of Planning and Sustainable Development. The specific layer is `HistoricCultural/MapServer/1`. Original source is the Office of Hawaiian Affairs (2009), with diacriticals corrected by DLNR/SHPD in 2017 and 2021.
 
-This is the **modern administrative** layer. Some traditional ahupuaʻa are merged into larger modern polygons — Mānoa, Makiki, Pālolo on Oʻahu all sit inside one big "Honolulu" polygon, for example. The game labels and the answer always match the State layer, but the in-app Terms doc explains the trade-off so players can understand what they are seeing.
+This is the **modern administrative** layer. Some traditional ahupuaʻa are merged into larger modern polygons. Mānoa, Makiki, Pālolo on Oʻahu all sit inside one big "Honolulu" polygon, for example. The game labels and the answer always match the State layer, but the in-app Terms doc explains the trade-off so players can understand what they are seeing.
 
 **Photos** come from [Wikimedia Commons](https://commons.wikimedia.org/), each under its own CC license. Every photo shows the credit in the game UI. Full attribution table is in [IMAGE_CREDITS.md](IMAGE_CREDITS.md).
 
@@ -119,7 +119,7 @@ Errors in this dataset are easy to make and easier to find. If you spot one:
 
 Open an issue or send a pull request. For people not on GitHub, send a message on [LinkedIn](https://www.linkedin.com/in/olinlagon/).
 
-If you want to add new locations, the rules are simple: the photo must be on Wikimedia Commons (so we have a real license and credit), the coordinates must be honest, and the GIS layer must return a valid mokupuni/moku/ahupuaʻa for those coordinates. The `discover_more_locations.py` script automates this — it pulls Hawaii photos with GPS and reverse-geocodes them.
+If you want to add new locations, the rules are simple: the photo must be on Wikimedia Commons (so we have a real license and credit), the coordinates must be honest, and the GIS layer must return a valid mokupuni/moku/ahupuaʻa for those coordinates. The `discover_more_locations.py` script automates this. It pulls Hawaii photos with GPS and reverse-geocodes them.
 
 ## Tech
 

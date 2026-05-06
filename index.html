@@ -1802,6 +1802,16 @@ const LOCATIONS = window.LOCATIONS || [];
                 location: loc.name,
                 location_island: loc.island,
             });
+            // Dedicated win/loss events for per-photo tracking in GA.
+            // These show up as their own entries in the Event Name list.
+            track(isFullyCorrect ? 'round_won' : 'round_lost', {
+                location: loc.name,
+                location_island: loc.island,
+                location_moku: loc.moku,
+                location_ahupuaa: loc.ahupuaa,
+                round: this.currentRoundIndex + 1,
+                close: isClose,
+            });
 
             this.gameHistory.push({
                 location: loc,
@@ -1840,6 +1850,15 @@ const LOCATIONS = window.LOCATIONS || [];
                 round: this.currentRoundIndex + 1,
                 location: loc.name,
                 location_island: loc.island,
+            });
+            // Give up counts as a round_lost so the event count totals stay clean.
+            track('round_lost', {
+                location: loc.name,
+                location_island: loc.island,
+                location_moku: loc.moku,
+                location_ahupuaa: loc.ahupuaa,
+                round: this.currentRoundIndex + 1,
+                gave_up: true,
             });
             this.gameHistory.push({
                 location: loc,
@@ -2584,7 +2603,7 @@ const LOCATIONS = window.LOCATIONS || [];
                 <p>Nothing personally identifying. We do not have user accounts and you never sign in.</p>
                 <p>We use one bit of <strong>localStorage</strong> to remember which sites you have solved across sessions, so the game can show your progress and pull rounds from sites you have not seen yet. That data lives only in your browser, never sent anywhere. You can clear it any time with your browser's site data tools.</p>
                 <p>We use <strong>Google Analytics 4</strong> to count how the game is being used in aggregate. How many rounds get played, how often the map mode is opened, what percent of rounds end in "show me the answer." This is set up to be as private as we know how to make it. IP addresses are anonymized before storage. Cross-device tracking via Google accounts is disabled. Ad personalization signals are disabled.</p>
-                <p>The events we record include: game starts and finishes, round answered (correct or not), give-ups, map mode opened, image enlarged, progress page opened, footer link clicks. None of these include your IP, your name, or anything that identifies you. They are counts and aggregates, not a record of any individual person's behavior.</p>
+                <p>The events we record include: game starts and finishes, round answered (correct or not), round wins and losses per photo, give-ups, map mode opened, image enlarged, progress page opened, footer link clicks. None of these include your IP, your name, or anything that identifies you. They are counts and aggregates, not a record of any individual person's behavior.</p>
                 <p>The reason we record any of this is to make the game better. If 80% of players never finish a round, that tells us the round screen needs work. If the give-up button is hit a lot on Lānaʻi entries, that tells us those rounds may be too obscure. We are not trying to build a profile of you. We are trying to make the game more fun.</p>
 
                 <h2>What third party services see</h2>
